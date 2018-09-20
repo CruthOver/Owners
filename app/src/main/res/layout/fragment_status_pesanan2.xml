@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="#FFFFFF"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/venue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/venue_btn"
+            android:maxHeight="55dp"
+            android:maxWidth="88dp"
+            android:layout_marginTop="20dp"/>
+        <ImageView
+            android:id="@+id/field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="55dp"
+            android:adjustViewBounds="true"
+            android:maxWidth="88dp"
+            android:src="@drawable/field_btn"
+            android:layout_marginTop="20dp"/>
+        <ImageView
+            android:id="@+id/jadwal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/jadwal_btn"
+            android:maxHeight="55dp"
+            android:adjustViewBounds="true"
+            android:maxWidth="88dp"
+            android:layout_marginTop="20dp"/>
+    </LinearLayout>
+
+</FrameLayout>

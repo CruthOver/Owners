@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/view_venue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/border">
+                <ImageView
+                    android:id="@+id/img_venue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/lapangan"
+                    android:scaleType="fitXY"
+                    android:layout_margin="8dp"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="128dp"
+                    android:maxWidth="128dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/nama_venue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="RAJAWALI SPORT CENTER"
+                        android:paddingRight="8dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="#FBCA11"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:gravity="left"/>
+                    <TextView
+                        android:id="@+id/alamat_venue"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Jl. Soekarno Hatta (bypass) no. 599, Bandung"
+                        android:paddingRight="8dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/border"
+                android:layout_marginTop="-4dp">
+                <Button
+                    android:id="@+id/btn_view_venue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="lihat venue"
+                    android:textStyle="bold"
+                    android:backgroundTint="#FBCA11"
+                    android:padding="16dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

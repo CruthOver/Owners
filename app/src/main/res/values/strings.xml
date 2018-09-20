@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">Lapang Bola Partner</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- String layout Register -->
+    <string name="hint_full_name">Nama Lengkap</string>
+    <string name="hint_username">Nama Pengguna</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_password">Kata Sandi</string>
+    <string name="hint_confirm_password">Ulang Kata Sandi</string>
+    <string name="hint_phone_number">Nomor Telepon/HP</string>
+    <string name="action_register">Daftar</string>
+    <!-- String layout Register -->
+
+    <!-- String layout Login -->
+    <string name="forgot_password">Lupa Sandi?</string>
+    <string name="action_login">Masuk</string>
+    <string name="dont_have_an_account">Belum memiliki Akun?</string>
+    <string name="register">Daftar</string>
+    <string name="tv_register">di sini</string>
+    <!-- String layout  Login -->
+
+    <!-- String layout Activation Code -->
+    <string name="text_code_activation">Masukkan Kode Aktivasi</string>
+    <string name="action_activation_code">Lanjut</string>
+    <string name="dialog_message_connection_error">Periksa kembali Koneksi Anda !!</string>
+    <string name="dialog_title_error">Kesalahan!</string>
+    <string name="hint_activation_code">Kode Aktivasi</string>
+    <!-- String layout Activation Code -->
+
+
+    <!-- String Spinner Day -->
+    <string name="optionDay">-- Pilih Hari --</string>
+    <string name="monday">Senin</string>
+    <string name="tuesday">Selasa</string>
+    <string name="wednesday">Rabu</string>
+    <string name="thursday">Kamis</string>
+    <string name="friday">Jum\'at</string>
+    <string name="saturday">Sabtu</string>
+    <string name="sunday">Minggu</string>
+    <!-- String Spinner Day -->
+
+    <!-- String Spinner Hour -->
+    <!-- String Spinner Hour -->
+
+    <string name="desc_venue">Rajawali Sport Center adalah tempat bermain futsal lengkap di daerah bandung. selain fasilitasnya yang bagus, pemain juga mendapat free wifi untuk semua pemain yang menggunakan lapangan rajawali sport center</string>
+    <string name="Edit">edit</string>
+    <string name="error_field_required">Wajib diisi</string>
+    <string name="error_invalid_password">Password harus lebih dari 4 karakter</string>
+</resources>
