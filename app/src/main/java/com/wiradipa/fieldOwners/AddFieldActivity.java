@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -18,34 +20,46 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.wiradipa.fieldOwners.Adapter.TarifAdapter;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
 import com.wiradipa.fieldOwners.Model.FieldData;
 import com.wiradipa.fieldOwners.Model.FieldTariff;
+import com.wiradipa.fieldOwners.Model.ListVenue;
 import com.wiradipa.fieldOwners.Model.ResponseData;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -66,7 +80,7 @@ public class AddFieldActivity extends AppCompatActivity {
             , mFieldSizeEditText, mFieldCostEditText, mFieldCostEditText2, mTitleFieldEditText
             , mTitleFieldEditText2;
     Spinner mFromDaySpinner, mUntilDaySpinner, mFromDay2Spinner, mUntilDay2Spinner, mFieldTypeSpinner, mGrassTypeSpinner,
-            mFromHourSpinner, mUntilHourSpinner, mFromHourSpinner2, mUntilHourSpinner2;
+            mFromHourSpinner, mUntilHourSpinner, mFromHourSpinner2, mUntilHourSpinner2, spinnerVenue;
     CheckBox mFacilitiesCheckBox;
     TextView mResultPhoto, mResultOtherPhoto, mResultOtherPhoto2, addOtherTarif;
     Button mBtnSubmit, mBtnCancel;
@@ -76,8 +90,9 @@ public class AddFieldActivity extends AppCompatActivity {
     TimePickerDialog timePickerDialog;
 
     ArrayList<FieldTariff> fieldTarifs;
-//    ListView listViewTarif;
-//    TarifAdapter mAdapter;
+    ListVenue venue;
+    ListView listViewTarif;
+    TarifAdapter mAdapter;
 
     private Uri imageFile;
     private Bitmap bitmap;
@@ -87,7 +102,7 @@ public class AddFieldActivity extends AppCompatActivity {
     AppSession mAppSession;
 
     private int mStartDay, mEndDay, mStartDay2, mEndDay2, mFieldType, mGrassType
-            , mStartHour, mEndHour, mStartHour2, mEndHour2;
+            , mStartHour, mEndHour, mStartHour2, mEndHour2, mIdVenue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,10 +113,10 @@ public class AddFieldActivity extends AppCompatActivity {
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
 
-        fieldTarifs = new ArrayList<>();
-//        listViewTarif = (ListView) findViewById(R.id.list_tariff);
-//        mAdapter = new TarifAdapter(mContext, fieldTarifs);
-//        listViewTarif.setAdapter(mAdapter);
+        fieldTarifs = new ArrayList<FieldTariff>();
+        listViewTarif = (ListView) findViewById(R.id.list_tariff);
+        mAdapter = new TarifAdapter(mContext, fieldTarifs);
+        listViewTarif.setAdapter(mAdapter);
 
         initComponents();
     }
@@ -118,19 +133,22 @@ public class AddFieldActivity extends AppCompatActivity {
         mFieldNameEditText = (EditText) findViewById(R.id.et_field_name);
         mDescriptionFieldEditText = (EditText) findViewById(R.id.et_field_description);
         mFieldSizeEditText = (EditText) findViewById(R.id.et_size_field);
-        mFieldCostEditText = (EditText) findViewById(R.id.et_cost_field);
+//        mFieldCostEditText = (EditText) findViewById(R.id.et_cost_field);
+
 //        mFieldCostEditText2 = (EditText) findViewById(R.id.tv_cost_field2);
 //        mTitleFieldEditText = (EditText) findViewById(R.id.et_title_field);
 //        mTitleFieldEditText2 = (EditText) findViewById(R.id.et_title_field2);
 //        mFromHourSpinner2 = (Spinner) findViewById(R.id.et_from_hour2);
 //        mUntilHourSpinner2 = (Spinner) findViewById(R.id.et_until_hour2);
-        mUntilHourSpinner = (Spinner) findViewById(R.id.et_until_hour);
-        mFromHourSpinner = (Spinner) findViewById(R.id.et_from_hour);
+//        mUntilHourSpinner = (Spinner) findViewById(R.id.et_until_hour);
+//        mFromHourSpinner = (Spinner) findViewById(R.id.et_from_hour);
 
 //        mFacilitiesCheckBox = (CheckBox) findViewById(R.id.checkbox_facilities_field);
 
-        mFromDaySpinner = (Spinner) findViewById(R.id.spinner_from_day);
-        mUntilDaySpinner = (Spinner) findViewById(R.id.spinner_until_day);
+        spinnerVenue = (Spinner) findViewById(R.id.spinner_id_venue);
+
+//        mFromDaySpinner = (Spinner) findViewById(R.id.spinner_from_day);
+//        mUntilDaySpinner = (Spinner) findViewById(R.id.spinner_until_day);
 //        mFromDay2Spinner = (Spinner) findViewById(R.id.spinner_from_day2);
 //        mUntilDay2Spinner = (Spinner) findViewById(R.id.spinner_until_day2);
         mFieldTypeSpinner = (Spinner) findViewById(R.id.spinner_type_field);
@@ -183,7 +201,7 @@ public class AddFieldActivity extends AppCompatActivity {
         addOtherTarif.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                dialogTarif();
             }
         });
 
@@ -236,6 +254,20 @@ public class AddFieldActivity extends AppCompatActivity {
             }
         });
 
+        spinnerVenue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                venue = (ListVenue) adapterView.getSelectedItem();
+                mIdVenue = venue.getId();
+                Toast.makeText(mContext, "Venue ID: "+ venue.getId()+",  Venue Name : "+ venue.getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
 //        addOtherTarif.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -246,8 +278,8 @@ public class AddFieldActivity extends AppCompatActivity {
 //
 //                for (int i=0; i<layoutTarif.size(); i++){
 //                    view = LayoutInflater.from(mContext).inflate(R.layout.list_tariff, linearLayout);
-//                    mUntilHourEditText = (Spinner) view.findViewById(R.id.et_until_hour);
-//                    mFromHourEditText = (Spinner) view.findViewById(R.id.et_from_hour);
+//                    mUntilHourSpinner = (Spinner) view.findViewById(R.id.et_until_hour);
+//                    mFromHourSpinner = (Spinner) view.findViewById(R.id.et_from_hour);
 //                    mFromDaySpinner = (Spinner) view.findViewById(R.id.spinner_from_day);
 //                    mUntilDaySpinner = (Spinner) view.findViewById(R.id.spinner_until_day);
 //                    mFieldCostEditText = (EditText) view.findViewById(R.id.et_cost_field);
@@ -260,14 +292,15 @@ public class AddFieldActivity extends AppCompatActivity {
 //            }
 //        });
 
-        setupSpinnerFromDay();
-        setupSpinnerUntilDay();
+//        setupSpinnerFromDay();
+//        setupSpinnerUntilDay();
 //        setupSpinnerFromDay2();
 //        setupSpinnerUntilDay2();
         setupSpinnerTypeGrass();
         setupSpinnerTypeField();
-        setSpinnerFromHour();
-        setSpinnerEndHour();
+//        setSpinnerFromHour();
+//        setSpinnerEndHour();
+        setSpinnerVenue();
 //        setSpinnerFromHour2();
 //        setSpinnerEndHour2();
     }
@@ -693,6 +726,51 @@ public class AddFieldActivity extends AppCompatActivity {
         });
     }
 
+    private void setSpinnerVenue(){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+
+        mApiService.listVenue(mAppSession.getData(AppSession.TOKEN)).enqueue(
+                new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()){
+                            progressDialog.dismiss();
+                            try {
+                                int idVenue;
+                                String nameVenue = "";
+                                JSONObject jsonObject = new JSONObject(response.body().string());
+                                if (jsonObject.getString("status").equals("Success")){
+                                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+                                    ArrayList<ListVenue> listVenue = new ArrayList<>();
+                                    for (int i=0; i<jsonArray.length(); i++){
+                                        jsonObject = jsonArray.getJSONObject(i);
+                                        idVenue = jsonObject.getInt("id");
+                                        nameVenue = jsonObject.getString("name");
+                                        listVenue.add(new ListVenue(idVenue, nameVenue));
+                                        Log.d("NAME VENUE", idVenue + nameVenue);
+                                    }
+                                    final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<ListVenue>(mContext, R.layout.spinner_jadwal, listVenue);
+                                    adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                    spinnerVenue.setAdapter(adapter);
+                                }
+
+                            } catch (JSONException | IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                }
+        );
+    }
+
 //    private void setupSpinnerFromDay2(){
 //        ArrayAdapter fromDay2Spinner = ArrayAdapter.createFromResource(mContext,
 //                R.array.day, R.layout.spinner_jadwal);
@@ -779,7 +857,7 @@ public class AddFieldActivity extends AppCompatActivity {
                     progressDialog.dismiss();
                     List<FieldData> fieldTypeItems = response.body().getFieldData();
                     List<String> listSpinner = new ArrayList<String>();
-                    for (int i=1; i < fieldTypeItems.size(); i++){
+                    for (int i=0; i < fieldTypeItems.size(); i++){
                         listSpinner.add(fieldTypeItems.get(i).getNama());
                         mGrassType = fieldTypeItems.get(i).getId();
                         Log.d("DEBUGGING : ", mGrassType + " : " + listSpinner);
@@ -825,7 +903,8 @@ public class AddFieldActivity extends AppCompatActivity {
                     progressDialog.dismiss();
                     List<FieldData> fieldTypeItems = response.body().getFieldData();
                     List<String> listSpinner = new ArrayList<String>();
-                    for (int i=1; i < fieldTypeItems.size(); i++){
+                    listSpinner.add(" Pilih Jenis Lapangan ");
+                    for (int i=0; i < fieldTypeItems.size(); i++){
                         listSpinner.add(fieldTypeItems.get(i).getNama());
                         mFieldType = fieldTypeItems.get(i).getId();
                         Log.d("DEBUGGING : ", mFieldType + " : " + listSpinner);
@@ -857,66 +936,66 @@ public class AddFieldActivity extends AppCompatActivity {
         });
     }
 
-//    private void dialogTarif(){
-//        final FieldTariff fieldTariff = new FieldTariff();
-//
-//        String titleText = "Tambah Tarif";
-//        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
-//        View dialogView = LayoutInflater.from(mContext).inflate(R.layout.list_tariff, null);
-//        dialogBuilder.setView(dialogView);
-//        dialogBuilder.setCancelable(true);
-//
-//        // Initialize a new foreground color span instance
-//        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.WHITE);
-//
-//        // Initialize a new spannable string builder instance
-//        SpannableStringBuilder ssBuilder = new SpannableStringBuilder(titleText);
-//
-//        // Apply the text color span
-//        ssBuilder.setSpan(
-//                foregroundColorSpan,
-//                0,
-//                titleText.length(),
-//                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-//        );
-//
-//
-//        dialogBuilder.setTitle(ssBuilder);
-//
-//        mFromDaySpinner = (Spinner) dialogView.findViewById(R.id.spinner_from_day);
-//        mUntilDaySpinner = (Spinner) dialogView.findViewById(R.id.spinner_until_day);
-//        mUntilHourEditText = (Spinner) dialogView.findViewById(R.id.et_until_hour);
-//        mFromHourEditText = (Spinner) dialogView.findViewById(R.id.et_from_hour);
-//        mFieldCostEditText = (EditText) dialogView.findViewById(R.id.et_cost_field);
-//
-//        setupSpinnerFromDay();
-//        setupSpinnerUntilDay();
-//        setSpinnerFromHour();
-//        setSpinnerEndHour();
-//
-//        dialogBuilder.setPositiveButton("Tambah", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                fieldTariff.setStartDay(mStartDay);
-//                fieldTariff.setEndDay(mEndDay);
-//                fieldTariff.setStartHour(mStartHour);
-//                fieldTariff.setEndHour(mEndHour);
-//                fieldTariff.setTariff(mFieldCostEditText.getText().toString());
-//                fieldTarifs.add(fieldTariff);
-//                mAdapter.notifyDataSetChanged();
-//            }
-//        });
-//        dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                dialogInterface.dismiss();
-//            }
-//        });
-//
-//        AlertDialog dialog = dialogBuilder.create();
-//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000046")));
-//        dialog.show();
-//    }
+    private void dialogTarif(){
+        final FieldTariff fieldTariff = new FieldTariff();
+
+        String titleText = "Tambah Tarif";
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
+        View dialogView = LayoutInflater.from(mContext).inflate(R.layout.list_tariff, null);
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setCancelable(true);
+
+        // Initialize a new foreground color span instance
+        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.WHITE);
+
+        // Initialize a new spannable string builder instance
+        SpannableStringBuilder ssBuilder = new SpannableStringBuilder(titleText);
+
+        // Apply the text color span
+        ssBuilder.setSpan(
+                foregroundColorSpan,
+                0,
+                titleText.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+
+
+        dialogBuilder.setTitle(ssBuilder);
+
+        mFromDaySpinner = (Spinner) dialogView.findViewById(R.id.spinner_from_day);
+        mUntilDaySpinner = (Spinner) dialogView.findViewById(R.id.spinner_until_day);
+        mUntilHourSpinner = (Spinner) dialogView.findViewById(R.id.et_until_hour);
+        mFromHourSpinner = (Spinner) dialogView.findViewById(R.id.et_from_hour);
+        mFieldCostEditText = (EditText) dialogView.findViewById(R.id.et_cost_field);
+
+        setupSpinnerFromDay();
+        setupSpinnerUntilDay();
+        setSpinnerFromHour();
+        setSpinnerEndHour();
+
+        dialogBuilder.setPositiveButton("Tambah", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                fieldTariff.setStartDay(mStartDay);
+                fieldTariff.setEndDay(mEndDay);
+                fieldTariff.setStartHour(mStartHour);
+                fieldTariff.setEndHour(mEndHour);
+                fieldTariff.setTariff(mFieldCostEditText.getText().toString());
+                fieldTarifs.add(fieldTariff);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+        dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#000046")));
+        dialog.show();
+    }
 
     private void addField(){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
@@ -937,12 +1016,12 @@ public class AddFieldActivity extends AppCompatActivity {
 
         String jsonTarif = new Gson().toJson(fieldTarifs);
         Log.d("GSOOONNNTARIIIF ", jsonTarif);
-        Log.d("FieldSPINNER ", String.valueOf(mFieldTypeSpinner.getSelectedItemPosition()));
+        Log.d("FieldSPINNER ", spinnerVenue.getId()+ " => " + mIdVenue);
+        Log.d("FieldSPINNERTYPE ", mFieldTypeSpinner.getSelectedItemPosition() + " ");
 
         RequestBody mName = RequestBody.create(MultipartBody.FORM, mFieldNameEditText.getText().toString());
         RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
         RequestBody mDesc = RequestBody.create(MultipartBody.FORM, mDescriptionFieldEditText.getText().toString());
-        RequestBody ownerId = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.OWNERID));
 //        RequestBody typeField = RequestBody.create(MultipartBody.FORM, mFieldTypeSpinner.getSelectedItemPosition());
         RequestBody sizeField = RequestBody.create(MultipartBody.FORM, mFieldSizeEditText.getText().toString());
         RequestBody tariff = RequestBody.create(MultipartBody.FORM, jsonTarif);
@@ -950,10 +1029,10 @@ public class AddFieldActivity extends AppCompatActivity {
         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
         MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
 
-        mApiService.createField(token, mName, mDesc, ownerId, mGrassTypeSpinner.getSelectedItemPosition(),
+        mApiService.createField(token, mName, mDesc, mIdVenue,
+                mGrassTypeSpinner.getSelectedItemPosition(),
                 mFieldTypeSpinner.getSelectedItemPosition(), sizeField,
-                tariff, partImage, null)
-                .enqueue(new Callback<ResponseBody>() {
+                tariff, partImage, null).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()){

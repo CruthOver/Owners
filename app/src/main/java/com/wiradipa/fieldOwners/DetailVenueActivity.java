@@ -3,6 +3,7 @@ package com.wiradipa.fieldOwners;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -25,6 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
+import com.wiradipa.fieldOwners.Model.FieldTariff;
 import com.wiradipa.fieldOwners.Model.PlaceInfo;
 
 import org.json.JSONArray;
@@ -44,8 +48,9 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
     TextView mDescriptionTextView;
     TextView mLokasiDetail, mNameVenueTextView;
     ScrollView mScrollView;
+    Button mPilihLapang;
 
-    String id, description, mLokasi, mName;
+    String id, description, mLokasi, mName, idDetail;
     Double mLatitude, mLongitude;
 
     Context mContext;
@@ -69,7 +74,6 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
             id = bundle.getString("idVenue");
-            Toast.makeText(mContext, id, Toast.LENGTH_SHORT).show();
         }
 
         linearFasilitas = (LinearLayout) findViewById(R.id.fasilitas_detail_venue);
@@ -79,8 +83,19 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
         mLokasiDetail = (TextView) findViewById(R.id.lokasi_detail);
         mScrollView = (ScrollView) findViewById(R.id.scrollViewDetailVenue);
         mNameVenueTextView = (TextView) findViewById(R.id.tv_name_venue);
+        mPilihLapang = (Button) findViewById(R.id.pilih_lapang);
 
         getDetailVenue();
+
+        mPilihLapang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent toField;
+                toField = new Intent(mContext, FieldActivity.class);
+                toField.putExtra("idVenueDetail", idDetail);
+                view.getContext().startActivity(toField);
+            }
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_detail);
 
@@ -116,6 +131,7 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         if (jsonObject.getString("status").equals("Success")){
+                            idDetail = jsonObject.getString("id");
                             mName = jsonObject.getString("name");
                             description = jsonObject.getString("description");
                             mLokasi = jsonObject.getString("address");
@@ -147,26 +163,28 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
 
                             JSONArray jsonArray = jsonObject.getJSONArray("facilities");
                             for (int i=0; i<jsonArray.length(); i++){
-                                jsonObject = jsonArray.getJSONObject(i);
-                                String facilities = jsonObject.getString("name");
+                                JSONObject jsonFacilities = jsonArray.getJSONObject(i);
+                                String facilities = jsonFacilities.getString("name");
                                 TextView textViewFacilities = new TextView(mContext);
                                 textViewFacilities.setTextColor(Color.WHITE);
                                 textViewFacilities.setTextSize(14f);
                                 textViewFacilities.setText("- " + facilities);
                                 linearFasilitasVenue.addView(textViewFacilities);
                             }
-                            JSONArray arrayArea = jsonObject.getJSONArray("areas");
-                            for (int i=0; i<arrayArea.length(); i++){
-                                jsonObject = arrayArea.getJSONObject(i);
-                                String area = jsonObject.getString("name");
-                                TextView textViewFacilities = new TextView(mContext);
-                                textViewFacilities.setTextColor(Color.WHITE);
-                                textViewFacilities.setTextSize(14f);
-                                textViewFacilities.setText("- " + area);
-                                linearAreaVenue.addView(textViewFacilities);
-                            }
+
                             mNameVenueTextView.setText(mName);
                             mDescriptionTextView.setText(description);
+                            JSONArray arrayArea = jsonObject.getJSONArray("areas");
+                            for (int i=0; i<arrayArea.length(); i++){
+                                JSONObject jsonArea = arrayArea.getJSONObject(i);
+                                String area = jsonArea.getString("name");
+                                TextView textView = new TextView(mContext);
+                                textView.setTextColor(Color.WHITE);
+                                textView.setTextSize(14f);
+                                textView.setText("- " + area);
+                                linearAreaVenue.addView(textView);
+                            }
+
                         }
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();

@@ -55,17 +55,17 @@ public class TarifAdapter extends BaseAdapter{
 
         fieldTariff = new FieldTariff();
 
-//        TextView tvFromDay = (TextView) view.findViewById(R.id.tv_from_day);
-//        tvFromDay.setText(fieldTariff.getStartDay());
-//        TextView tvEndDay = (TextView) view.findViewById(R.id.tv_until_day);
-//        tvEndDay.setText(fieldTariff.getEndDay());
-//        TextView tvFromHour = (TextView) view.findViewById(R.id.tv_from_hour);
-//        tvFromHour.setText(fieldTariff.getStartHour());
-//        TextView tvEndHour = (TextView) view.findViewById(R.id.tv_until_hour);
-//        tvEndHour.setText(fieldTariff.getEndHour());
+        TextView tvFromDay = (TextView) view.findViewById(R.id.tv_from_day);
+        tvFromDay.setText(tariffs.get(i).getStartDay());
+        TextView tvEndDay = (TextView) view.findViewById(R.id.tv_until_day);
+        tvEndDay.setText(tariffs.get(i).getEndDay());
+        TextView tvFromHour = (TextView) view.findViewById(R.id.tv_from_hour);
+        tvFromHour.setText(tariffs.get(i).getStartHour());
+        TextView tvEndHour = (TextView) view.findViewById(R.id.tv_until_hour);
+        tvEndHour.setText(tariffs.get(i).getEndHour());
         TextView etCost = (EditText) view.findViewById(R.id.et_cost_field);
-        etCost.setText(fieldTariff.getTariff());
-        Log.d("TARIFFFF", fieldTariff.getTariff());
+        etCost.setText(tariffs.get(i).getTariff());
+        Log.d("TARIFFFF", tariffs.get(i).getTariff());
 
         return view;
     }
