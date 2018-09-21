@@ -138,4 +138,22 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.ViewHolder
             e.printStackTrace();
         }
     }
+
+    public void updateData(JSONArray dataJsonArray){
+        listJadwal.clear();
+        try {
+            for (int i=0; i<dataJsonArray.length(); i++){
+                JSONObject jsonObject = dataJsonArray.getJSONObject(i);
+                Jadwal jsonClass = new Jadwal();
+                jsonClass.date = jsonObject.getString("rental_date");
+                jsonClass.startHour = jsonObject.getString("start_hour");
+                jsonClass.endHours = jsonObject.getString("end_hour");
+                jsonClass.status = jsonObject.getInt("rental_status");
+                listJadwal.add(jsonClass);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        this.notifyDataSetChanged();
+    }
 }

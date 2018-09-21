@@ -101,6 +101,7 @@ public class JadwalActivity extends AppCompatActivity {
                 month = month + 1;
                 date = year + "-" + checkDigit(month)+ "-" + checkDigit(dayOfMonth);
                 tanggal.setText(date);
+                listJadwal();
                 jadwalAdapter.notifyDataSetChanged();
             }
         };
@@ -123,16 +124,16 @@ public class JadwalActivity extends AppCompatActivity {
         });
 
         listJadwal();
+
         listView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), listView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 if (jadwalAdapter.getJadwalId(position) == 1){
                     createPeminjaman(jadwalAdapter.getStartHour(position), jadwalAdapter.getEndHour(position));
-                    jadwalAdapter.notifyDataSetChanged();
                 } else{
                     cancelPeminjaman(jadwalAdapter.getStartHour(position), jadwalAdapter.getEndHour(position));
-                    jadwalAdapter.notifyDataSetChanged();
                 }
+                refreshActivity();
             }
 
             @Override
@@ -184,20 +185,44 @@ public class JadwalActivity extends AppCompatActivity {
                 });
     }
 
+    private void updateJadwal(){
+
+        mApiService.listSchedule(mAppSession.getData(AppSession.TOKEN), date, id)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()){
+                            try {
+                                JSONObject jsonObject = new JSONObject(response.body().string());
+                                if (jsonObject.getString("status").equals("Success")){
+                                    jadwalAdapter.updateData(jsonObject.getJSONArray("data"));
+                                    jadwalAdapter.notifyDataSetChanged();
+                                }else {
+                                    String errorMsg = jsonObject.getString("message");
+                                    Toast.makeText(mContext, errorMsg, Toast.LENGTH_SHORT).show();
+                                    jadwalAdapter.notifyDataSetChanged();
+                                }
+                            } catch (JSONException | IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e("debug","OnFailure: JadwalError >" + t.toString());
+                        Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void createPeminjaman(String startHour, String endHour){
-        final ProgressDialog progressDialog = new ProgressDialog(mContext);
-        progressDialog.setTitle("Proses");
-        progressDialog.setMessage("Tunggu Sebentar");
-        progressDialog.show();
-
-
         mApiService.createPeminjaman(mAppSession.getData(AppSession.TOKEN), date,
                 startHour, endHour, id, 0)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()){
-                            progressDialog.dismiss();
                             try {
                                 JSONObject jsonObject = new JSONObject(response.body().string());
                                 if (jsonObject.getString("status").equals("Success")){
@@ -218,25 +243,25 @@ public class JadwalActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.e("debug","OnFailure: JadwalError >" + t.toString());
-                        progressDialog.dismiss();
                         Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    private void cancelPeminjaman(String startHour, String endHour){
-        final ProgressDialog progressDialog = new ProgressDialog(mContext);
-        progressDialog.setTitle("Proses");
-        progressDialog.setMessage("Tunggu Sebentar");
-        progressDialog.show();
+    public void refreshActivity(){
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
+    }
 
+    private void cancelPeminjaman(String startHour, String endHour){
         mApiService.cancelPeminjaman(mAppSession.getData(AppSession.TOKEN), date,
                 startHour, endHour, id).enqueue(
                 new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()){
-                            progressDialog.dismiss();
                             try {
                                 JSONObject jsonObject = new JSONObject(response.body().string());
                                 if (jsonObject.getString("status").equals("Success")){
