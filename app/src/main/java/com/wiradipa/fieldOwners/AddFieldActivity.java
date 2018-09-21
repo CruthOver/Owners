@@ -115,6 +115,7 @@ public class AddFieldActivity extends AppCompatActivity {
 
         fieldTarifs = new ArrayList<FieldTariff>();
         listViewTarif = (ListView) findViewById(R.id.list_tariff);
+        //fieldTarifs.add(new FieldTariff(01, 02, 1, 2 , "200.000"));
         mAdapter = new TarifAdapter(mContext, fieldTarifs);
         listViewTarif.setAdapter(mAdapter);
 
@@ -982,6 +983,7 @@ public class AddFieldActivity extends AppCompatActivity {
                 fieldTariff.setEndHour(mEndHour);
                 fieldTariff.setTariff(mFieldCostEditText.getText().toString());
                 fieldTarifs.add(fieldTariff);
+
                 mAdapter.notifyDataSetChanged();
             }
         });

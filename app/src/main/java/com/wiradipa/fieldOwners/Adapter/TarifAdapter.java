@@ -56,17 +56,23 @@ public class TarifAdapter extends BaseAdapter{
         fieldTariff = new FieldTariff();
 
         TextView tvFromDay = (TextView) view.findViewById(R.id.tv_from_day);
-        tvFromDay.setText(tariffs.get(i).getStartDay());
+        tvFromDay.setText(String.valueOf(tariffs.get(i).getStartDay()));
         TextView tvEndDay = (TextView) view.findViewById(R.id.tv_until_day);
-        tvEndDay.setText(tariffs.get(i).getEndDay());
+        tvEndDay.setText(String.valueOf(tariffs.get(i).getEndDay()));
         TextView tvFromHour = (TextView) view.findViewById(R.id.tv_from_hour);
-        tvFromHour.setText(tariffs.get(i).getStartHour());
+        tvFromHour.setText(String.valueOf(tariffs.get(i).getStartHour()));
         TextView tvEndHour = (TextView) view.findViewById(R.id.tv_until_hour);
-        tvEndHour.setText(tariffs.get(i).getEndHour());
+        tvEndHour.setText(String.valueOf(tariffs.get(i).getEndHour()));
         TextView etCost = (EditText) view.findViewById(R.id.et_cost_field);
         etCost.setText(tariffs.get(i).getTariff());
         Log.d("TARIFFFF", tariffs.get(i).getTariff());
 
         return view;
+    }
+
+    public void updateItems(ArrayList<FieldTariff> newList) {
+        tariffs.clear();
+        tariffs.addAll(newList);
+        notifyDataSetChanged();
     }
 }
