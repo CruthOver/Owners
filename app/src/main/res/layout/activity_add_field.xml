@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     tools:context=".AddFieldActivity">
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -175,12 +175,28 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"/>
 
-            <ListView
-                android:id="@+id/list_tariff"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.wiradipa.fieldOwners.NonScrollListView
+                        android:id="@+id/list_tariff"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    </com.wiradipa.fieldOwners.NonScrollListView>
 
-            </ListView>
+                    <TextView
+                        android:id="@+id/empty_tarif_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Belum Ada Tarif Terdaftar"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/text_color"
+                        android:layout_centerInParent="true"
+                        android:textSize="10sp" />
+                </RelativeLayout>
+
+
+
 
             <!--<TextView-->
                 <!--android:layout_width="match_parent"-->
@@ -313,19 +329,17 @@
                 <!--android:layout_height="1dp"-->
                 <!--android:background="@android:color/white"/>-->
 
-            <TextView
+            <Button
                 android:id="@+id/add_other_opsi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tambah opsi lain"
-                android:gravity="center"
-                android:textColor="@color/text_color"
-                android:layout_marginTop="12dp"
-                android:textSize="12sp"
-                android:layout_marginBottom="24dp"
-                android:clickable="true"
-                android:focusable="true"
-                tools:ignore="KeyboardInaccessibleWidget,OnClick" />
+                android:text="TAMBAH TARIF"
+                android:textSize="16sp"
+                android:textColor="@color/text_button"
+                android:padding="8dp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/text_color"
+                android:layout_marginBottom="16dp"/>
 
             <!--<TextView-->
                 <!--android:layout_width="match_parent"-->
@@ -606,5 +620,6 @@
                 android:background="@color/background"
                 android:layout_marginBottom="16dp"/>
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
+
 </RelativeLayout>

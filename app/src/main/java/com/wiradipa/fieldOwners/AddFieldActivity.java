@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -82,8 +83,8 @@ public class AddFieldActivity extends AppCompatActivity {
     Spinner mFromDaySpinner, mUntilDaySpinner, mFromDay2Spinner, mUntilDay2Spinner, mFieldTypeSpinner, mGrassTypeSpinner,
             mFromHourSpinner, mUntilHourSpinner, mFromHourSpinner2, mUntilHourSpinner2, spinnerVenue;
     CheckBox mFacilitiesCheckBox;
-    TextView mResultPhoto, mResultOtherPhoto, mResultOtherPhoto2, addOtherTarif;
-    Button mBtnSubmit, mBtnCancel;
+    TextView mResultPhoto, mResultOtherPhoto, mResultOtherPhoto2, mEmptyViewTarif;
+    Button mBtnSubmit, mBtnCancel, addOtherTarif;
     ImageView mAddImageView, mAddOtherImageView, mAddOtherImageView2;
     String fileImagePath;
 
@@ -91,7 +92,7 @@ public class AddFieldActivity extends AppCompatActivity {
 
     ArrayList<FieldTariff> fieldTarifs;
     ListVenue venue;
-    ListView listViewTarif;
+    NonScrollListView listViewTarif;
     TarifAdapter mAdapter;
 
     private Uri imageFile;
@@ -104,6 +105,7 @@ public class AddFieldActivity extends AppCompatActivity {
     private int mStartDay, mEndDay, mStartDay2, mEndDay2, mFieldType, mGrassType
             , mStartHour, mEndHour, mStartHour2, mEndHour2, mIdVenue;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,10 +116,13 @@ public class AddFieldActivity extends AppCompatActivity {
         mAppSession = new AppSession(mContext);
 
         fieldTarifs = new ArrayList<FieldTariff>();
-        listViewTarif = (ListView) findViewById(R.id.list_tariff);
+        listViewTarif = (NonScrollListView) findViewById(R.id.list_tariff);
+        listViewTarif.setNestedScrollingEnabled(false);
         //fieldTarifs.add(new FieldTariff(01, 02, 1, 2 , "200.000"));
         mAdapter = new TarifAdapter(mContext, fieldTarifs);
         listViewTarif.setAdapter(mAdapter);
+
+
 
         initComponents();
     }
@@ -158,7 +163,8 @@ public class AddFieldActivity extends AppCompatActivity {
         mResultPhoto = (TextView) findViewById(R.id.tv_photo1);
 //        mResultOtherPhoto =(TextView) findViewById(R.id.other_photo);
 //        mResultOtherPhoto2 = (TextView) findViewById(R.id.other_photo2);
-        addOtherTarif = (TextView) findViewById(R.id.add_other_opsi);
+        mEmptyViewTarif = (TextView) findViewById(R.id.empty_tarif_tv);
+        addOtherTarif = (Button) findViewById(R.id.add_other_opsi);
 
         mBtnSubmit = (Button) findViewById(R.id.add_new_field);
         mBtnCancel = (Button) findViewById(R.id.btn_cancel);
@@ -977,14 +983,14 @@ public class AddFieldActivity extends AppCompatActivity {
         dialogBuilder.setPositiveButton("Tambah", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                fieldTariff.setStartDay(mStartDay);
-                fieldTariff.setEndDay(mEndDay);
-                fieldTariff.setStartHour(mStartHour);
-                fieldTariff.setEndHour(mEndHour);
-                fieldTariff.setTariff(mFieldCostEditText.getText().toString());
-                fieldTarifs.add(fieldTariff);
-
+                fieldTarifs.add(
+                        new FieldTariff(mStartDay, mEndDay, mStartHour, mEndHour, mFieldCostEditText.getText().toString()));
                 mAdapter.notifyDataSetChanged();
+                if(mAdapter.getCount()==0){
+                    mEmptyViewTarif.setVisibility(View.VISIBLE);
+                }else{
+                    mEmptyViewTarif.setVisibility(View.GONE);
+                }
             }
         });
         dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
@@ -1012,9 +1018,6 @@ public class AddFieldActivity extends AppCompatActivity {
             image = new File(imageFile.getPath());
         }
         Log.d("PAATTTTHHHHHZZZZ", image +"");
-
-        fieldTarifs.add(new FieldTariff(mStartDay, mEndDay, mStartHour,
-                mEndHour, mFieldCostEditText.getText().toString()));
 
         String jsonTarif = new Gson().toJson(fieldTarifs);
         Log.d("GSOOONNNTARIIIF ", jsonTarif);

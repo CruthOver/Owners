@@ -73,6 +73,5 @@ public class TarifAdapter extends BaseAdapter{
     public void updateItems(ArrayList<FieldTariff> newList) {
         tariffs.clear();
         tariffs.addAll(newList);
-        notifyDataSetChanged();
     }
 }
