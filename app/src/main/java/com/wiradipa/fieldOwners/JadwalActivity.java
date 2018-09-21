@@ -3,6 +3,7 @@ package com.wiradipa.fieldOwners;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -86,13 +87,25 @@ public class JadwalActivity extends AppCompatActivity {
 
         final TextView tanggal = (TextView) findViewById(R.id.tanggal);
 
+        String tempDate = null;
+
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
         month = month + 1;
+
         date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
+
+        tempDate = getIntent().getStringExtra("date");
+        if(tempDate!=null){
+            date = tempDate;
+        }else{
+            date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
+        }
+
+        
         tanggal.setText(date);
 
         mDatePicker = new DatePickerDialog.OnDateSetListener() {
@@ -102,7 +115,7 @@ public class JadwalActivity extends AppCompatActivity {
                 date = year + "-" + checkDigit(month)+ "-" + checkDigit(dayOfMonth);
                 tanggal.setText(date);
                 listJadwal();
-                jadwalAdapter.notifyDataSetChanged();
+                refreshActivity();
             }
         };
 
@@ -251,7 +264,10 @@ public class JadwalActivity extends AppCompatActivity {
     public void refreshActivity(){
         finish();
         overridePendingTransition(0, 0);
-        startActivity(getIntent());
+        Intent intent = new Intent(JadwalActivity.this, JadwalActivity.class);
+        intent.putExtra("date", date);
+        intent.putExtra("idField", id);
+        startActivity(intent);
         overridePendingTransition(0, 0);
     }
 
