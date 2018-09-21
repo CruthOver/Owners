@@ -9,32 +9,24 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -45,6 +37,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -78,6 +71,7 @@ import com.wiradipa.fieldOwners.Adapter.PlaceAutocompleteAdapter;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
+import com.wiradipa.fieldOwners.Model.AreasValue;
 import com.wiradipa.fieldOwners.Model.FasilitasValue;
 import com.wiradipa.fieldOwners.Model.FieldData;
 import com.wiradipa.fieldOwners.Model.PlaceInfo;
@@ -114,7 +108,7 @@ public class AddVenueActivity extends AppCompatActivity
     private static final int REQUEST_GET_IMAGE = 2;
     private static final int GET_IMAGE_REQUEST = 3;
     private static final int PERMISSION_REQUEST_STORAGE = 77;
-    String jsonFacility, fileImagePath, result;
+    String jsonFacility, jsonAreas, fileImagePath, result;
 
     ImageView mImageView;
 
@@ -123,7 +117,7 @@ public class AddVenueActivity extends AppCompatActivity
     ScrollView scrollView;
     Spinner fromHourEditText, untilHourEditText;
     AutoCompleteTextView mAutoCompleteTextView;
-    CheckBox checkBoxFacilities;
+    CheckBox checkBoxFacilities, checkBoxArea;
     Button mSubmitBtn, mCancelBtn, mPlacePicker;
     LinearLayout mOpsiHour, mOpsiFacilities;
     LinearLayout checkBoxLinearLayout, cbAreaLinearLayout;
@@ -132,6 +126,7 @@ public class AddVenueActivity extends AppCompatActivity
     TimePickerDialog timePickerDialog;
 
     List<FasilitasValue> facilitiesArray;
+    List<AreasValue> areasArray;
 
     Context mContext;
     BaseApiService mApiService;
@@ -162,6 +157,7 @@ public class AddVenueActivity extends AppCompatActivity
         mAppSession = new AppSession(mContext);
 
         facilitiesArray = new ArrayList<>();
+        areasArray = new ArrayList<>();
 
         initComponents();
         setSpinnerFromHour();
@@ -226,9 +222,7 @@ public class AddVenueActivity extends AppCompatActivity
                 try {
                     //__________start placepicker activity for result
                     startActivityForResult(builder.build(AddVenueActivity.this), REQUEST_PLACE_PICKER);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
+                } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
             }
@@ -486,6 +480,41 @@ public class AddVenueActivity extends AppCompatActivity
         });
     }
 
+    private void setupCheckboxesAreas(){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+
+        mApiService.listAreas().enqueue(new Callback<ResponseData>() {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                if (response.isSuccessful()) {
+                    progressDialog.dismiss();
+                    List<FieldData> listAreas = response.body().getFieldData();
+                    List<String> listCheckbox = new ArrayList<String>();
+                    for (int i = 0; i < listAreas.size(); i++) {
+                        listCheckbox.add(listAreas.get(i).getNama());
+                        checkBoxArea = new CheckBox(mContext);
+                        checkBoxArea.setId(listAreas.get(i).getId());
+                        checkBoxArea.setText(listAreas.get(i).getNama());
+                        checkBoxArea.setTextColor(Color.WHITE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            checkBoxArea.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
+                        }
+                        checkBoxArea.setOnClickListener(getOnClickListenerCheckBoxArea(checkBoxArea));
+                        cbAreaLinearLayout.addView(checkBoxArea);
+                    }
+                }
+            }
+            @Override
+            public void onFailure (Call<ResponseData> call, Throwable t){
+
+            }
+        });
+    }
+
     View.OnClickListener getOnClickListenerCheckBox(final CheckBox button){
         return new View.OnClickListener() {
             @Override
@@ -515,39 +544,33 @@ public class AddVenueActivity extends AppCompatActivity
         };
     }
 
-    private void setupCheckboxesAreas(){
-        final ProgressDialog progressDialog = new ProgressDialog(mContext);
-        progressDialog.setTitle("Proses");
-        progressDialog.setMessage("Tunggu Sebentar");
-        progressDialog.show();
-
-        mApiService.listAreas().enqueue(new Callback<ResponseData>() {
-            @SuppressLint("ResourceAsColor")
+    View.OnClickListener getOnClickListenerCheckBoxArea(final CheckBox button){
+        return new View.OnClickListener() {
             @Override
-            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()) {
-                    progressDialog.dismiss();
-                    List<FieldData> listAreas = response.body().getFieldData();
-                    List<String> listCheckbox = new ArrayList<String>();
-                    for (int i = 0; i < listAreas.size(); i++) {
-                        listCheckbox.add(listAreas.get(i).getNama());
-                        checkBoxFacilities = new CheckBox(mContext);
-                        checkBoxFacilities.setId(listAreas.get(i).getId());
-                        checkBoxFacilities.setText(listAreas.get(i).getNama());
-                        checkBoxFacilities.setTextColor(Color.WHITE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            checkBoxFacilities.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
-                        }
-                        checkBoxFacilities.setOnClickListener(getOnClickListenerCheckBox(checkBoxFacilities));
-                        cbAreaLinearLayout.addView(checkBoxFacilities);
-                    }
+            public void onClick(View view) {
+//                for (int i=0; i<=checkBoxFacilities.length(); i++){
+//                    View nextChild = checkBoxLinearLayout.getChildAt(i);
+//
+//                    if (nextChild instanceof  CheckBox){
+//                        CheckBox cb = (CheckBox) nextChild;
+//                        if (cb.isChecked()){
+//                            facilitiesArray.add(cb.getText().toString());
+//                        } else {
+//                            facilitiesArray.remove(cb.getText().toString());
+//                        }
+//                    }
+//                }
+                if (button.isChecked()){
+                    areasArray.add(new AreasValue(button.getId()));
+                } else {
+                    areasArray.remove(new AreasValue(button.getId()));
                 }
+//                switch (button.getId()){
+//                    case 1:
+//                        Toast.makeText(mContext, "Your Click : " + button.getId() + " Text : " + button.getText().toString(), Toast.LENGTH_SHORT).show();
+//                }
             }
-            @Override
-            public void onFailure (Call<ResponseData> call, Throwable t){
-
-            }
-        });
+        };
     }
 
     @Override
@@ -684,7 +707,9 @@ public class AddVenueActivity extends AppCompatActivity
         Log.d("PAATTTTHHHHHZZZZ", image +"");
 
         jsonFacility  = new Gson().toJson(facilitiesArray);
+        jsonAreas = new Gson().toJson(areasArray);
         Log.d("FASILITAS ", jsonFacility + "");
+        Log.d("AREAAAA ", jsonAreas + "");
         RequestBody mName = RequestBody.create(MultipartBody.FORM, nameVenueEditText.getText().toString());
         RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
         RequestBody mDesc = RequestBody.create(MultipartBody.FORM, descVenueEditText.getText().toString());
@@ -694,12 +719,13 @@ public class AddVenueActivity extends AppCompatActivity
 //        RequestBody startHour = RequestBody.create(MultipartBody.FORM, fromHourEditText.getText().toString());
 //        RequestBody endHour = RequestBody.create(MultipartBody.FORM, untilHourEditText.getText().toString());
         RequestBody facilities = RequestBody.create(MultipartBody.FORM, jsonFacility);
+        RequestBody areas = RequestBody.create(MultipartBody.FORM, jsonAreas);
 
         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
         MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
 
         mApiService.createVenue(token, mName, mDesc, mAddress, mLatitude, mLongitude,
-                mStartHour, mEndHour, facilities, null, partImage,null )
+                mStartHour, mEndHour, facilities, areas, partImage,null )
                 .enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

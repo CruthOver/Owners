@@ -45,6 +45,8 @@ public class FieldActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     FieldAdapter mAdapter;
 
+    String id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +89,14 @@ public class FieldActivity extends AppCompatActivity {
 //            recyclerView.setAdapter(mAdapter);
 //        }
 
-        listMyFields();
+        Bundle bundle = getIntent().getExtras();
+        if (bundle!=null){
+            id = bundle.getString("idVenueDetail");
+            Toast.makeText(mContext, id, Toast.LENGTH_SHORT).show();
+            listMyField();
+        } else {
+            listMyFields();
+        }
 
         imgAddField = (ImageView) findViewById(R.id.add_field);
         imgAddField.setOnClickListener(new View.OnClickListener() {
@@ -99,13 +108,49 @@ public class FieldActivity extends AppCompatActivity {
         });
     }
 
+    private void listMyField(){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+
+        mApiService.listField(mAppSession.getData(AppSession.TOKEN), id)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()){
+                            progressDialog.dismiss();
+                            try {
+                                JSONObject jsonObject = new JSONObject(response.body().string());
+                                if (jsonObject.getString("status").equals("Success")){
+                                    mAdapter.parsingData(jsonObject.getJSONArray("data"));
+                                    mAdapter.notifyDataSetChanged();
+                                } else {
+                                    String errMsg = jsonObject.getString("message");
+                                    Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (JSONException | IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e("debug", "OnFailure: ERROR > "+ t.toString());
+                        progressDialog.dismiss();
+                        Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void listMyFields(){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setTitle("Proses");
         progressDialog.setMessage("Tunggu Sebentar");
         progressDialog.show();
 
-        mApiService.listField(mAppSession.getData(AppSession.TOKEN))
+        mApiService.listFields(mAppSession.getData(AppSession.TOKEN))
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

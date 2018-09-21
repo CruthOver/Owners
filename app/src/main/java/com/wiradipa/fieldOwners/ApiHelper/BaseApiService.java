@@ -75,7 +75,7 @@ public interface BaseApiService {
     Call<ResponseBody> createField(@Part("auth_token") RequestBody token,
                                    @Part("name") RequestBody name,
                                    @Part("description") RequestBody description,
-                                   @Part("field_owner_id") RequestBody fieldOwnerID,
+                                   @Part("field_owner_id") int fieldOwnerID,
                                    @Part("grass_type_id") int grassTypeID,
                                    @Part("field_type_id") int fieldTypeID,
                                    @Part("pitch_size") RequestBody pitchSize,
@@ -119,7 +119,7 @@ public interface BaseApiService {
     Call<ResponseBody> detailField(@Path("id") String id);
 
     @GET("fields")
-    Call<ResponseBody> listField(@Query("auth_token") String token);
+    Call<ResponseBody> listFields(@Query("auth_token") String token);
 
     @GET("fields")
     Call<ResponseBody> listField(@Query("auth_token") String token,
@@ -127,6 +127,7 @@ public interface BaseApiService {
 
     @GET("field_owners/{id}")
     Call<ResponseBody> detailVenue(@Path("id") String id);
+
 
     @GET("field_owners")
     Call<ResponseBody> listVenue(@Query("auth_token") String token);
