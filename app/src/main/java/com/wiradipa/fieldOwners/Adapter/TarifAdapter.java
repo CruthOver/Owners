@@ -28,6 +28,8 @@ public class TarifAdapter extends BaseAdapter{
     Context mContext;
     FieldTariff fieldTariff;
 
+    String startDay, endDay, startHours, endHours;
+
     public TarifAdapter(Context mContext, ArrayList<FieldTariff> tariffs) {
         this.tariffs = tariffs;
         this.mContext = mContext;
@@ -55,14 +57,51 @@ public class TarifAdapter extends BaseAdapter{
 
         fieldTariff = new FieldTariff();
 
+        //        tvEndHour.setText(String.valueOf(tariffs.get(i).getEndHour()));
+
+        if (tariffs.get(i).getStartDay()==1){
+            startDay = "Senin"; //monday
+        } else if (tariffs.get(i).getStartDay()==2){
+            startDay = "Selasa";
+        } else if (tariffs.get(i).getStartDay()==3){
+            startDay = "Rabu";
+        } else if (tariffs.get(i).getStartDay()==4){
+            startDay = "Kamis";
+        } else if (tariffs.get(i).getStartDay()==5){
+            startDay = "Jumat";
+        } else if (tariffs.get(i).getStartDay()==6){
+            startDay = "Sabtu";
+        } else if (tariffs.get(i).getStartDay()==0){
+            startDay = "Minggu";
+        }
+
+        if (tariffs.get(i).getEndDay()==1){
+            endDay= "Senin"; //monday
+        } else if (tariffs.get(i).getEndDay()==2){
+            endDay= "Selasa";
+        } else if (tariffs.get(i).getEndDay()==3){
+            endDay= "Rabu";
+        } else if (tariffs.get(i).getEndDay()==4){
+            endDay= "Kamis";
+        } else if (tariffs.get(i).getEndDay()==5){
+            endDay= "Jumat";
+        } else if (tariffs.get(i).getEndDay()==6){
+            endDay= "Sabtu";
+        } else if (tariffs.get(i).getEndDay()==0){
+            endDay= "Minggu";
+        }
+
+        startHours = String.valueOf(tariffs.get(i).getStartHour());
+        endHours = String.valueOf(tariffs.get(i).getEndHour());
+
         TextView tvFromDay = (TextView) view.findViewById(R.id.tv_from_day);
-        tvFromDay.setText(String.valueOf(tariffs.get(i).getStartDay()));
+        tvFromDay.setText(startDay);
         TextView tvEndDay = (TextView) view.findViewById(R.id.tv_until_day);
-        tvEndDay.setText(String.valueOf(tariffs.get(i).getEndDay()));
+        tvEndDay.setText(endDay);
         TextView tvFromHour = (TextView) view.findViewById(R.id.tv_from_hour);
-        tvFromHour.setText(String.valueOf(tariffs.get(i).getStartHour()));
+        tvFromHour.setText(startHours);
         TextView tvEndHour = (TextView) view.findViewById(R.id.tv_until_hour);
-        tvEndHour.setText(String.valueOf(tariffs.get(i).getEndHour()));
+        tvEndHour.setText(endHours);
         TextView etCost = (EditText) view.findViewById(R.id.et_cost_field);
         etCost.setText(tariffs.get(i).getTariff());
         Log.d("TARIFFFF", tariffs.get(i).getTariff());

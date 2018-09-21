@@ -76,6 +76,7 @@ public class AddFieldActivity extends AppCompatActivity {
     private static final int REQUEST_SELECT_IMAGE = 1;
     private static final int REQUEST_GET_IMAGE = 2;
     private static final int GET_IMAGE_REQUEST = 3;
+    private String jsonTarif;
 
     EditText mFieldNameEditText, mDescriptionFieldEditText
             , mFieldSizeEditText, mFieldCostEditText, mFieldCostEditText2, mTitleFieldEditText
@@ -172,7 +173,7 @@ public class AddFieldActivity extends AppCompatActivity {
         mBtnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addField();
+                addField(jsonTarif);
             }
         });
 
@@ -195,7 +196,7 @@ public class AddFieldActivity extends AppCompatActivity {
                     if (intentGallery.resolveActivity(getPackageManager()) != null) {
                         startActivityForResult(Intent.createChooser(intentGallery, "SELECT IMAGE"), REQUEST_SELECT_IMAGE);
                     } else {
-                        Toast.makeText(mContext, "You Don't Have Pick Image", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, "You Don't Have Pick Image", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     ActivityCompat.requestPermissions(AddFieldActivity.this,
@@ -239,7 +240,7 @@ public class AddFieldActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedName = adapterView.getItemAtPosition(i).toString();
-                Toast.makeText(mContext, i + " : " + selectedName, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, i + " : " + selectedName, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -252,7 +253,7 @@ public class AddFieldActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedName = adapterView.getItemAtPosition(i).toString();
-                Toast.makeText(mContext, i + " : " + selectedName, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, i + " : " + selectedName, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -266,7 +267,7 @@ public class AddFieldActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 venue = (ListVenue) adapterView.getSelectedItem();
                 mIdVenue = venue.getId();
-                Toast.makeText(mContext, "Venue ID: "+ venue.getId()+",  Venue Name : "+ venue.getName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mContext, "Venue ID: "+ venue.getId()+",  Venue Name : "+ venue.getName(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -986,6 +987,8 @@ public class AddFieldActivity extends AppCompatActivity {
                 fieldTarifs.add(
                         new FieldTariff(mStartDay, mEndDay, mStartHour, mEndHour, mFieldCostEditText.getText().toString()));
                 mAdapter.notifyDataSetChanged();
+                jsonTarif= new Gson().toJson(fieldTarifs);
+                Log.d("JSONTARIF ", jsonTarif);
                 if(mAdapter.getCount()==0){
                     mEmptyViewTarif.setVisibility(View.VISIBLE);
                 }else{
@@ -1005,7 +1008,8 @@ public class AddFieldActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void addField(){
+    private void addField(String stringJsonTarif){
+        Log.d("JSONTARIFS", stringJsonTarif);
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setTitle("Proses");
         progressDialog.setMessage("Tunggu Sebentar");
@@ -1019,8 +1023,6 @@ public class AddFieldActivity extends AppCompatActivity {
         }
         Log.d("PAATTTTHHHHHZZZZ", image +"");
 
-        String jsonTarif = new Gson().toJson(fieldTarifs);
-        Log.d("GSOOONNNTARIIIF ", jsonTarif);
         Log.d("FieldSPINNER ", spinnerVenue.getId()+ " => " + mIdVenue);
         Log.d("FieldSPINNERTYPE ", mFieldTypeSpinner.getSelectedItemPosition() + " ");
 
@@ -1029,7 +1031,7 @@ public class AddFieldActivity extends AppCompatActivity {
         RequestBody mDesc = RequestBody.create(MultipartBody.FORM, mDescriptionFieldEditText.getText().toString());
 //        RequestBody typeField = RequestBody.create(MultipartBody.FORM, mFieldTypeSpinner.getSelectedItemPosition());
         RequestBody sizeField = RequestBody.create(MultipartBody.FORM, mFieldSizeEditText.getText().toString());
-        RequestBody tariff = RequestBody.create(MultipartBody.FORM, jsonTarif);
+        RequestBody tariff = RequestBody.create(MultipartBody.FORM, stringJsonTarif);
 
         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
         MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
@@ -1045,15 +1047,15 @@ public class AddFieldActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         if (jsonObject.getString("status").equals("Success")){
-                            Toast.makeText(mContext, "BERHASIL", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(mContext, "BERHASIL", Toast.LENGTH_SHORT).show();
                             String message = jsonObject.getString("message");
-                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(mContext, FieldActivity.class);
                             startActivity(intent);
                             finish();
                         }
                         else {
-                            Toast.makeText(mContext, "Add Field Failed", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(mContext, "Add Field Failed", Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
