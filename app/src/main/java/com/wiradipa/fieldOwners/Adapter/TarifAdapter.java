@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -52,7 +53,7 @@ public class TarifAdapter extends BaseAdapter{
 
     @SuppressLint("ViewHolder")
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         view = LayoutInflater.from(mContext).inflate(R.layout.listview_tarif, viewGroup, false);
 
         fieldTariff = new FieldTariff();
@@ -104,6 +105,15 @@ public class TarifAdapter extends BaseAdapter{
         tvEndHour.setText(endHours);
         TextView etCost = (EditText) view.findViewById(R.id.et_cost_field);
         etCost.setText(tariffs.get(i).getTariff());
+        ImageView removeList = (ImageView) view.findViewById(R.id.removeList);
+        removeList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tariffs.remove(i);
+                notifyDataSetChanged();
+                Log.d("COUNTTT", getCount() + "");
+            }
+        });
         Log.d("TARIFFFF", tariffs.get(i).getTariff());
 
         return view;

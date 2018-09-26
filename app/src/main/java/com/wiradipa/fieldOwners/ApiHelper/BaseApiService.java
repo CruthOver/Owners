@@ -56,9 +56,9 @@ public interface BaseApiService {
     @GET("field_types")
     Call<ResponseData> typeField();
 
-    @FormUrlEncoded
-    @GET("fields/[:id]/edit")
-    Call<ResponseBody> formEditField(@Field("auth_token") String token);
+    @GET("fields/{id}/edit")
+    Call<ResponseBody> formEditField(@Query("auth_token") String token,
+                                     @Path("id") String id);
 
     @FormUrlEncoded
     @PUT("fields")
@@ -83,22 +83,25 @@ public interface BaseApiService {
                                    @Part MultipartBody.Part picture,
                                    @Part MultipartBody.Part title);
 
-    @FormUrlEncoded
-    @GET("field_owners/[:id]/edit")
-    Call<ResponseBody> formEditVenue(@Field("auth_token") String token);
+    @GET("field_owners/{id}/edit")
+    Call<ResponseBody> formEditVenue(@Path("id") String id,
+                                     @Query("auth_token") String token);
 
-    @FormUrlEncoded
+    @Multipart
     @PUT("field_owners")
-    Call<ResponseBody> updateVenue(@Field("auth_token") String token,
-                                   @Field("name") String name,
-                                   @Field("description") String description,
-                                   @Field("address") String address,
-                                   @Field("latitude") String latitude,
-                                   @Field("longitude") String longitude,
-                                   @Field("start_hour") String startHour,
-                                   @Field("end_hour") String endHour,
-                                   @Field("owner_id") String ownerID,
-                                   @Field("picture") String picture);
+    Call<ResponseBody> updateVenue(@Part("auth_token") RequestBody token,
+                                   @Part("name") RequestBody name,
+                                   @Part("description") RequestBody description,
+                                   @Part("address") RequestBody address,
+                                   @Part("latitude") RequestBody latitude,
+                                   @Part("longitude") RequestBody longitude,
+                                   @Part("start_hour") int startHour,
+                                   @Part("end_hour") int endHour,
+                                   @Part("owner_id") RequestBody ownerID,
+                                   @Part("field_owners_facilities") RequestBody facilities,
+                                   @Part("field_owners_areas") RequestBody areas,
+                                   @Part MultipartBody.Part picture,
+                                   @Part MultipartBody.Part fieldPhoto);
 
     @Multipart
     @POST("field_owners")

@@ -34,6 +34,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -105,10 +106,11 @@ public class AddVenueActivity extends AppCompatActivity
     private static final float DEFAULT_ZOOM = 15f;
     private static final int REQUEST_SELECT_IMAGE = 1;
     private static final int REQUEST_PLACE_PICKER = 0;
-    private static final int REQUEST_GET_IMAGE = 2;
-    private static final int GET_IMAGE_REQUEST = 3;
+//    private static final int REQUEST_GET_IMAGE = 2;
+//    private static final int GET_IMAGE_REQUEST = 3;
     private static final int PERMISSION_REQUEST_STORAGE = 77;
-    String jsonFacility, jsonAreas, fileImagePath, result;
+    String jsonFacility, jsonAreas, fileImagePath, result, venueId;
+    Double mLatitude, mLongitude;
 
     ImageView mImageView;
 
@@ -127,6 +129,7 @@ public class AddVenueActivity extends AppCompatActivity
 
     List<FasilitasValue> facilitiesArray;
     List<AreasValue> areasArray;
+    List<String> listCheckbox;
 
     Context mContext;
     BaseApiService mApiService;
@@ -134,6 +137,7 @@ public class AddVenueActivity extends AppCompatActivity
 
     private Uri imageFile;
     private Bitmap bitmap;
+    private Bundle bundle;
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -158,12 +162,23 @@ public class AddVenueActivity extends AppCompatActivity
 
         facilitiesArray = new ArrayList<>();
         areasArray = new ArrayList<>();
+        listCheckbox = new ArrayList<String>();
 
         initComponents();
         setSpinnerFromHour();
         setSpinnerEndHour();
         setupcheckBoxesFacilities();
         setupCheckboxesAreas();
+
+        bundle = getIntent().getExtras();
+        if (bundle != null){
+            setTitle("Edit Venue");
+            venueId = bundle.getString("venueId");
+            editVenue();
+        } else {
+            setTitle("Tambah Venue");
+        }
+
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getLocationPermission();
         }
@@ -231,7 +246,12 @@ public class AddVenueActivity extends AppCompatActivity
         mSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addVenue();
+                if (venueId == null){
+                    addVenue();
+                } else {
+                    updateVenue();
+                }
+
             }
         });
 
@@ -294,9 +314,6 @@ public class AddVenueActivity extends AppCompatActivity
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selection = (String) adapterView.getItemAtPosition(i);
                 if (!TextUtils.isEmpty(selection)){
-                    if (selection.equals("-- Pilih Jam -- ")){
-                        Toast.makeText(mContext, "Pilih Jam Terlebih Dahulu", Toast.LENGTH_SHORT).show();;
-                    }
                     if (selection.equals("0")){
                         mStartHour = 0;
                         Log.d("START HOUR ", mStartHour + "");
@@ -369,9 +386,6 @@ public class AddVenueActivity extends AppCompatActivity
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selection = (String) adapterView.getItemAtPosition(i);
                 if (!TextUtils.isEmpty(selection)) {
-                    if (selection.equals(getString(R.string.optionDay))) {
-                        Toast.makeText(mContext, "Pilih Jam Terlebih Dahulu", Toast.LENGTH_SHORT).show();
-                    }
 
                     if (selection.equals("1")) {
                         mEndHour = 1; //monday
@@ -446,7 +460,6 @@ public class AddVenueActivity extends AppCompatActivity
                 if (response.isSuccessful()){
                     progressDialog.dismiss();
                     List<FieldData> listFacilities = response.body().getFieldData();
-                    List<String> listCheckbox = new ArrayList<String>();
                     for (int i = 0; i<listFacilities.size(); i++){
                         listCheckbox.add(listFacilities.get(i).getNama());
                         checkBoxFacilities = new CheckBox(mContext);
@@ -756,6 +769,98 @@ public class AddVenueActivity extends AppCompatActivity
         });
     }
 
+    private void editVenue(){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+
+        mApiService.formEditVenue(venueId, mAppSession.getData(AppSession.TOKEN)).enqueue(
+                new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()){
+                            progressDialog.dismiss();
+                            try {
+                                JSONObject data = new JSONObject(response.body().string());
+                                Toast.makeText(mContext, "BERHASIL", Toast.LENGTH_SHORT).show();
+                                String name = data.getString("name");
+                                String desc = data.getString("description");
+                                String address = data.getString("address");
+                                String latitude = data.getString("latitude");
+                                String longitude = data.getString("longitude");
+                                String startHour = data.getString("start_hour");
+                                String endHour = data.getString("end_hour");
+                                String urlPicture = data.getString("picture");
+
+                                nameVenueEditText.setText(name);
+                                descVenueEditText.setText(desc);
+                                JSONArray jsonArray = data.getJSONArray("facilities");
+                                for (int i=0; i<jsonArray.length(); i++){
+                                    JSONObject jsonFacilities = jsonArray.getJSONObject(i);
+                                    String facilities = jsonFacilities.getString("name");
+                                    checkBoxFacilities = new CheckBox(mContext);
+                                    checkBoxFacilities.setSelected();
+                                    checkBoxFacilities.setChecked(listCheckbox.get(i).equalsIgnoreCase(facilities));
+                                    Log.d("FACILIETIEESS", facilities);
+                                    Log.d("ARRAY", listCheckbox.get(i).equalsIgnoreCase(facilities) + "");
+//                                    listCheckbox.get(i).equalsIgnoreCase(facilities);
+                                }
+
+                                for (int i=0; i<fromHourEditText.getCount(); i++){
+                                    if (fromHourEditText.getItemAtPosition(i).toString().equalsIgnoreCase(startHour)){
+                                        fromHourEditText.setSelection(i);
+                                    }
+                                }
+                                for (int i=0; i<untilHourEditText.getCount(); i++){
+                                    if (untilHourEditText.getItemAtPosition(i).toString().equalsIgnoreCase(endHour)){
+                                        untilHourEditText.setSelection(i);
+                                    }
+                                }
+
+                                if (latitude.equals("")){
+                                    mLatitude = (Double) null;
+                                    mLongitude = (Double) null;
+                                } else{
+                                    mLatitude = Double.parseDouble(latitude);
+                                    mLongitude = Double.parseDouble(longitude);
+                                }
+
+                                if (mLatitude != null){
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLatitude, mLongitude)));
+                                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15f), 2000, null);
+
+                                    MarkerOptions markerOptions = new MarkerOptions().
+                                            title(name).position(new LatLng(mLatitude, mLongitude));
+                                    mMap.addMarker(markerOptions);
+                                    mAutoCompleteTextView.setText(address);
+                                } else {
+                                    Toast.makeText(mContext, "Lokasi tidak ada", Toast.LENGTH_SHORT).show();
+                                }
+
+                            } catch (JSONException | IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        progressDialog.dismiss();
+                        Log.d("DEBUG EDIT ", t.getMessage());
+                    }
+                }
+        );
+    }
+
+    private void updateVenue(){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+    }
+
     private void getLocationPermission(){
         Log.d("DEBUG : ", "getLocationPermission: getting location permissions");
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
@@ -786,7 +891,6 @@ public class AddVenueActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
         Log.d("DEBUG : ", "onMapReady: map is ready");
         mMap = googleMap;
 

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -210,11 +211,13 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        int position = item.getItemId();
 
-        switch (id){
+        switch (position){
             case R.id.action_edit:
-                Toast.makeText(this, "Belum bisa Edit", Toast.LENGTH_SHORT).show();
+                Intent edit = new Intent(mContext, AddVenueActivity.class);
+                edit.putExtra("venueId", id);
+                startActivity(edit);
                 break;
         }
 

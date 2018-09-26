@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
 
-        Toast.makeText(mContext, mAppSession.getData(AppSession.USERNAME), Toast.LENGTH_SHORT).show();
         mEmailTv.setText(mAppSession.getData(AppSession.EMAIL));
         mUsernameTv.setText(mAppSession.getData(AppSession.USERNAME));
     }

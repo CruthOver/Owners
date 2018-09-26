@@ -59,7 +59,6 @@ public class DetailFieldActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
             id = bundle.getString("idField");
-            Toast.makeText(mContext, id, Toast.LENGTH_SHORT).show();
         }
 
         initComponents();
@@ -100,7 +99,7 @@ public class DetailFieldActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         if (jsonObject.getString("status").equals("Success")){
-                            Toast.makeText(mContext, "Berhasil", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(mContext, "Berhasil", Toast.LENGTH_SHORT).show();
                             String url = jsonObject.getString("picture_url");
                             String sizeField = jsonObject.getString("pitch_size");
                             String typeGrass = jsonObject.getString("grass_type_name");

@@ -40,6 +40,8 @@
                 android:background="@android:color/transparent"
                 android:textSize="14sp"
                 android:hint="Nama Lapangan"
+                android:inputType="text"
+                android:maxLines="1"
                 android:textColor="@color/text_white"
                 android:textColorHint="@color/text_white"
                 android:paddingTop="4dp"/>
@@ -62,6 +64,7 @@
                 android:background="@android:color/transparent"
                 android:textSize="14sp"
                 android:hint="Deskripsi Lapangan"
+                android:inputType="text"
                 android:textColor="@color/text_white"
                 android:textColorHint="@color/text_white"
                 android:paddingTop="4dp"/>
@@ -71,6 +74,7 @@
                 android:background="@android:color/white"
                 android:layout_marginTop="8dp"/>
             <TextView
+                android:id="@+id/textVenue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pilih Venue"
@@ -128,6 +132,8 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:textSize="14sp"
+                android:inputType="text"
+                android:maxLines="1"
                 android:hint="15 x 25 m"
                 android:textColor="@color/text_white"
                 android:textColorHint="@color/text_white"

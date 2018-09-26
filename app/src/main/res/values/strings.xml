@@ -48,10 +48,6 @@
     <!-- String Spinner Hour -->
     <!-- String Spinner Hour -->
 
-    <!--<string name="google_maps_key"
-        templateMergeStrategy="preserve"
-        translatable="false">AIzaSyCL_gLp0uWBFwSIz1tfl26OvpkYCn6T-5c</string>-->
-
     <string name="desc_venue">Rajawali Sport Center adalah tempat bermain futsal lengkap di daerah bandung. selain fasilitasnya yang bagus, pemain juga mendapat free wifi untuk semua pemain yang menggunakan lapangan rajawali sport center</string>
     <string name="Edit">edit</string>
     <string name="error_field_required">Wajib diisi</string>

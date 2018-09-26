@@ -84,10 +84,10 @@ public class AddFieldActivity extends AppCompatActivity {
     Spinner mFromDaySpinner, mUntilDaySpinner, mFromDay2Spinner, mUntilDay2Spinner, mFieldTypeSpinner, mGrassTypeSpinner,
             mFromHourSpinner, mUntilHourSpinner, mFromHourSpinner2, mUntilHourSpinner2, spinnerVenue;
     CheckBox mFacilitiesCheckBox;
-    TextView mResultPhoto, mResultOtherPhoto, mResultOtherPhoto2, mEmptyViewTarif;
+    TextView mResultPhoto, mResultOtherPhoto, mResultOtherPhoto2, mEmptyViewTarif, mTextViewVenue;
     Button mBtnSubmit, mBtnCancel, addOtherTarif;
     ImageView mAddImageView, mAddOtherImageView, mAddOtherImageView2;
-    String fileImagePath;
+    String fileImagePath, id;
 
     TimePickerDialog timePickerDialog;
 
@@ -123,9 +123,12 @@ public class AddFieldActivity extends AppCompatActivity {
         mAdapter = new TarifAdapter(mContext, fieldTarifs);
         listViewTarif.setAdapter(mAdapter);
 
-
-
         initComponents();
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle!=null){
+            id = bundle.getString("idVenue");
+        }
     }
 
     private boolean isNameFieldValid(String nameField){
@@ -165,6 +168,8 @@ public class AddFieldActivity extends AppCompatActivity {
 //        mResultOtherPhoto =(TextView) findViewById(R.id.other_photo);
 //        mResultOtherPhoto2 = (TextView) findViewById(R.id.other_photo2);
         mEmptyViewTarif = (TextView) findViewById(R.id.empty_tarif_tv);
+        mTextViewVenue = (TextView) findViewById(R.id.textVenue);
+
         addOtherTarif = (Button) findViewById(R.id.add_other_opsi);
 
         mBtnSubmit = (Button) findViewById(R.id.add_new_field);
@@ -757,8 +762,17 @@ public class AddFieldActivity extends AppCompatActivity {
                                         jsonObject = jsonArray.getJSONObject(i);
                                         idVenue = jsonObject.getInt("id");
                                         nameVenue = jsonObject.getString("name");
-                                        listVenue.add(new ListVenue(idVenue, nameVenue));
-                                        Log.d("NAME VENUE", idVenue + nameVenue);
+                                        if (id !=null){
+                                            if (idVenue == Integer.parseInt(id)){
+                                                listVenue.add(new ListVenue(idVenue,nameVenue));
+                                                spinnerVenue.setVisibility(View.GONE);
+                                                mTextViewVenue.setVisibility(View.GONE);
+                                                mIdVenue = idVenue;
+                                                Toast.makeText(mContext, "Venue ID: "+ mIdVenue, Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else{
+                                            listVenue.add(new ListVenue(idVenue, nameVenue));
+                                        }
                                     }
                                     final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<ListVenue>(mContext, R.layout.spinner_jadwal, listVenue);
                                     adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -876,18 +890,18 @@ public class AddFieldActivity extends AppCompatActivity {
                     mGrassTypeSpinner.setAdapter(adapter);
 
                 } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                        builder.setTitle(R.string.dialog_title_error);
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                System.exit(0);
-                                finish();
-                            }
-                        });
-                        builder.setMessage("Server Error !!");
-                        AlertDialog alert1 = builder.create();
-                        alert1.show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle(R.string.dialog_title_error);
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                            finish();
+                        }
+                    });
+                    builder.setMessage("Server Error !!");
+                    AlertDialog alert1 = builder.create();
+                    alert1.show();
                 }
             }
 
@@ -945,7 +959,6 @@ public class AddFieldActivity extends AppCompatActivity {
     }
 
     private void dialogTarif(){
-        final FieldTariff fieldTariff = new FieldTariff();
 
         String titleText = "Tambah Tarif";
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
@@ -989,11 +1002,12 @@ public class AddFieldActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
                 jsonTarif= new Gson().toJson(fieldTarifs);
                 Log.d("JSONTARIF ", jsonTarif);
-                if(mAdapter.getCount()==0){
-                    mEmptyViewTarif.setVisibility(View.VISIBLE);
-                }else{
-                    mEmptyViewTarif.setVisibility(View.GONE);
-                }
+//                if(mAdapter.getCount()==0){
+//                    mEmptyViewTarif.setVisibility(View.VISIBLE);
+//                }else{
+//                    mEmptyViewTarif.setVisibility(View.GONE);
+//                }
+                listViewTarif.setEmptyView(mEmptyViewTarif);
             }
         });
         dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {

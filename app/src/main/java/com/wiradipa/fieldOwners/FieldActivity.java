@@ -103,6 +103,7 @@ public class FieldActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intentAddField = new Intent(mContext, AddFieldActivity.class);
+                intentAddField.putExtra("idVenue", id);
                 startActivity(intentAddField);
             }
         });
@@ -124,6 +125,12 @@ public class FieldActivity extends AppCompatActivity {
                                 JSONObject jsonObject = new JSONObject(response.body().string());
                                 if (jsonObject.getString("status").equals("Success")){
                                     mAdapter.parsingData(jsonObject.getJSONArray("data"));
+                                    if (mAdapter.getItemCount() == 0){
+                                        mEmptyData.setVisibility(View.VISIBLE);
+                                    } else {
+                                        mEmptyData.setVisibility(View.GONE
+                                        );
+                                    }
                                     mAdapter.notifyDataSetChanged();
                                 } else {
                                     String errMsg = jsonObject.getString("message");
