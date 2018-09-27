@@ -145,11 +145,14 @@ public class DetailFieldActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        int id = item.getItemId();
+        int menuID = item.getItemId();
 
-        switch (id){
+        switch (menuID){
             case R.id.action_edit:
-                Toast.makeText(this, "Belum bisa Edit", Toast.LENGTH_SHORT).show();
+                Intent edit = new Intent(mContext, AddFieldActivity.class);
+                edit.putExtra("fieldID", id);
+                edit.putExtra("FLAG", "edit");
+                startActivity(edit);
         }
 
         return super.onOptionsItemSelected(item);

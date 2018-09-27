@@ -10,6 +10,11 @@ public class FieldData {
     @SerializedName("id")
     private int id;
 
+    public FieldData(String nama, int id) {
+        this.nama = nama;
+        this.id = id;
+    }
+
     public void setNama(String nama) {
         this.nama = nama;
     }

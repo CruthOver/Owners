@@ -52,4 +52,5 @@
     <string name="Edit">edit</string>
     <string name="error_field_required">Wajib diisi</string>
     <string name="error_invalid_password">Password harus lebih dari 4 karakter</string>
+    <string name="edit_lapangan">Edit Lapangan</string>
 </resources>

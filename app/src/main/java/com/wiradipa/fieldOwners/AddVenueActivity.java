@@ -800,7 +800,6 @@ public class AddVenueActivity extends AppCompatActivity
                                     JSONObject jsonFacilities = jsonArray.getJSONObject(i);
                                     String facilities = jsonFacilities.getString("name");
                                     checkBoxFacilities = new CheckBox(mContext);
-                                    checkBoxFacilities.setSelected();
                                     checkBoxFacilities.setChecked(listCheckbox.get(i).equalsIgnoreCase(facilities));
                                     Log.d("FACILIETIEESS", facilities);
                                     Log.d("ARRAY", listCheckbox.get(i).equalsIgnoreCase(facilities) + "");

@@ -28,15 +28,13 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,9 +56,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -77,6 +73,7 @@ public class AddFieldActivity extends AppCompatActivity {
     private static final int REQUEST_GET_IMAGE = 2;
     private static final int GET_IMAGE_REQUEST = 3;
     private String jsonTarif;
+    private RelativeLayout tarifRelativeLayout;
 
     EditText mFieldNameEditText, mDescriptionFieldEditText
             , mFieldSizeEditText, mFieldCostEditText, mFieldCostEditText2, mTitleFieldEditText
@@ -87,7 +84,7 @@ public class AddFieldActivity extends AppCompatActivity {
     TextView mResultPhoto, mResultOtherPhoto, mResultOtherPhoto2, mEmptyViewTarif, mTextViewVenue;
     Button mBtnSubmit, mBtnCancel, addOtherTarif;
     ImageView mAddImageView, mAddOtherImageView, mAddOtherImageView2;
-    String fileImagePath, id;
+    String fileImagePath, id, fieldId;
 
     TimePickerDialog timePickerDialog;
 
@@ -116,6 +113,27 @@ public class AddFieldActivity extends AppCompatActivity {
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
 
+        initComponents();
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle!=null){
+            id = bundle.getString("idVenue");
+
+            try{
+                fieldId = bundle.getString("fieldID");
+                String flag  = (String) bundle.get("FLAG");
+                if(flag.equals("edit")){
+                    detailField(fieldId);
+                    tarifRelativeLayout.setVisibility(View.GONE);
+                    addOtherTarif.setVisibility(View.GONE);
+                    getSupportActionBar().setTitle(R.string.edit_lapangan);
+                }
+            }catch (Exception e){
+
+            }
+
+        }
+
         fieldTarifs = new ArrayList<FieldTariff>();
         listViewTarif = (NonScrollListView) findViewById(R.id.list_tariff);
         listViewTarif.setNestedScrollingEnabled(false);
@@ -123,12 +141,78 @@ public class AddFieldActivity extends AppCompatActivity {
         mAdapter = new TarifAdapter(mContext, fieldTarifs);
         listViewTarif.setAdapter(mAdapter);
 
-        initComponents();
+    }
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle!=null){
-            id = bundle.getString("idVenue");
-        }
+    private void detailField(String requestID){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+
+        mApiService.detailField(requestID).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    progressDialog.dismiss();
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        if (jsonObject.getString("status").equals("Success")){
+//                            Toast.makeText(mContext, "Berhasil", Toast.LENGTH_SHORT).show();
+                            String nameField = jsonObject.getString("name");
+                            String url = jsonObject.getString("picture_url");
+                            String venueName = jsonObject.getString("field_owner_name");
+                            String sizeField = jsonObject.getString("pitch_size");
+                            String typeGrass = jsonObject.getString("grass_type_name");
+                            String typeField = jsonObject.getString("field_type_name");
+                            String descField = jsonObject.getString("description");
+                            String costField = "";
+                            String venueID = jsonObject.getString("field_owner_id");
+                            int grassID = Integer.parseInt(jsonObject.getString("grass_type_id"));
+                            int fieldID = Integer.parseInt(jsonObject.getString("field_type_id"));
+
+                            JSONArray jsonArray = jsonObject.getJSONArray("field_tariffs");
+                            for (int i=0; i<jsonArray.length(); i++){
+                                jsonObject = jsonArray.getJSONObject(i);
+                                costField = jsonObject.getString("tariff");
+                            }
+
+                            for (int i=0; i<mGrassTypeSpinner.getCount(); i++){
+                                if(mGrassTypeSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(typeGrass)){
+                                    mGrassTypeSpinner.setSelection(i, false);
+                                }
+                            }
+
+                            for (int i=0; i<spinnerVenue.getCount(); i++){
+                                if(spinnerVenue.getItemAtPosition(i).toString().equalsIgnoreCase(venueName)){
+                                    spinnerVenue.setSelection(i, false);
+                                }
+                            }
+
+                            for (int i=0; i<mFieldTypeSpinner.getCount(); i++){
+                                if(mFieldTypeSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(typeField)){
+                                    mFieldTypeSpinner.setSelection(i, false);
+                                }
+                            }
+                            id = venueID;
+
+                            mResultPhoto.setText(url);
+                            mFieldNameEditText.setText(nameField);
+                            mFieldSizeEditText.setText(sizeField);
+                            mDescriptionFieldEditText.setText(descField);
+                        }
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "OnFailure: ERROR > "+ t.toString());
+                progressDialog.dismiss();
+                Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private boolean isNameFieldValid(String nameField){
@@ -140,6 +224,7 @@ public class AddFieldActivity extends AppCompatActivity {
     }
 
     private void initComponents(){
+        tarifRelativeLayout = findViewById(R.id.tarif_RL);
         mFieldNameEditText = (EditText) findViewById(R.id.et_field_name);
         mDescriptionFieldEditText = (EditText) findViewById(R.id.et_field_description);
         mFieldSizeEditText = (EditText) findViewById(R.id.et_size_field);
@@ -244,8 +329,8 @@ public class AddFieldActivity extends AppCompatActivity {
         mFieldTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String selectedName = adapterView.getItemAtPosition(i).toString();
-//                Toast.makeText(mContext, i + " : " + selectedName, Toast.LENGTH_SHORT).show();
+                ListVenue field = (ListVenue) adapterView.getSelectedItem();
+                mFieldType = field.getId();
             }
 
             @Override
@@ -257,8 +342,8 @@ public class AddFieldActivity extends AppCompatActivity {
         mGrassTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String selectedName = adapterView.getItemAtPosition(i).toString();
-//                Toast.makeText(mContext, i + " : " + selectedName, Toast.LENGTH_SHORT).show();
+                ListVenue grass = (ListVenue) adapterView.getSelectedItem();
+                mGrassType = grass.getId();
             }
 
             @Override
@@ -326,6 +411,72 @@ public class AddFieldActivity extends AppCompatActivity {
         fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         mFromHourSpinner.setAdapter(fromDaySpinner);
+        mFromHourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String selection = (String) adapterView.getItemAtPosition(i);
+                if (!TextUtils.isEmpty(selection)){
+                    if (selection.equals("-- Pilih Jam -- ")){
+                        Toast.makeText(mContext, "Pilih Jam Terlebih Dahulu", Toast.LENGTH_SHORT).show();;
+                    }
+                    if (selection.equals("0")){
+                        mStartHour = 0;
+                        Log.d("START HOUR ", mStartHour + "");
+                    } else if (selection.equals("1")){
+                        mStartHour = 1; //monday
+                    } else if (selection.equals("2")){
+                        mStartHour = 2;
+                    } else if (selection.equals("3")){
+                        mStartHour = 3;
+                    } else if (selection.equals("4")){
+                        mStartHour = 4;
+                    } else if (selection.equals("5")){
+                        mStartHour = 5;
+                    } else if (selection.equals("6")){
+                        mStartHour = 6;
+                    } else if (selection.equals("7")){
+                        mStartHour = 7;
+                    } else if (selection.equals("8")){
+                        mStartHour = 8;
+                    } else if (selection.equals("9")){
+                        mStartHour = 9;
+                    } else if (selection.equals("10")){
+                        mStartHour = 10;
+                    } else if (selection.equals("11")){
+                        mStartHour = 11;
+                    } else if (selection.equals("12")){
+                        mStartHour = 12;
+                    } else if (selection.equals("13")){
+                        mStartHour = 13;
+                    } else if (selection.equals("14")){
+                        mStartHour = 14;
+                    } else if (selection.equals("15")){
+                        mStartHour = 15;
+                    } else if (selection.equals("16")){
+                        mStartHour = 16;
+                    } else if (selection.equals("17")){
+                        mStartHour = 17;
+                    } else if (selection.equals("18")){
+                        mStartHour = 18;
+                    } else if (selection.equals("19")){
+                        mStartHour = 19;
+                    } else if (selection.equals("20")){
+                        mStartHour = 20;
+                    } else if (selection.equals("21")){
+                        mStartHour = 21;
+                    } else if (selection.equals("22")){
+                        mStartHour = 22;
+                    } else if (selection.equals("23")){
+                        mStartHour = 23;
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                Toast.makeText(mContext, "Hari belum dipilih", Toast.LENGTH_SHORT).show();
+            }
+        });
         mFromHourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -765,10 +916,8 @@ public class AddFieldActivity extends AppCompatActivity {
                                         if (id !=null){
                                             if (idVenue == Integer.parseInt(id)){
                                                 listVenue.add(new ListVenue(idVenue,nameVenue));
-                                                spinnerVenue.setVisibility(View.GONE);
-                                                mTextViewVenue.setVisibility(View.GONE);
+
                                                 mIdVenue = idVenue;
-                                                Toast.makeText(mContext, "Venue ID: "+ mIdVenue, Toast.LENGTH_SHORT).show();
                                             }
                                         } else{
                                             listVenue.add(new ListVenue(idVenue, nameVenue));
@@ -876,16 +1025,19 @@ public class AddFieldActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()){
+                    int typeID;
+                    String typeName;
                     progressDialog.dismiss();
                     List<FieldData> fieldTypeItems = response.body().getFieldData();
-                    List<String> listSpinner = new ArrayList<String>();
+                    List<ListVenue> listSpinner = new ArrayList<>();
                     for (int i=0; i < fieldTypeItems.size(); i++){
-                        listSpinner.add(fieldTypeItems.get(i).getNama());
-                        mGrassType = fieldTypeItems.get(i).getId();
-                        Log.d("DEBUGGING : ", mGrassType + " : " + listSpinner);
+                        typeID = fieldTypeItems.get(i).getId();
+                        typeName = fieldTypeItems.get(i).getNama();
+                        listSpinner.add(new ListVenue(typeID, typeName));
+                        Log.d("DEBUGGING : ", typeID + " : " + listSpinner);
                     }
 
-                    final ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, R.layout.spinner_jadwal, listSpinner);
+                    final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<>(mContext, R.layout.spinner_jadwal, listSpinner);
                     adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                     mGrassTypeSpinner.setAdapter(adapter);
 
@@ -923,16 +1075,20 @@ public class AddFieldActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()){
                     progressDialog.dismiss();
+                    int typeID;
+                    String typeName;
                     List<FieldData> fieldTypeItems = response.body().getFieldData();
-                    List<String> listSpinner = new ArrayList<String>();
-                    listSpinner.add(" Pilih Jenis Lapangan ");
+                    List<ListVenue> listSpinner = new ArrayList<>();
                     for (int i=0; i < fieldTypeItems.size(); i++){
-                        listSpinner.add(fieldTypeItems.get(i).getNama());
+                        typeID = fieldTypeItems.get(i).getId();
+                        typeName = fieldTypeItems.get(i).getNama();
+                        listSpinner.add(new ListVenue(typeID, typeName));
                         mFieldType = fieldTypeItems.get(i).getId();
+                        mFieldType = typeID;
                         Log.d("DEBUGGING : ", mFieldType + " : " + listSpinner);
                     }
 
-                    final ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, R.layout.spinner_jadwal, listSpinner);
+                    final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<>(mContext, R.layout.spinner_jadwal, listSpinner);
                     adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                     mFieldTypeSpinner.setAdapter(adapter);
                 } else {
@@ -1051,8 +1207,8 @@ public class AddFieldActivity extends AppCompatActivity {
         MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
 
         mApiService.createField(token, mName, mDesc, mIdVenue,
-                mGrassTypeSpinner.getSelectedItemPosition(),
-                mFieldTypeSpinner.getSelectedItemPosition(), sizeField,
+                mGrassType,
+                mFieldType, sizeField,
                 tariff, partImage, null).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
