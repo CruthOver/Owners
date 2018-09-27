@@ -13,6 +13,8 @@ public class AppSession {
     public final static String NAME = "name";
     public final static String OWNERID = "userid";
     public final static String PHOTOURL = "photo_url";
+    public final static String ORDERED_WEEK = "today_rentals";
+    public final static String ORDERED_MONTH = "month_rentals";
 
 
     private SharedPreferences sharedPreferences;
@@ -47,7 +49,8 @@ public class AppSession {
         editor.apply();
     }
 
-    public void createSession(String token, String username, String name, String email, String phoneNumber, String ownerId, String photoUrl){
+    public void createSession(String token, String username, String name, String email, String phoneNumber, String ownerId, String photoUrl,
+                              String orderWeek, String orderMonth){
         editor = sharedPreferences.edit();
         editor.putString(TOKEN, token);
         editor.putString(USERNAME, username);
@@ -56,6 +59,8 @@ public class AppSession {
         editor.putString(PHONE_NUMBER, phoneNumber);
         editor.putString(OWNERID, ownerId);
         editor.putString(PHOTOURL, photoUrl);
+        editor.putString(ORDERED_WEEK, orderWeek);
+        editor.putString(ORDERED_MONTH, orderMonth);
         editor.apply();
     }
 

@@ -92,7 +92,6 @@ public class FieldActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
             id = bundle.getString("idVenueDetail");
-            Toast.makeText(mContext, id, Toast.LENGTH_SHORT).show();
             listMyField();
         } else {
             listMyFields();

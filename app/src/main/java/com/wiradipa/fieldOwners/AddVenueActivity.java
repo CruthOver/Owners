@@ -129,7 +129,7 @@ public class AddVenueActivity extends AppCompatActivity
 
     List<FasilitasValue> facilitiesArray;
     List<AreasValue> areasArray;
-    List<String> listCheckbox;
+    List<String> listCheckFac, listCheckArea;
 
     Context mContext;
     BaseApiService mApiService;
@@ -162,13 +162,8 @@ public class AddVenueActivity extends AppCompatActivity
 
         facilitiesArray = new ArrayList<>();
         areasArray = new ArrayList<>();
-        listCheckbox = new ArrayList<String>();
-
-        initComponents();
-        setSpinnerFromHour();
-        setSpinnerEndHour();
-        setupcheckBoxesFacilities();
-        setupCheckboxesAreas();
+        listCheckFac = new ArrayList<>();
+        listCheckArea = new ArrayList<>();
 
         bundle = getIntent().getExtras();
         if (bundle != null){
@@ -178,6 +173,12 @@ public class AddVenueActivity extends AppCompatActivity
         } else {
             setTitle("Tambah Venue");
         }
+
+        initComponents();
+        setSpinnerFromHour();
+        setSpinnerEndHour();
+        setupcheckBoxesFacilities();
+        setupCheckboxesAreas();
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getLocationPermission();
@@ -447,7 +448,7 @@ public class AddVenueActivity extends AppCompatActivity
         });
     }
 
-    private void setupcheckBoxesFacilities(){
+    private void setupcheckBoxesFacilities( ){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setTitle("Proses");
         progressDialog.setMessage("Tunggu Sebentar");
@@ -459,13 +460,21 @@ public class AddVenueActivity extends AppCompatActivity
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()){
                     progressDialog.dismiss();
+
                     List<FieldData> listFacilities = response.body().getFieldData();
+                    List<String> listCheckbox = new ArrayList<String>();
                     for (int i = 0; i<listFacilities.size(); i++){
                         listCheckbox.add(listFacilities.get(i).getNama());
                         checkBoxFacilities = new CheckBox(mContext);
                         checkBoxFacilities.setId(listFacilities.get(i).getId());
                         checkBoxFacilities.setText(listFacilities.get(i).getNama());
                         checkBoxFacilities.setTextColor(Color.WHITE);
+                        for (int j=0; j<listCheckFac.size(); j++){
+                            if (listCheckbox.get(i).equals(listCheckFac.get(j))){
+                                checkBoxFacilities.setChecked(true);
+                            }
+                        }
+
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             checkBoxFacilities.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
                         }
@@ -513,6 +522,12 @@ public class AddVenueActivity extends AppCompatActivity
                         checkBoxArea.setId(listAreas.get(i).getId());
                         checkBoxArea.setText(listAreas.get(i).getNama());
                         checkBoxArea.setTextColor(Color.WHITE);
+                        for (int j=0; j<listCheckArea.size(); j++){
+                            if (listCheckbox.get(i).equals(listCheckArea.get(j))){
+                                checkBoxArea.setChecked(true);
+                            }
+                        }
+
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             checkBoxArea.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
                         }
@@ -769,6 +784,10 @@ public class AddVenueActivity extends AppCompatActivity
         });
     }
 
+    private void getDataCheckBox(CheckBox cb){
+
+    }
+
     private void editVenue(){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setTitle("Proses");
@@ -795,15 +814,41 @@ public class AddVenueActivity extends AppCompatActivity
 
                                 nameVenueEditText.setText(name);
                                 descVenueEditText.setText(desc);
+                                if (latitude.equals("")){
+                                    mLatitude = (Double) null;
+                                    mLongitude = (Double) null;
+                                } else{
+                                    mLatitude = Double.parseDouble(latitude);
+                                    mLongitude = Double.parseDouble(longitude);
+                                }
+                                if (mLatitude != null){
+                                    float zoom = 15f;
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLatitude, mLongitude)));
+                                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15f), 2000, null);
+
+                                    MarkerOptions markerOptions = new MarkerOptions().
+                                            title(name).position(new LatLng(mLatitude, mLongitude));
+                                    mMap.addMarker(markerOptions);
+                                    mAutoCompleteTextView.setText(address);
+                                } else {
+                                    Toast.makeText(mContext, "Lokasi tidak ada", Toast.LENGTH_SHORT).show();
+                                }
+
                                 JSONArray jsonArray = data.getJSONArray("facilities");
                                 for (int i=0; i<jsonArray.length(); i++){
                                     JSONObject jsonFacilities = jsonArray.getJSONObject(i);
                                     String facilities = jsonFacilities.getString("name");
-                                    checkBoxFacilities = new CheckBox(mContext);
-                                    checkBoxFacilities.setChecked(listCheckbox.get(i).equalsIgnoreCase(facilities));
-                                    Log.d("FACILIETIEESS", facilities);
-                                    Log.d("ARRAY", listCheckbox.get(i).equalsIgnoreCase(facilities) + "");
-//                                    listCheckbox.get(i).equalsIgnoreCase(facilities);
+                                    listCheckFac.add(facilities);
+                                    Log.d("LISTSS", listCheckFac.get(i));
+                                }
+
+                                JSONArray arrayArea = data.getJSONArray("areas");
+                                for (int i=0; i<arrayArea.length(); i++){
+                                    JSONObject jsonArea = arrayArea.getJSONObject(i);
+                                    String areas = jsonArea.getString("name");
+                                    listCheckArea.add(areas);
+                                    Log.d("LISTAREAS", listCheckArea.get(i));
                                 }
 
                                 for (int i=0; i<fromHourEditText.getCount(); i++){
@@ -817,31 +862,9 @@ public class AddVenueActivity extends AppCompatActivity
                                     }
                                 }
 
-                                if (latitude.equals("")){
-                                    mLatitude = (Double) null;
-                                    mLongitude = (Double) null;
-                                } else{
-                                    mLatitude = Double.parseDouble(latitude);
-                                    mLongitude = Double.parseDouble(longitude);
-                                }
-
-                                if (mLatitude != null){
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLatitude, mLongitude)));
-                                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
-                                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15f), 2000, null);
-
-                                    MarkerOptions markerOptions = new MarkerOptions().
-                                            title(name).position(new LatLng(mLatitude, mLongitude));
-                                    mMap.addMarker(markerOptions);
-                                    mAutoCompleteTextView.setText(address);
-                                } else {
-                                    Toast.makeText(mContext, "Lokasi tidak ada", Toast.LENGTH_SHORT).show();
-                                }
-
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     }
                     @Override
@@ -1070,9 +1093,11 @@ public class AddVenueActivity extends AppCompatActivity
                             Log.d("DEBUG : ", "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
 
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                                    DEFAULT_ZOOM,
-                                    "My Location");
+                            if (venueId == null){
+                                moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                                        DEFAULT_ZOOM,
+                                        "My Location");
+                            }
 
                         }else{
                             Log.d("DEBUG : ", "onComplete: current location is null");

@@ -79,11 +79,16 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
+    public String checkDigit(String number)
+    {
+        return Integer.parseInt(number)<=9?"0"+number:number +".00";
+    }
+
     public void onBindViewHolder(final ViewHolder holder, int i) {
         Jadwal jadwalList = listJadwal.get(i);
         if (jadwalList!=null){
-            ((ViewHolder) holder).startHour.setText(jadwalList.startHour);
-            ((ViewHolder) holder).endHour.setText(jadwalList.endHours);
+            ((ViewHolder) holder).startHour.setText(checkDigit(jadwalList.startHour));
+            ((ViewHolder) holder).endHour.setText(checkDigit(jadwalList.endHours));
 //            ((ViewHolder) holder).status.setText(jadwalList.mRentalStatus);
             if (jadwalList.status == 0){
                 ((ViewHolder) holder).status.setImageResource(R.drawable.booked_btn);

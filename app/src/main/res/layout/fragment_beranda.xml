@@ -67,6 +67,7 @@
                 android:gravity="center"
                 android:textSize="16sp"/>
             <TextView
+                android:id="@+id/week_rentals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="24 pemesanan"
@@ -90,6 +91,7 @@
                 android:gravity="center"
                 android:textSize="16sp"/>
             <TextView
+                android:id="@+id/month_rentals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="10 pemesanan"

@@ -1219,7 +1219,7 @@ public class AddFieldActivity extends AppCompatActivity {
                         if (jsonObject.getString("status").equals("Success")){
 //                            Toast.makeText(mContext, "BERHASIL", Toast.LENGTH_SHORT).show();
                             String message = jsonObject.getString("message");
-//                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(mContext, FieldActivity.class);
                             startActivity(intent);
                             finish();
