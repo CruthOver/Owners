@@ -85,7 +85,8 @@ public class AddFieldActivity extends AppCompatActivity {
     TextView mResultPhoto, mResultOtherPhoto, mResultOtherPhoto2, mEmptyViewTarif, mTextViewVenue;
     Button mBtnSubmit, mBtnCancel, addOtherTarif;
     ImageView mAddImageView, mAddOtherImageView, mAddOtherImageView2;
-    String fileImagePath, id, fieldId;
+    String id, fieldId;
+    String fileImagePath = "";
 
     TimePickerDialog timePickerDialog;
 
@@ -142,6 +143,36 @@ public class AddFieldActivity extends AppCompatActivity {
         mAdapter = new TarifAdapter(mContext, fieldTarifs);
         listViewTarif.setAdapter(mAdapter);
 
+    }
+
+    private boolean emptyCheck(){
+        boolean status = true;
+        mFieldNameEditText.setError(null);
+        mDescriptionFieldEditText.setError(null);
+        mFieldSizeEditText.setError(null);
+
+        if(isStringEmpty(mFieldNameEditText.getText().toString())){
+            mFieldNameEditText.setError(getString(R.string.error_field_required));
+            status = false;
+        }
+        if(isStringEmpty(mDescriptionFieldEditText.getText().toString())){
+            mDescriptionFieldEditText.setError(getString(R.string.error_field_required));
+            status = false;
+        }
+        if(isStringEmpty(mFieldSizeEditText.getText().toString())){
+            mFieldSizeEditText.setError(getString(R.string.error_field_required));
+            status = false;
+        }
+        if(isStringEmpty(fileImagePath)){
+            status = false;
+        }
+
+        return status;
+
+    }
+
+    private boolean isStringEmpty(String x){
+        return x.equals("");
     }
 
     private void detailField(String requestID){
@@ -1190,66 +1221,65 @@ public class AddFieldActivity extends AppCompatActivity {
     }
 
     private void addField(String stringJsonTarif){
-        Log.d("JSONTARIFS", stringJsonTarif);
-        final ProgressDialog progressDialog = new ProgressDialog(mContext);
-        progressDialog.setTitle("Proses");
-        progressDialog.setMessage("Tunggu Sebentar");
-        progressDialog.show();
+        if(emptyCheck()){
+            final ProgressDialog progressDialog = new ProgressDialog(mContext);
+            progressDialog.setTitle("Proses");
+            progressDialog.setMessage("Tunggu Sebentar");
+            progressDialog.show();
 
-        File image;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
-            image = new File(fileImagePath);
-        } else {
-            image = new File(imageFile.getPath());
-        }
-        Log.d("PAATTTTHHHHHZZZZ", image +"");
+            File image ;
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                image = new File(fileImagePath);
+            } else {
+                image = new File(imageFile.getPath());
+            }
+            RequestBody mName = RequestBody.create(MultipartBody.FORM, mFieldNameEditText.getText().toString());
+            RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
+            RequestBody mDesc = RequestBody.create(MultipartBody.FORM, mDescriptionFieldEditText.getText().toString());
+    //        RequestBody typeField = RequestBody.create(MultipartBody.FORM, mFieldTypeSpinner.getSelectedItemPosition());
+            RequestBody sizeField = RequestBody.create(MultipartBody.FORM, mFieldSizeEditText.getText().toString());
+            RequestBody tariff = RequestBody.create(MultipartBody.FORM, stringJsonTarif);
 
-        Log.d("FieldSPINNER ", spinnerVenue.getId()+ " => " + mIdVenue);
-        Log.d("FieldSPINNERTYPE ", mFieldTypeSpinner.getSelectedItemPosition() + " ");
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
+            MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
 
-        RequestBody mName = RequestBody.create(MultipartBody.FORM, mFieldNameEditText.getText().toString());
-        RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
-        RequestBody mDesc = RequestBody.create(MultipartBody.FORM, mDescriptionFieldEditText.getText().toString());
-//        RequestBody typeField = RequestBody.create(MultipartBody.FORM, mFieldTypeSpinner.getSelectedItemPosition());
-        RequestBody sizeField = RequestBody.create(MultipartBody.FORM, mFieldSizeEditText.getText().toString());
-        RequestBody tariff = RequestBody.create(MultipartBody.FORM, stringJsonTarif);
 
-        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
-        MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
-
-        mApiService.createField(token, mName, mDesc, mIdVenue,
-                mGrassType,
-                mFieldType, sizeField,
-                tariff, partImage, null).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()){
-                    progressDialog.dismiss();
-                    try {
-                        JSONObject jsonObject = new JSONObject(response.body().string());
-                        if (jsonObject.getString("status").equals("Success")){
+            mApiService.createField(token, mName, mDesc, mIdVenue,
+                    mGrassType,
+                    mFieldType, sizeField,
+                    tariff, partImage, null).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        progressDialog.dismiss();
+                        try {
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            if (jsonObject.getString("status").equals("Success")){
 //                            Toast.makeText(mContext, "BERHASIL", Toast.LENGTH_SHORT).show();
-                            String message = jsonObject.getString("message");
-                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(mContext, FieldActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                        else {
+                                String message = jsonObject.getString("message");
+                                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(mContext, FieldActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                            else {
 //                            Toast.makeText(mContext, "Add Field Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException | IOException e) {
-                        e.printStackTrace();
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.d("onFailure", t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    progressDialog.dismiss();
+                    Log.d("onFailure", t.getMessage());
+                }
+            });
+        }
+
+
     }
 
     private void updateField(){
