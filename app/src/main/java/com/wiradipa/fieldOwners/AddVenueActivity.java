@@ -106,8 +106,6 @@ public class AddVenueActivity extends AppCompatActivity
     private static final float DEFAULT_ZOOM = 15f;
     private static final int REQUEST_SELECT_IMAGE = 1;
     private static final int REQUEST_PLACE_PICKER = 0;
-//    private static final int REQUEST_GET_IMAGE = 2;
-//    private static final int GET_IMAGE_REQUEST = 3;
     private static final int PERMISSION_REQUEST_STORAGE = 77;
     String jsonFacility, jsonAreas, fileImagePath, result, venueId;
     Double mLatitude, mLongitude;
@@ -197,6 +195,7 @@ public class AddVenueActivity extends AppCompatActivity
         return addressVenue.equals("");
     }
 
+    @SuppressLint("SetTextI18n")
     private void initComponents() {
         scrollView = findViewById(R.id.scroll); //parent scrollview in xml, give your scrollview id value
 
@@ -227,6 +226,11 @@ public class AddVenueActivity extends AppCompatActivity
 //        mAddOtherImage2 = (ImageView) findViewById(R.id.img_other_photo2);
 
         mSubmitBtn = (Button) findViewById(R.id.add_new_venue);
+        if (venueId == null){
+            mSubmitBtn.setText("SIMPAN");
+        } else {
+            mSubmitBtn.setText("Update");
+        }
         mCancelBtn = (Button) findViewById(R.id.btnCancel);
         mPlacePicker = (Button) findViewById(R.id.placePicker);
 
@@ -472,6 +476,7 @@ public class AddVenueActivity extends AppCompatActivity
                         for (int j=0; j<listCheckFac.size(); j++){
                             if (listCheckbox.get(i).equals(listCheckFac.get(j))){
                                 checkBoxFacilities.setChecked(true);
+                                facilitiesArray.add(new FasilitasValue(checkBoxFacilities.getId()));
                             }
                         }
 
@@ -479,17 +484,6 @@ public class AddVenueActivity extends AppCompatActivity
                             checkBoxFacilities.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
                         }
                         checkBoxFacilities.setOnClickListener(getOnClickListenerCheckBox(checkBoxFacilities));
-//                        LinearLayout listCbVenue = new LinearLayout(mContext);
-//                        listCbVenue.setOrientation(LinearLayout.VERTICAL);
-//                        listCbVenue.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-//                                ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-//
-//                        listCbVenue.addView(checkBoxFacilities);
-//                        layoutCheckbox.addView(mFacilitiesCheckBox);
-//                        if (layoutCheckbox.getParent() != null){
-//                            ((ViewGroup) layoutCheckbox.getParent()).removeView(layoutCheckbox
-//                            );
-//                        }
                         checkBoxLinearLayout.addView(checkBoxFacilities);
                     }
                 }
@@ -525,6 +519,7 @@ public class AddVenueActivity extends AppCompatActivity
                         for (int j=0; j<listCheckArea.size(); j++){
                             if (listCheckbox.get(i).equals(listCheckArea.get(j))){
                                 checkBoxArea.setChecked(true);
+                                areasArray.add(new AreasValue(checkBoxArea.getId()));
                             }
                         }
 
@@ -547,27 +542,11 @@ public class AddVenueActivity extends AppCompatActivity
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                for (int i=0; i<=checkBoxFacilities.length(); i++){
-//                    View nextChild = checkBoxLinearLayout.getChildAt(i);
-//
-//                    if (nextChild instanceof  CheckBox){
-//                        CheckBox cb = (CheckBox) nextChild;
-//                        if (cb.isChecked()){
-//                            facilitiesArray.add(cb.getText().toString());
-//                        } else {
-//                            facilitiesArray.remove(cb.getText().toString());
-//                        }
-//                    }
-//                }
                 if (button.isChecked()){
                     facilitiesArray.add(new FasilitasValue(button.getId()));
                 } else {
                     facilitiesArray.remove(new FasilitasValue(button.getId()));
                 }
-//                switch (button.getId()){
-//                    case 1:
-//                        Toast.makeText(mContext, "Your Click : " + button.getId() + " Text : " + button.getText().toString(), Toast.LENGTH_SHORT).show();
-//                }
             }
         };
     }
@@ -576,27 +555,11 @@ public class AddVenueActivity extends AppCompatActivity
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                for (int i=0; i<=checkBoxFacilities.length(); i++){
-//                    View nextChild = checkBoxLinearLayout.getChildAt(i);
-//
-//                    if (nextChild instanceof  CheckBox){
-//                        CheckBox cb = (CheckBox) nextChild;
-//                        if (cb.isChecked()){
-//                            facilitiesArray.add(cb.getText().toString());
-//                        } else {
-//                            facilitiesArray.remove(cb.getText().toString());
-//                        }
-//                    }
-//                }
                 if (button.isChecked()){
                     areasArray.add(new AreasValue(button.getId()));
                 } else {
                     areasArray.remove(new AreasValue(button.getId()));
                 }
-//                switch (button.getId()){
-//                    case 1:
-//                        Toast.makeText(mContext, "Your Click : " + button.getId() + " Text : " + button.getText().toString(), Toast.LENGTH_SHORT).show();
-//                }
             }
         };
     }
@@ -627,12 +590,16 @@ public class AddVenueActivity extends AppCompatActivity
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    fileImagePath = "";
                 }
             } else {
                 if (imageFile !=null){
                     File file = new File(imageFile.getPath());
                     result = file.getName();
                     mResultImage.setText(result);
+                } else {
+                    imageFile = null;
                 }
             }
         } else if (requestCode == REQUEST_PLACE_PICKER && resultCode == RESULT_OK){
@@ -645,57 +612,6 @@ public class AddVenueActivity extends AppCompatActivity
 
             geoLocate();
         }
-//        if (requestCode == REQUEST_GET_IMAGE && resultCode == RESULT_OK){
-//            Uri imageUri = data.getData();
-//            String[] projection = {MediaStore.Images.Media.DATA};
-//
-//            if (imageUri != null) {
-//                Cursor cursor = mContext.getContentResolver().query(imageUri, projection, null, null, null);
-//                if (cursor != null) {
-//                    if (cursor.moveToFirst()) {
-//                        int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
-//                        fileImagePath = cursor.getString(columnIndex);
-////                    Toast.makeText(mContext, filePath, Toast.LENGTH_SHORT).show();
-//                        cursor.close();
-//                    }
-//                } else {
-//                    fileImagePath = imageUri.getPath();
-//                    Log.d("DEBUG PHOTO : ", DatabaseUtils.dumpCursorToString(cursor));
-//                }
-//            }
-//
-//            if (fileImagePath!=null){
-//                File file = new File(fileImagePath);
-//                String result = file.getName();
-//                mResultOtherImage.setText(result);
-//            }
-//        }
-//
-//        if (requestCode == GET_IMAGE_REQUEST && resultCode == RESULT_OK){
-//            Uri imageUri = data.getData();
-//            String[] projection = {MediaStore.Images.Media.DATA};
-//
-//            if (imageUri != null) {
-//                Cursor cursor = mContext.getContentResolver().query(imageUri, projection, null, null, null);
-//                if (cursor != null) {
-//                    if (cursor.moveToFirst()) {
-//                        int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
-//                        fileImagePath = cursor.getString(columnIndex);
-////                    Toast.makeText(mContext, filePath, Toast.LENGTH_SHORT).show();
-//                        cursor.close();
-//                    }
-//                } else {
-//                    fileImagePath = imageUri.getPath();
-//                    Log.d("DEBUG PHOTO : ", DatabaseUtils.dumpCursorToString(cursor));
-//                }
-//            }
-//
-//            if (fileImagePath!=null){
-//                File file = new File(fileImagePath);
-//                String result = file.getName();
-//                mResultOtherImage2.setText(result);
-//            }
-//        }
     }
 
 //    private String getPathFromUri(Uri contentUri){
@@ -740,6 +656,7 @@ public class AddVenueActivity extends AppCompatActivity
         Log.d("AREAAAA ", jsonAreas + "");
         RequestBody mName = RequestBody.create(MultipartBody.FORM, nameVenueEditText.getText().toString());
         RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
+        RequestBody ownerId = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.OWNERID));
         RequestBody mDesc = RequestBody.create(MultipartBody.FORM, descVenueEditText.getText().toString());
         RequestBody mAddress = RequestBody.create(MultipartBody.FORM, mAutoCompleteTextView.getText().toString());
         RequestBody mLatitude = RequestBody.create(MultipartBody.FORM, String.valueOf(mPlace.getLatitude()));
@@ -753,7 +670,7 @@ public class AddVenueActivity extends AppCompatActivity
         MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
 
         mApiService.createVenue(token, mName, mDesc, mAddress, mLatitude, mLongitude,
-                mStartHour, mEndHour, facilities, areas, partImage,null )
+                mStartHour, mEndHour, ownerId, facilities, areas, partImage,null )
                 .enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -784,10 +701,6 @@ public class AddVenueActivity extends AppCompatActivity
         });
     }
 
-    private void getDataCheckBox(CheckBox cb){
-
-    }
-
     private void editVenue(){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setTitle("Proses");
@@ -814,6 +727,7 @@ public class AddVenueActivity extends AppCompatActivity
 
                                 nameVenueEditText.setText(name);
                                 descVenueEditText.setText(desc);
+                                mResultImage.setText(urlPicture);
                                 if (latitude.equals("")){
                                     mLatitude = (Double) null;
                                     mLongitude = (Double) null;
@@ -822,7 +736,6 @@ public class AddVenueActivity extends AppCompatActivity
                                     mLongitude = Double.parseDouble(longitude);
                                 }
                                 if (mLatitude != null){
-                                    float zoom = 15f;
                                     mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLatitude, mLongitude)));
                                     mMap.animateCamera(CameraUpdateFactory.zoomIn());
                                     mMap.animateCamera(CameraUpdateFactory.zoomTo(15f), 2000, null);
@@ -881,6 +794,73 @@ public class AddVenueActivity extends AppCompatActivity
         progressDialog.setTitle("Proses");
         progressDialog.setMessage("Tunggu Sebentar");
         progressDialog.show();
+        File image = null;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+            if (fileImagePath == null){
+                image = new File("");
+            } else {
+                image = new File(fileImagePath);
+            }
+        } else {
+            if (imageFile == null){
+                image = new File("");
+            } else {
+                image = new File(imageFile.getPath());
+            }
+        }
+        Log.d("PAATTTTHHHHHZZZZ", image + "");
+
+        jsonFacility  = new Gson().toJson(facilitiesArray);
+        jsonAreas = new Gson().toJson(areasArray);
+        Log.d("FASILITAS ", jsonFacility + "");
+        Log.d("AREAAAA ", jsonAreas + "");
+        Log.d("NAMAAAAA ", nameVenueEditText.getText().toString() + "");
+        Log.d("DESSSCRIPSI ", descVenueEditText.getText().toString() + "");
+        Log.d("STARTHOUR ", mStartHour + "");
+        Log.d("ENDHOUR ", mEndHour + "");
+        RequestBody mName = RequestBody.create(MultipartBody.FORM, nameVenueEditText.getText().toString());
+        RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
+        RequestBody ownerId = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.OWNERID));
+        RequestBody mDesc = RequestBody.create(MultipartBody.FORM, descVenueEditText.getText().toString());
+        RequestBody mAddress = RequestBody.create(MultipartBody.FORM, mAutoCompleteTextView.getText().toString());
+        RequestBody mLatitude = RequestBody.create(MultipartBody.FORM, String.valueOf(mPlace.getLatitude()));
+        RequestBody mLongitude = RequestBody.create(MultipartBody.FORM, String.valueOf(mPlace.getLongitude()));
+        RequestBody facilities = RequestBody.create(MultipartBody.FORM, jsonFacility);
+        RequestBody areas = RequestBody.create(MultipartBody.FORM, jsonAreas);
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
+        MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
+
+        mApiService.updateVenue(token, mName, mDesc, mAddress, mLatitude, mLongitude,
+                mStartHour, mEndHour, ownerId, facilities, areas, partImage,null )
+                .enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    progressDialog.dismiss();
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        if (jsonObject.getString("status").equals("Success")) {
+                            String message = jsonObject.getString("message");
+                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(mContext, VenueActivity.class);
+                            finish();
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(mContext, "Update Venue Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.d("onFailure", t.getMessage());
+            }
+        });
     }
 
     private void getLocationPermission(){

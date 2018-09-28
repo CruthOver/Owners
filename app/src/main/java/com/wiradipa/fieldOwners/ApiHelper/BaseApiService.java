@@ -113,6 +113,7 @@ public interface BaseApiService {
                                    @Part("longitude") RequestBody longitude,
                                    @Part("start_hour") int startHour,
                                    @Part("end_hour") int endHour,
+                                   @Part("owner_id") RequestBody ownerID,
                                    @Part("field_owners_facilities") RequestBody facilityId,
                                    @Part("field_owners_areas") RequestBody fieldAreas,
                                    @Part MultipartBody.Part picture,

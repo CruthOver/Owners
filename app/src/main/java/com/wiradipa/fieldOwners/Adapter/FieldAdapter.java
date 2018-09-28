@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.squareup.picasso.Picasso;
 import com.wiradipa.fieldOwners.R;
 
@@ -108,7 +106,7 @@ public class FieldAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ((MyFieldViewHolder) viewHolder).mAddressField.setText(myField.mAddress);
             ((MyFieldViewHolder) viewHolder).mTypeFieldName.setText(myField.mFieldType);
 //            Picasso.with(mContext).load("http://app.lapangbola.com" + myField.mPhotoUrl).into(((MyFieldViewHolder) viewHolder).mPhotoLapang);
-            Glide.with(mContext).load("http://app.lapangbola.com" + myField.mPhotoUrl).into(((MyFieldViewHolder) viewHolder).mPhotoLapang);
+            Picasso.with(mContext).load("http://app.lapangbola.com" + myField.mPhotoUrl).into(((MyFieldViewHolder) viewHolder).mPhotoLapang);
         }
     }
 

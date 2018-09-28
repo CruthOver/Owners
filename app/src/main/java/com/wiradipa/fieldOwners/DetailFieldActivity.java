@@ -105,19 +105,18 @@ public class DetailFieldActivity extends AppCompatActivity {
                             String typeGrass = jsonObject.getString("grass_type_name");
                             String typeField = jsonObject.getString("field_type_name");
                             String descField = jsonObject.getString("description");
-                            String costField = "";
+                            String costField = jsonObject.getString("min_tariff");
 
                             JSONArray jsonArray = jsonObject.getJSONArray("field_tariffs");
                             for (int i=0; i<jsonArray.length(); i++){
                                 jsonObject = jsonArray.getJSONObject(i);
-                                costField = jsonObject.getString("tariff");
                             }
 
                             Picasso.with(mContext).load("http://app.lapangbola.com" + url).into(iv);
                             mSizeField.setText(sizeField);
                             mGrassType.setText(typeGrass);
                             mTypeField.setText(typeField);
-                            mDetailHarga.setText(costField + ".000");
+                            mDetailHarga.setText("Mulai dari : " + costField);
                             mDescField.setText(descField);
                         }
                     } catch (IOException | JSONException e) {

@@ -1,6 +1,7 @@
 package com.wiradipa.fieldOwners;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -223,6 +224,7 @@ public class AddFieldActivity extends AppCompatActivity {
         return descField.equals("");
     }
 
+    @SuppressLint("SetTextI18n")
     private void initComponents(){
         tarifRelativeLayout = findViewById(R.id.tarif_RL);
         mFieldNameEditText = (EditText) findViewById(R.id.et_field_name);
@@ -258,12 +260,21 @@ public class AddFieldActivity extends AppCompatActivity {
         addOtherTarif = (Button) findViewById(R.id.add_other_opsi);
 
         mBtnSubmit = (Button) findViewById(R.id.add_new_field);
+        if (fieldId == null){
+            mBtnSubmit.setText("SIMPAN");
+        } else {
+            mBtnSubmit.setText("UPDATE");
+        }
         mBtnCancel = (Button) findViewById(R.id.btn_cancel);
 
         mBtnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addField(jsonTarif);
+                if (fieldId == null){
+                    addField(jsonTarif);
+                } else {
+                    updateField();
+                }
             }
         });
 
@@ -1241,6 +1252,80 @@ public class AddFieldActivity extends AppCompatActivity {
         });
     }
 
+    private void updateField(){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+
+        File image = null;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+            if (fileImagePath == null){
+                image = new File("");
+            } else {
+                image = new File(fileImagePath);
+            }
+        } else {
+            if (imageFile == null){
+                image = new File("");
+            } else {
+                image = new File(imageFile.getPath());
+            }
+        }
+        Log.d("PAATTTTHHHHHZZZZ", image +"");
+
+        Log.d("FieldSPINNER ", mIdVenue + "");
+        Log.d("FieldSPINNERTYPE ", mFieldTypeSpinner.getSelectedItemPosition() + mFieldType + "");
+        Log.d("FieldSPINNERGRASS ", mFieldTypeSpinner.getSelectedItemPosition() + mGrassType + "");
+        Log.d("Size Field ", mFieldSizeEditText.getText().toString() + " ");
+        Log.d("Name Field ", mFieldNameEditText.getText().toString() + " ");
+        Log.d("Desc Field ", mDescriptionFieldEditText.getText().toString() + " ");
+
+        /*RequestBody mName = RequestBody.create(MultipartBody.FORM, mFieldNameEditText.getText().toString());
+        RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
+        RequestBody mDesc = RequestBody.create(MultipartBody.FORM, mDescriptionFieldEditText.getText().toString());
+//        RequestBody typeField = RequestBody.create(MultipartBody.FORM, mFieldTypeSpinner.getSelectedItemPosition());
+        RequestBody sizeField = RequestBody.create(MultipartBody.FORM, mFieldSizeEditText.getText().toString());
+        RequestBody tariff = RequestBody.create(MultipartBody.FORM, stringJsonTarif);
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
+        MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
+
+        mApiService.createField(token, mName, mDesc, mIdVenue,
+                mGrassType,
+                mFieldType, sizeField,
+                tariff, partImage, null).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    progressDialog.dismiss();
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        if (jsonObject.getString("status").equals("Success")){
+//                            Toast.makeText(mContext, "BERHASIL", Toast.LENGTH_SHORT).show();
+                            String message = jsonObject.getString("message");
+                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(mContext, FieldActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else {
+//                            Toast.makeText(mContext, "Add Field Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.d("onFailure", t.getMessage());
+            }
+        });*/
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1265,6 +1350,8 @@ public class AddFieldActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    fileImagePath = "";
                 }
             } else {
                 if (imageFile!=null){
@@ -1273,11 +1360,10 @@ public class AddFieldActivity extends AppCompatActivity {
                     mResultPhoto.setText(result);
 //                Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d("DEBUG PHOTO : ", "WHERE HIS PATH?");
+                    imageFile = null;
                 }
             }
         }
-
 //        if (requestCode == REQUEST_GET_IMAGE && resultCode == RESULT_OK){
 //            Uri imageUri = data.getData();
 //            String otherPathUri = getPathFromUri(imageUri);
