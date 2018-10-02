@@ -54,6 +54,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,20 +72,17 @@ import retrofit2.Response;
 public class AddFieldActivity extends AppCompatActivity {
 
     private static final int REQUEST_SELECT_IMAGE = 1;
-    private static final int REQUEST_GET_IMAGE = 2;
-    private static final int GET_IMAGE_REQUEST = 3;
     private String jsonTarif;
     private RelativeLayout tarifRelativeLayout;
 
     EditText mFieldNameEditText, mDescriptionFieldEditText
-            , mFieldSizeEditText, mFieldCostEditText, mFieldCostEditText2, mTitleFieldEditText
-            , mTitleFieldEditText2;
-    Spinner mFromDaySpinner, mUntilDaySpinner, mFromDay2Spinner, mUntilDay2Spinner, mFieldTypeSpinner, mGrassTypeSpinner,
-            mFromHourSpinner, mUntilHourSpinner, mFromHourSpinner2, mUntilHourSpinner2, spinnerVenue;
+            , mFieldSizeEditText, mFieldCostEditText;
+    Spinner mFromDaySpinner, mUntilDaySpinner, mFieldTypeSpinner, mGrassTypeSpinner,
+            mFromHourSpinner, mUntilHourSpinner, spinnerVenue;
     CheckBox mFacilitiesCheckBox;
-    TextView mResultPhoto, mResultOtherPhoto, mResultOtherPhoto2, mEmptyViewTarif, mTextViewVenue;
+    TextView mResultPhoto, mEmptyViewTarif, mTextViewVenue;
     Button mBtnSubmit, mBtnCancel, addOtherTarif;
-    ImageView mAddImageView, mAddOtherImageView, mAddOtherImageView2;
+    ImageView mAddImageView;
     String id, fieldId;
     String fileImagePath = "";
 
@@ -102,8 +100,8 @@ public class AddFieldActivity extends AppCompatActivity {
     BaseApiService mApiService;
     AppSession mAppSession;
 
-    private int mStartDay, mEndDay, mStartDay2, mEndDay2, mFieldType, mGrassType
-            , mStartHour, mEndHour, mStartHour2, mEndHour2, mIdVenue;
+    private int mStartDay, mEndDay, mFieldType, mGrassType
+            , mStartHour, mEndHour, mIdVenue;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -165,6 +163,7 @@ public class AddFieldActivity extends AppCompatActivity {
         }
         if(isStringEmpty(fileImagePath)){
             status = false;
+            popupAllert("Gambar belum dipilih");
         }
 
         return status;
@@ -173,6 +172,18 @@ public class AddFieldActivity extends AppCompatActivity {
 
     private boolean isStringEmpty(String x){
         return x.equals("");
+    }
+
+    public void popupAllert(String alert) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_title_error)
+                .setMessage(alert)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
+
     }
 
     private void detailField(String requestID){
@@ -199,8 +210,15 @@ public class AddFieldActivity extends AppCompatActivity {
                             String descField = jsonObject.getString("description");
                             String costField = "";
                             String venueID = jsonObject.getString("field_owner_id");
+
                             int grassID = Integer.parseInt(jsonObject.getString("grass_type_id"));
-                            int fieldID = Integer.parseInt(jsonObject.getString("field_type_id"));
+                            int fieldID = 0;
+                            try {
+                                fieldID = Integer.parseInt(jsonObject.getString("field_type_id"));
+                            } catch (NumberFormatException e){
+                                e.printStackTrace();
+                                fieldID = 1;
+                            }
 
                             JSONArray jsonArray = jsonObject.getJSONArray("field_tariffs");
                             for (int i=0; i<jsonArray.length(); i++){
@@ -208,9 +226,13 @@ public class AddFieldActivity extends AppCompatActivity {
                                 costField = jsonObject.getString("tariff");
                             }
 
-                            for (int i=0; i<mGrassTypeSpinner.getCount(); i++){
-                                if(mGrassTypeSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(typeGrass)){
-                                    mGrassTypeSpinner.setSelection(i, false);
+                            if (String.valueOf(grassID) == null){
+                                mGrassTypeSpinner.setSelection(1, false);
+                            } else {
+                                for (int i=0; i<mGrassTypeSpinner.getCount(); i++){
+                                    if(mGrassTypeSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(typeGrass)){
+                                        mGrassTypeSpinner.setSelection(i, false);
+                                    }
                                 }
                             }
 
@@ -245,14 +267,6 @@ public class AddFieldActivity extends AppCompatActivity {
                 Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private boolean isNameFieldValid(String nameField){
-        return nameField.equals("");
-    }
-
-    private boolean isDecsVenueValid(String descField){
-        return descField.equals("");
     }
 
     @SuppressLint("SetTextI18n")
@@ -345,29 +359,7 @@ public class AddFieldActivity extends AppCompatActivity {
             }
         });
 
-//        mAddOtherImageView = (ImageView) findViewById(R.id.img_other_photo);
-//        mAddOtherImageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intentGallery = new Intent(Intent.ACTION_PICK);
-//                intentGallery.setType("image/*");
-//                if (intentGallery.resolveActivity(getPackageManager()) != null){
-//                    startActivityForResult(Intent.createChooser(intentGallery, "SELECT IMAGE"),REQUEST_GET_IMAGE);
-//                }
-//            }
-//        });
 
-//        mAddOtherImageView2 = (ImageView) findViewById(R.id.img_other_photo2);
-//        mAddOtherImageView2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intentGallery = new Intent(Intent.ACTION_PICK);
-//                intentGallery.setType("image/*");
-//                if (intentGallery.resolveActivity(getPackageManager()) != null){
-//                    startActivityForResult(Intent.createChooser(intentGallery, "SELECT IMAGE"), GET_IMAGE_REQUEST);
-//                }
-//            }
-//        });
         mFieldTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -408,41 +400,12 @@ public class AddFieldActivity extends AppCompatActivity {
             }
         });
 
-//        addOtherTarif.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ArrayList<String> layoutTarif = new ArrayList();
-//                LinearLayout linearLayout = new LinearLayout(mContext);
-//                linearLayout.setOrientation(LinearLayout.VERTICAL);
-//                linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-//
-//                for (int i=0; i<layoutTarif.size(); i++){
-//                    view = LayoutInflater.from(mContext).inflate(R.layout.list_tariff, linearLayout);
-//                    mUntilHourSpinner = (Spinner) view.findViewById(R.id.et_until_hour);
-//                    mFromHourSpinner = (Spinner) view.findViewById(R.id.et_from_hour);
-//                    mFromDaySpinner = (Spinner) view.findViewById(R.id.spinner_from_day);
-//                    mUntilDaySpinner = (Spinner) view.findViewById(R.id.spinner_until_day);
-//                    mFieldCostEditText = (EditText) view.findViewById(R.id.et_cost_field);
-//
-//                    linearLayout.addView(view);
-//                    Toast.makeText(mContext, "Layout Ditambahkan", Toast.LENGTH_SHORT).show();
-//                }
-//                Toast.makeText(mContext, "Layout Gagal Ditambahkan", Toast.LENGTH_SHORT).show();
-//
-//            }
-//        });
 
-//        setupSpinnerFromDay();
-//        setupSpinnerUntilDay();
-//        setupSpinnerFromDay2();
-//        setupSpinnerUntilDay2();
         setupSpinnerTypeGrass();
         setupSpinnerTypeField();
-//        setSpinnerFromHour();
-//        setSpinnerEndHour();
+
         setSpinnerVenue();
-//        setSpinnerFromHour2();
-//        setSpinnerEndHour2();
+
     }
 
     private void setSpinnerFromHour() {
@@ -684,177 +647,6 @@ public class AddFieldActivity extends AppCompatActivity {
         });
     }
 
-//    private void setSpinnerFromHour2() {
-//
-//        ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
-//                R.array.startHour, R.layout.spinner_jadwal);
-//
-//        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-//
-//        mFromHourSpinner2.setAdapter(fromDaySpinner);
-//        mFromHourSpinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                String selection = (String) adapterView.getItemAtPosition(i);
-//                if (!TextUtils.isEmpty(selection)){
-//                    if (selection.equals("-- Pilih Jam --")){
-//                        Toast.makeText(mContext, "Pilih Jam Terlebih Dahulu", Toast.LENGTH_SHORT).show();;
-//                    }
-//                    if (selection.equals("0")){
-//                        mStartHour2 = 0;
-//                        Log.d("START HOUR ", mStartHour2 + "");
-//                    } else if (selection.equals("1")){
-//                        mStartHour2 = 1; //monday
-//                    } else if(selection.equals("2")){
-//                        mStartHour2 = 2;
-//                    } else if (selection.equals("3")){
-//                        mStartHour2 = 3;
-//                    } else if (selection.equals("4")){
-//                        mStartHour2 = 4;
-//                    } else if (selection.equals("5")){
-//                        mStartHour2 = 5;
-//                    } else if (selection.equals("6")){
-//                        mStartHour2 = 6;
-//                    } else if (selection.equals("7")){
-//                        mStartHour2 = 7;
-//                    } else if (selection.equals("8")){
-//                        mStartHour2 = 8;
-//                    } else if (selection.equals("9")){
-//                        mStartHour2 = 9;
-//                    } else if (selection.equals("10")){
-//                        mStartHour2 = 10;
-//                    } else if (selection.equals("11")){
-//                        mStartHour2 = 11;
-//                    } else if (selection.equals("12")){
-//                        mStartHour2 = 12;
-//                    } else if (selection.equals("13")){
-//                        mStartHour2 = 13;
-//                    } else if (selection.equals("14")){
-//                        mStartHour2 = 14;
-//                    } else if (selection.equals("15")){
-//                        mStartHour2 = 15;
-//                    } else if (selection.equals("16")){
-//                        mStartHour2 = 16;
-//                    } else if (selection.equals("17")){
-//                        mStartHour2 = 17;
-//                    } else if (selection.equals("18")){
-//                        mStartHour2 = 18;
-//                    } else if (selection.equals("19")){
-//                        mStartHour2 = 19;
-//                    } else if (selection.equals("20")){
-//                        mStartHour2 = 20;
-//                    } else if (selection.equals("21")){
-//                        mStartHour2 = 21;
-//                    } else if (selection.equals("221")){
-//                        mStartHour2 = 22;
-//                    } else if (selection.equals("23")){
-//                        mStartHour2 = 23;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//                Toast.makeText(mContext, "Hari belum dipilih", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-////        mFromHourEditText.setInputType(InputType.TYPE_NULL);
-////        mFromHourEditText.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View view) {
-////                final Calendar calendar = Calendar.getInstance();
-////                int hour = calendar.get(Calendar.HOUR);
-////                int minute = calendar.get(Calendar.MINUTE);
-////                //time picker dialog
-////                timePickerDialog = new TimePickerDialog(mContext, android.R.style.Theme_Holo_Dialog, new TimePickerDialog.OnTimeSetListener() {
-////                    @SuppressLint("DefaultLocale")
-////                    @Override
-////                    public void onTimeSet(TimePicker timePicker, int sHour, int sMinute) {
-////                        mFromHourEditText.setText(String.format("%02d:%02d", sHour, sMinute));
-////                    }
-////                }, hour, minute, true);
-////                timePickerDialog.setIcon(R.drawable.akun_icon);
-////                timePickerDialog.setTitle("Please Select Time");
-////                timePickerDialog.show();
-////            }
-////        });
-//    }
-//
-//    private void setSpinnerEndHour2() {
-//
-//        ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
-//                R.array.endHour, R.layout.spinner_jadwal);
-//
-//        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-//
-//        mUntilHourSpinner2.setAdapter(fromDaySpinner);
-//        mUntilHourSpinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                String selection = (String) adapterView.getItemAtPosition(i);
-//                if (!TextUtils.isEmpty(selection)) {
-//                    if (selection.equals("-- Pilih Jam --")) {
-//                        Toast.makeText(mContext, "Pilih Jam Terlebih Dahulu", Toast.LENGTH_SHORT).show();
-//                    }
-//                    if (selection.equals("1")) {
-//                        mEndHour2 = 1; //monday
-//                    } else if (selection.equals("2")) {
-//                        mEndHour2 = 2;
-//                    } else if (selection.equals("3")) {
-//                        mEndHour2 = 3;
-//                    } else if (selection.equals("4")) {
-//                        mEndHour2 = 4;
-//                    } else if (selection.equals("5")) {
-//                        mEndHour2 = 5;
-//                    } else if (selection.equals("6")) {
-//                        mEndHour2 = 6;
-//                    } else if (selection.equals("7")) {
-//                        mEndHour2 = 7;
-//                    } else if (selection.equals("8")) {
-//                        mEndHour2 = 8;
-//                    } else if (selection.equals("9")) {
-//                        mEndHour2 = 9;
-//                    } else if (selection.equals("10")) {
-//                        mEndHour2 = 10;
-//                    } else if (selection.equals("11")) {
-//                        mEndHour2 = 11;
-//                    } else if (selection.equals("12")) {
-//                        mEndHour2 = 12;
-//                    } else if (selection.equals("13")) {
-//                        mEndHour2 = 13;
-//                    } else if (selection.equals("14")) {
-//                        mEndHour2 = 14;
-//                    } else if (selection.equals("15")) {
-//                        mEndHour2 = 15;
-//                    } else if (selection.equals("16")) {
-//                        mEndHour2 = 16;
-//                    } else if (selection.equals("17")) {
-//                        mEndHour2 = 17;
-//                    } else if (selection.equals("18")) {
-//                        mEndHour2 = 18;
-//                    } else if (selection.equals("19")) {
-//                        mEndHour2 = 19;
-//                    } else if (selection.equals("20")) {
-//                        mEndHour2 = 20;
-//                    } else if (selection.equals("21")) {
-//                        mEndHour2 = 21;
-//                    } else if (selection.equals("221")) {
-//                        mEndHour2 = 22;
-//                    } else if (selection.equals("23")) {
-//                        mEndHour2 = 23;
-//                    } else if (selection.equals("24")) {
-//                        mEndHour2 = 24;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//                Toast.makeText(mContext, "Hari belum dipilih", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
     private void setupSpinnerFromDay(){
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.day, R.layout.spinner_jadwal);
@@ -984,79 +776,7 @@ public class AddFieldActivity extends AppCompatActivity {
         );
     }
 
-//    private void setupSpinnerFromDay2(){
-//        ArrayAdapter fromDay2Spinner = ArrayAdapter.createFromResource(mContext,
-//                R.array.day, R.layout.spinner_jadwal);
-//
-//        fromDay2Spinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-//
-//        mFromDay2Spinner.setAdapter(fromDay2Spinner);
-//        mFromDay2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                String selection = (String) adapterView.getItemAtPosition(i);
-//                if (!TextUtils.isEmpty(selection)){
-//                    if (selection.equals(getString(R.string.monday))){
-//                        mStartDay2 = 1; //monday
-//                    } else if(selection.equals(getString(R.string.tuesday))){
-//                        mStartDay2 = 2;
-//                    } else if (selection.equals(getString(R.string.wednesday))){
-//                        mStartDay2 = 3;
-//                    } else if (selection.equals(getString(R.string.thursday))){
-//                        mStartDay2 = 4;
-//                    } else if (selection.equals(getString(R.string.friday))){
-//                        mStartDay2 = 5;
-//                    } else if (selection.equals(getString(R.string.saturday))){
-//                        mStartDay2 = 6;
-//                    } else if (selection.equals(getString(R.string.sunday))){
-//                        mStartDay2 = 0;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//                Toast.makeText(mContext, "Hari belum dipilih", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-//
-//    private void setupSpinnerUntilDay2(){
-//        ArrayAdapter untilDay2Spinner = ArrayAdapter.createFromResource(mContext,
-//                R.array.day, R.layout.spinner_jadwal);
-//
-//        untilDay2Spinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-//
-//        mUntilDay2Spinner.setAdapter(untilDay2Spinner);
-//        mUntilDay2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                String selection = (String) adapterView.getItemAtPosition(i);
-//                if (!TextUtils.isEmpty(selection)){
-//                    if (selection.equals(getString(R.string.monday))){
-//                        mEndDay2 = 1; //monday
-//                    } else if(selection.equals(getString(R.string.tuesday))){
-//                        mEndDay2 = 2;
-//                    } else if (selection.equals(getString(R.string.wednesday))){
-//                        mEndDay2 = 3;
-//                    } else if (selection.equals(getString(R.string.thursday))){
-//                        mEndDay = 4;
-//                    } else if (selection.equals(getString(R.string.friday))){
-//                        mEndDay2 = 5;
-//                    } else if (selection.equals(getString(R.string.saturday))){
-//                        mEndDay2 = 6;
-//                    } else if (selection.equals(getString(R.string.sunday))){
-//                        mEndDay2 = 0;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//                Toast.makeText(mContext, "Hari belum dipilih", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+
 
     private void setupSpinnerTypeGrass(){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
@@ -1290,14 +1010,14 @@ public class AddFieldActivity extends AppCompatActivity {
 
         File image = null;
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
-            if (fileImagePath == null){
-                image = new File("");
+            if (fileImagePath == null && fileImagePath.equals("")){
+                image = null;
             } else {
                 image = new File(fileImagePath);
             }
         } else {
             if (imageFile == null){
-                image = new File("");
+                image = null;
             } else {
                 image = new File(imageFile.getPath());
             }
@@ -1311,20 +1031,28 @@ public class AddFieldActivity extends AppCompatActivity {
         Log.d("Name Field ", mFieldNameEditText.getText().toString() + " ");
         Log.d("Desc Field ", mDescriptionFieldEditText.getText().toString() + " ");
 
-        /*RequestBody mName = RequestBody.create(MultipartBody.FORM, mFieldNameEditText.getText().toString());
+        RequestBody idField = RequestBody.create(MultipartBody.FORM, fieldId);
+        RequestBody mName = RequestBody.create(MultipartBody.FORM, mFieldNameEditText.getText().toString());
         RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
         RequestBody mDesc = RequestBody.create(MultipartBody.FORM, mDescriptionFieldEditText.getText().toString());
 //        RequestBody typeField = RequestBody.create(MultipartBody.FORM, mFieldTypeSpinner.getSelectedItemPosition());
         RequestBody sizeField = RequestBody.create(MultipartBody.FORM, mFieldSizeEditText.getText().toString());
-        RequestBody tariff = RequestBody.create(MultipartBody.FORM, stringJsonTarif);
+//        RequestBody tariff = RequestBody.create(MultipartBody.FORM, stringJsonTarif);
 
-        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
-        MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
+        MultipartBody.Part partImage = null;
+        if (image != null){
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
+            partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
+        } else {
+            RequestBody file = RequestBody.create(MediaType.parse(""), "");
+            partImage = MultipartBody.Part.createFormData("picture", null, file);
+        }
 
-        mApiService.createField(token, mName, mDesc, mIdVenue,
-                mGrassType,
-                mFieldType, sizeField,
-                tariff, partImage, null).enqueue(new Callback<ResponseBody>() {
+//        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
+//        MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
+
+        mApiService.updateField(fieldId, token, mName, mDesc, mIdVenue, mGrassType,
+                mFieldType, sizeField,null, partImage, null).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()){
@@ -1353,13 +1081,13 @@ public class AddFieldActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 Log.d("onFailure", t.getMessage());
             }
-        });*/
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_SELECT_IMAGE && resultCode == RESULT_OK){
+        if (requestCode == REQUEST_SELECT_IMAGE && resultCode == RESULT_OK && null != data){
             imageFile = data.getData();
             String[] projection = {MediaStore.Images.Media.DATA};
 
@@ -1368,6 +1096,9 @@ public class AddFieldActivity extends AppCompatActivity {
                 if (cursor!=null){
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageFile);
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
                         cursor.moveToFirst();
                         int index = cursor.getColumnIndex(projection[0]);
                         fileImagePath = cursor.getString(index);
@@ -1375,7 +1106,6 @@ public class AddFieldActivity extends AppCompatActivity {
                         File file = new File(fileImagePath);
                         String hasil = file.getName();
                         mResultPhoto.setText(hasil);
-
                         cursor.close();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -1385,35 +1115,22 @@ public class AddFieldActivity extends AppCompatActivity {
                 }
             } else {
                 if (imageFile!=null){
-                    File file = new File(imageFile.getPath());
-                    String result = file.getName();
-                    mResultPhoto.setText(result);
+                    try {
+                        File file = new File(imageFile.getPath());
+                        String result = file.getName();
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageFile);
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
+                        mResultPhoto.setText(result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 //                Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
                 } else {
-                    imageFile = null;
+                    imageFile = Uri.EMPTY;
                 }
             }
         }
-//        if (requestCode == REQUEST_GET_IMAGE && resultCode == RESULT_OK){
-//            Uri imageUri = data.getData();
-//            String otherPathUri = getPathFromUri(imageUri);
-//
-//            if (otherPathUri!=null){
-//                File file = new File(otherPathUri);
-//                String result = file.getName();
-//                mResultOtherPhoto.setText(result);
-//            }
-//        }
-//
-//        if (requestCode == GET_IMAGE_REQUEST && resultCode == RESULT_OK){
-//            Uri imageUri = data.getData();
-//            String otherPathUri = getPathFromUri(imageUri);
-//
-//            if (otherPathUri!=null){
-//                File file = new File(otherPathUri);
-//                String result = file.getName();
-//                mResultOtherPhoto2.setText(result);
-//            }
-//        }
     }
 }

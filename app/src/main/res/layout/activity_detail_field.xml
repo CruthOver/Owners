@@ -51,10 +51,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
+
+                    android:layout_marginLeft="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mulai dari"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_white"
+                    android:textSize="16sp"/>
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Rp. "
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginLeft="8dp"
                     android:textSize="12sp"
                     android:gravity="top"
                     android:textColor="@color/text_white"/>
@@ -249,6 +258,18 @@
                 android:textColor="@color/text_white"
                 android:layout_marginBottom="16dp"/>
             <Button
+                android:id="@+id/edit_tarif"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="36dp"
+                android:layout_marginRight="36dp"
+                android:layout_marginBottom="16dp"
+                android:textSize="16sp"
+                android:text="Edit Tarif"
+                android:backgroundTint="@color/text_color"
+                android:textStyle="bold"
+                tools:targetApi="lollipop" />
+            <Button
                 android:id="@+id/sewa_lapangan_bayar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -258,7 +279,8 @@
                 android:textSize="16sp"
                 android:text="Atur Jadwal"
                 android:backgroundTint="@color/text_color"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools:targetApi="lollipop" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

@@ -77,7 +77,6 @@ public class JadwalActivity extends AppCompatActivity {
         listView.setAdapter(jadwalAdapter);
 
         jadwal = new ArrayList<>();
-
         mJadwal = new Jadwal();
 
         Bundle bundle = getIntent().getExtras();
