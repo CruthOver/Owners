@@ -13,4 +13,5 @@
     <color name="textHint">#18872F</color>
     <color name="line">#D6D6D6</color>
     <color name="text_kuning">#FBCA11</color>
+    <color name="text_box">#D6EAF8</color>
 </resources>

@@ -151,6 +151,10 @@ public class MainActivity extends AppCompatActivity
             fragment = new TarikDanaFragment();
             getSupportActionBar().setTitle("TARIK DANA");
         }
+        else if (id == R.id.nav_transaksi) {
+            fragment = new TransaksiFragment();
+            getSupportActionBar().setTitle("Transaksi");
+        }
 //        else if (id == R.id.nav_slideshow) {
 //
 //        } else if (id == R.id.nav_manage) {
