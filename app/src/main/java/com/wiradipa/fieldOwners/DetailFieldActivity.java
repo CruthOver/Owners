@@ -35,7 +35,7 @@ public class DetailFieldActivity extends AppCompatActivity {
 
     TextView mDetailHarga, mSizeField, mDescField, mTypeField, mGrassType;
     private ImageView iv;
-    Button mBtnSewa;
+    Button mBtnSewa, mBtnEditTarif;
 
     String id;
 
@@ -83,6 +83,17 @@ public class DetailFieldActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        mBtnEditTarif = (Button) findViewById(R.id.edit_tarif);
+        mBtnEditTarif.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent;
+                intent = new Intent(mContext, ListEditTarif.class);
+                intent.putExtra("fieldId", id);
+                startActivity(intent);
+            }
+        });
     }
 
     private void detailField(){
@@ -116,7 +127,7 @@ public class DetailFieldActivity extends AppCompatActivity {
                             mSizeField.setText(sizeField);
                             mGrassType.setText(typeGrass);
                             mTypeField.setText(typeField);
-                            mDetailHarga.setText("Mulai dari : " + costField);
+                            mDetailHarga.setText(costField);
                             mDescField.setText(descField);
                         }
                     } catch (IOException | JSONException e) {

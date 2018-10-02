@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView mEmailTv, mUsernameTv;
+    Button  mLogout;
 
     AppSession mAppSession;
     Context mContext;
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         mEmailTv = (TextView) headerView.findViewById(R.id.email);
         mUsernameTv= (TextView) headerView.findViewById(R.id.username);
+        mLogout = (Button) findViewById(R.id.logout);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame_container, new BerandaFragment());
@@ -74,6 +77,29 @@ public class MainActivity extends AppCompatActivity
 
         mEmailTv.setText(mAppSession.getData(AppSession.EMAIL));
         mUsernameTv.setText(mAppSession.getData(AppSession.USERNAME));
+        mLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog dialogBuilder = new AlertDialog.Builder(mContext).
+                        setTitle("Logout").setMessage("Anda Yakin Ingin Logout ?").
+                        setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }).setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                signOutOwner();
+                                mAppSession.clearSession();
+                                Intent intent = new Intent(mContext, LoginActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                finish();
+                                startActivity(intent);
+                            }
+                        }).show();
+            }
+        });
     }
 
     @Override
@@ -102,24 +128,6 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            AlertDialog dialogBuilder = new AlertDialog.Builder(mContext).
-                    setTitle("Logout").setMessage("Anda Yakin Ingin Logout ?").
-                    setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    }).setPositiveButton("Ya", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    signOutOwner();
-                    mAppSession.clearSession();
-                    Intent intent = new Intent(mContext, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    finish();
-                    startActivity(intent);
-                }
-            }).show();
             return true;
         }
 

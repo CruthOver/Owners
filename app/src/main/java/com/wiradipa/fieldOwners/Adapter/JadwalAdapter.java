@@ -50,7 +50,6 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.ViewHolder
 
     public ArrayList<Jadwal> listJadwal;
     Context mContext;
-    int toogle = 0;
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 

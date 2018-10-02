@@ -25,8 +25,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".LoginActivity">
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -82,24 +81,28 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.LoginActivity" />
         </activity>
-        <activity android:name=".AddFieldActivity"
+        <activity
+            android:name=".AddFieldActivity"
             android:label="Tambah Lapangan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.FieldActivity" />
         </activity>
-        <activity android:name=".DetailVenueActivity"
+        <activity
+            android:name=".DetailVenueActivity"
             android:label="Detail Venue">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.VenueActivity" />
         </activity>
-        <activity android:name=".DetailFieldActivity"
+        <activity
+            android:name=".DetailFieldActivity"
             android:label="Detail Lapangan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.FieldActivity" />
         </activity>
+        <activity android:name=".ListEditTarif"></activity>
     </application>
 
 </manifest>

@@ -60,15 +60,19 @@ public interface BaseApiService {
     Call<ResponseBody> formEditField(@Query("auth_token") String token,
                                      @Path("id") String id);
 
-    @FormUrlEncoded
-    @PUT("fields")
-    Call<ResponseBody> updateField(@Field("auth_token") String token,
-                                   @Field("name") String name,
-                                   @Field("description") String description,
-                                   @Field("field_owner_id") String fieldOwnerID,
-                                   @Field("grass_type_id") String grassTypeID,
-                                   @Field("pitch_size") String pitchSize,
-                                   @Field("picture") String picture);
+    @Multipart
+    @PUT("fields/{id}")
+    Call<ResponseBody> updateField(@Path("id") String id,
+                                   @Part("auth_token") RequestBody token,
+                                   @Part("name") RequestBody name,
+                                   @Part("description") RequestBody description,
+                                   @Part("field_owner_id") int fieldOwnerID,
+                                   @Part("grass_type_id") int grassTypeID,
+                                   @Part("field_type_id") int fieldTypeID,
+                                   @Part("pitch_size") RequestBody pitchSize,
+                                   @Part("field_tariffs") RequestBody fieldTarif,
+                                   @Part MultipartBody.Part picture,
+                                   @Part MultipartBody.Part title);
 
     @Multipart
     @POST("fields")
@@ -88,8 +92,9 @@ public interface BaseApiService {
                                      @Query("auth_token") String token);
 
     @Multipart
-    @PUT("field_owners")
-    Call<ResponseBody> updateVenue(@Part("auth_token") RequestBody token,
+    @PUT("field_owners/{id}")
+    Call<ResponseBody> updateVenue(@Path("id") String id,
+                                   @Part("auth_token") RequestBody token,
                                    @Part("name") RequestBody name,
                                    @Part("description") RequestBody description,
                                    @Part("address") RequestBody address,
