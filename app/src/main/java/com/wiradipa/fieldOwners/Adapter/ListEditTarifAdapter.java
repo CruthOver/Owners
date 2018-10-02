@@ -3,6 +3,7 @@ package com.wiradipa.fieldOwners.Adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,11 +38,13 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
         TextView startHour;
         TextView endHour;
         TextView cost;
+        TextView day;
         public ViewHolder(View itemView) {
             super(itemView);
             startHour = (TextView) itemView.findViewById(R.id.startHour);
             endHour = (TextView) itemView.findViewById(R.id.endHour);
             cost = (TextView) itemView.findViewById(R.id.tv_harga);
+            day = (TextView) itemView.findViewById(R.id.tv_day);
         }
     }
 
@@ -64,6 +67,7 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
             ((ViewHolder) viewHolder).startHour.setText(editTarif.mStartHour);
             ((ViewHolder) viewHolder).endHour.setText(editTarif.mEndHour);
             ((ViewHolder) viewHolder).cost.setText(editTarif.mHarga);
+            ((ViewHolder) viewHolder).day.setText(editTarif.mDay);
         }
     }
 
@@ -73,17 +77,52 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
     }
 
     public void ParsingData(JSONArray dataJsonArray){
+        listEditTarifs.clear();
         try {
             for (int i=0; i<dataJsonArray.length(); i++){
                 JSONObject jsonObject = dataJsonArray.getJSONObject(i);
                 ListEditTarif jsonClass = new ListEditTarif();
+
 
                 jsonClass.mDay = jsonObject.getString("wday");
                 jsonClass.mStartHour = jsonObject.getString("start_hour");
                 jsonClass.mEndHour = jsonObject.getString("end_hour");
                 jsonClass.mHarga = jsonObject.getString("tariff");
                 listEditTarifs.add(jsonClass);
+                Log.d("arrayContent", jsonClass.mDay + " "
+                        + jsonClass.mStartHour + " "
+                        + jsonClass.mEndHour + " "
+                        + jsonClass.mHarga + " ");
             }
+            Log.d("arraySize", String.valueOf(dataJsonArray.length()));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void ParsingData(JSONArray dataJsonArray, String day){
+        listEditTarifs.clear();
+        try {
+            for (int i=0; i<dataJsonArray.length(); i++){
+                JSONObject jsonObject = dataJsonArray.getJSONObject(i);
+                ListEditTarif jsonClass = new ListEditTarif();
+
+                if(jsonObject.getString("wday").equalsIgnoreCase(day)){
+                    jsonClass.mDay = jsonObject.getString("wday");
+                    jsonClass.mStartHour = jsonObject.getString("start_hour");
+                    jsonClass.mEndHour = jsonObject.getString("end_hour");
+                    jsonClass.mHarga = jsonObject.getString("tariff");
+                    listEditTarifs.add(jsonClass);
+                    Log.d("arrayContent", jsonClass.mDay + " "
+                            + jsonClass.mStartHour + " "
+                            + jsonClass.mEndHour + " "
+                            + jsonClass.mHarga + " ");
+                }
+
+            }
+            Log.d("arraySize", String.valueOf(dataJsonArray.length()));
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

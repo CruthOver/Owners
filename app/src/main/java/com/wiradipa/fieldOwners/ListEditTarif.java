@@ -99,22 +99,29 @@ public class ListEditTarif extends AppCompatActivity {
                 String selection = (String) adapterView.getItemAtPosition(i);
                 if (!TextUtils.isEmpty(selection)){
                     if (selection.equals(getString(R.string.optionDay))){
-                        Toast.makeText(mContext, "Select Open Day", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Silahkan Pilih Hari", Toast.LENGTH_SHORT).show();
                     }
                     if (selection.equals(getString(R.string.monday))){
                         mStartDay = 1; //monday
+                        getDataTarif("Senin");
                     } else if(selection.equals(getString(R.string.tuesday))){
                         mStartDay = 2; //tuesday
+                        getDataTarif("Selasa");
                     } else if (selection.equals(getString(R.string.wednesday))){
                         mStartDay = 3; //wednesday
+                        getDataTarif("Rabu");
                     } else if (selection.equals(getString(R.string.thursday))){
                         mStartDay = 4; //thursday
+                        getDataTarif("Kamis");
                     } else if (selection.equals(getString(R.string.friday))){
                         mStartDay = 5; //friday
+                        getDataTarif("Jumat");
                     } else if (selection.equals(getString(R.string.saturday))){
                         mStartDay = 6; //saturday
+                        getDataTarif("Sabtu");
                     } else if (selection.equals(getString(R.string.sunday))){
                         mStartDay = 0; //sunday
+                        getDataTarif("Minggu");
                     }
                 }
             }
@@ -141,6 +148,42 @@ public class ListEditTarif extends AppCompatActivity {
                         JSONObject data = new JSONObject(response.body().string());
                         if (data.getString("status").equals("Success")){
                             adapter.ParsingData(data.getJSONArray("field_tariffs"));
+                            adapter.notifyDataSetChanged();
+                        }else {
+                            String errorMsg = data.getString("message");
+                            Toast.makeText(mContext, errorMsg, Toast.LENGTH_SHORT).show();
+                            adapter.notifyDataSetChanged();
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                progressDialog.dismiss();
+                Log.e("debug","OnFailure: JadwalError >" + t.toString());
+            }
+        });
+    }
+
+    private void getDataTarif(final String day){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+
+        mApiService.detailField(id).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    progressDialog.dismiss();
+                    try {
+                        JSONObject data = new JSONObject(response.body().string());
+                        if (data.getString("status").equals("Success")){
+                            adapter.ParsingData(data.getJSONArray("field_tariffs"), day);
                             adapter.notifyDataSetChanged();
                         }else {
                             String errorMsg = data.getString("message");
