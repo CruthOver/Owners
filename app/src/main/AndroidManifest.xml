@@ -103,6 +103,7 @@
                 android:value="com.wiradipa.fieldOwners.FieldActivity" />
         </activity>
         <activity android:name=".ListEditTarif"></activity>
+        <activity android:name=".DetailTransaksi" />
     </application>
 
 </manifest>
