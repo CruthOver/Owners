@@ -44,7 +44,7 @@
             android:label="KODEAKTIVASI" />
         <activity
             android:name=".MainActivity"
-            android:label="BERANDAA"
+            android:label="BERANDA"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AddVenueActivity"
@@ -102,8 +102,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.FieldActivity" />
         </activity>
-        <activity android:name=".ListEditTarif"></activity>
-        <activity android:name=".DetailTransaksi" />
+        <activity android:name=".ListEditTarifActivity"
+            android:label="Edit Tarif">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.wiradipa.fieldOwners.DetailFieldActivity" />
+        </activity>
+        <activity android:name=".DetailTransaksi"
+            android:label="Detail Transaksi"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.wiradipa.fieldOwners.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

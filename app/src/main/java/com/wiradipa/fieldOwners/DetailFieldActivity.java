@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-import com.wiradipa.fieldOwners.Adapter.VenueAdapter;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
@@ -89,7 +88,7 @@ public class DetailFieldActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent;
-                intent = new Intent(mContext, ListEditTarif.class);
+                intent = new Intent(mContext, ListEditTarifActivity.class);
                 intent.putExtra("fieldId", id);
                 startActivity(intent);
             }

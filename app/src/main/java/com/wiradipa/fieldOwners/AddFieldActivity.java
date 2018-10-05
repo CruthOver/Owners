@@ -129,7 +129,7 @@ public class AddFieldActivity extends AppCompatActivity {
                     getSupportActionBar().setTitle(R.string.edit_lapangan);
                 }
             }catch (Exception e){
-
+                e.printStackTrace();
             }
 
         }
@@ -161,10 +161,9 @@ public class AddFieldActivity extends AppCompatActivity {
             mFieldSizeEditText.setError(getString(R.string.error_field_required));
             status = false;
         }
-        if(isStringEmpty(fileImagePath)){
-            status = false;
-            popupAllert("Gambar belum dipilih");
-        }
+//        if(isStringEmpty(fileImagePath)){
+//            status = false;
+//        }
 
         return status;
 
@@ -275,30 +274,13 @@ public class AddFieldActivity extends AppCompatActivity {
         mFieldNameEditText = (EditText) findViewById(R.id.et_field_name);
         mDescriptionFieldEditText = (EditText) findViewById(R.id.et_field_description);
         mFieldSizeEditText = (EditText) findViewById(R.id.et_size_field);
-//        mFieldCostEditText = (EditText) findViewById(R.id.et_cost_field);
-
-//        mFieldCostEditText2 = (EditText) findViewById(R.id.tv_cost_field2);
-//        mTitleFieldEditText = (EditText) findViewById(R.id.et_title_field);
-//        mTitleFieldEditText2 = (EditText) findViewById(R.id.et_title_field2);
-//        mFromHourSpinner2 = (Spinner) findViewById(R.id.et_from_hour2);
-//        mUntilHourSpinner2 = (Spinner) findViewById(R.id.et_until_hour2);
-//        mUntilHourSpinner = (Spinner) findViewById(R.id.et_until_hour);
-//        mFromHourSpinner = (Spinner) findViewById(R.id.et_from_hour);
-
-//        mFacilitiesCheckBox = (CheckBox) findViewById(R.id.checkbox_facilities_field);
 
         spinnerVenue = (Spinner) findViewById(R.id.spinner_id_venue);
 
-//        mFromDaySpinner = (Spinner) findViewById(R.id.spinner_from_day);
-//        mUntilDaySpinner = (Spinner) findViewById(R.id.spinner_until_day);
-//        mFromDay2Spinner = (Spinner) findViewById(R.id.spinner_from_day2);
-//        mUntilDay2Spinner = (Spinner) findViewById(R.id.spinner_until_day2);
         mFieldTypeSpinner = (Spinner) findViewById(R.id.spinner_type_field);
         mGrassTypeSpinner = (Spinner) findViewById(R.id.spinner_type_floor);
 
         mResultPhoto = (TextView) findViewById(R.id.tv_photo1);
-//        mResultOtherPhoto =(TextView) findViewById(R.id.other_photo);
-//        mResultOtherPhoto2 = (TextView) findViewById(R.id.other_photo2);
         mEmptyViewTarif = (TextView) findViewById(R.id.empty_tarif_tv);
         mTextViewVenue = (TextView) findViewById(R.id.textVenue);
 
@@ -403,9 +385,7 @@ public class AddFieldActivity extends AppCompatActivity {
 
         setupSpinnerTypeGrass();
         setupSpinnerTypeField();
-
         setSpinnerVenue();
-
     }
 
     private void setSpinnerFromHour() {
@@ -776,8 +756,6 @@ public class AddFieldActivity extends AppCompatActivity {
         );
     }
 
-
-
     private void setupSpinnerTypeGrass(){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setTitle("Proses");
@@ -1010,7 +988,7 @@ public class AddFieldActivity extends AppCompatActivity {
 
         File image = null;
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
-            if (fileImagePath == null && fileImagePath.equals("")){
+            if (fileImagePath == null || fileImagePath.equals("")){
                 image = null;
             } else {
                 image = new File(fileImagePath);
@@ -1094,39 +1072,38 @@ public class AddFieldActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
                 Cursor cursor = getContentResolver().query(imageFile, projection, null, null, null);
                 if (cursor!=null){
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageFile);
-                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
-                        cursor.moveToFirst();
-                        int index = cursor.getColumnIndex(projection[0]);
-                        fileImagePath = cursor.getString(index);
+//                    try {
+//                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageFile);
+//                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+//                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+                    cursor.moveToFirst();
+                    int index = cursor.getColumnIndex(projection[0]);
+                    fileImagePath = cursor.getString(index);
 
-                        File file = new File(fileImagePath);
-                        String hasil = file.getName();
-                        mResultPhoto.setText(hasil);
-                        cursor.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    File file = new File(fileImagePath);
+                    String hasil = file.getName();
+                    mResultPhoto.setText(hasil);
+                    cursor.close();
                 } else {
                     fileImagePath = "";
                 }
             } else {
                 if (imageFile!=null){
-                    try {
-                        File file = new File(imageFile.getPath());
-                        String result = file.getName();
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageFile);
-                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
-                        mResultPhoto.setText(result);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-//                Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
+//                    try {
+//                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageFile);
+//                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+//                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+                    File file = new File(imageFile.getPath());
+                    String result = file.getName();
+                    mResultPhoto.setText(result);
                 } else {
                     imageFile = Uri.EMPTY;
                 }

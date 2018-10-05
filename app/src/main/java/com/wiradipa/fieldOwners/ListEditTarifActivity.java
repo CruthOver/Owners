@@ -34,7 +34,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ListEditTarif extends AppCompatActivity {
+public class ListEditTarifActivity extends AppCompatActivity {
 
     Context mContext;
     BaseApiService mApiService;
@@ -185,47 +185,6 @@ public class ListEditTarif extends AppCompatActivity {
                         if (data.getString("status").equals("Success")){
                             adapter.ParsingData(data.getJSONArray("field_tariffs"), day);
                             adapter.notifyDataSetChanged();
-                        }else {
-                            String errorMsg = data.getString("message");
-                            Toast.makeText(mContext, errorMsg, Toast.LENGTH_SHORT).show();
-                            adapter.notifyDataSetChanged();
-                        }
-                    } catch (JSONException | IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                progressDialog.dismiss();
-                Log.e("debug","OnFailure: JadwalError >" + t.toString());
-            }
-        });
-    }
-
-    private void getDataDayTarif(){
-        final ProgressDialog progressDialog = new ProgressDialog(mContext);
-        progressDialog.setTitle("Proses");
-        progressDialog.setMessage("Tunggu Sebentar");
-        progressDialog.show();
-
-        mApiService.detailField(id).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()){
-                    progressDialog.dismiss();
-                    try {
-                        JSONObject data = new JSONObject(response.body().string());
-                        if (data.getString("status").equals("Success")){
-                            JSONArray dataArray = data.getJSONArray("field_tariffs");
-                            for (int i=0; i<dataArray.length(); i++){
-                                JSONObject jsonObject = dataArray.getJSONObject(i);
-                                String startHour = jsonObject.getString("start_hour");
-                                String endHours = jsonObject.getString("end_hour");
-                                String mDay= jsonObject.getString("wday");
-                            }
                         }else {
                             String errorMsg = data.getString("message");
                             Toast.makeText(mContext, errorMsg, Toast.LENGTH_SHORT).show();

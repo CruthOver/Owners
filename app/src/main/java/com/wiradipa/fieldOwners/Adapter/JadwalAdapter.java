@@ -78,9 +78,8 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
-    public String checkDigit(String number)
-    {
-        return Integer.parseInt(number)<=9?"0"+number:number +".00";
+    public String checkDigit(String number) {
+        return Integer.parseInt(number)<=9?"0"+number+".00":number +".00";
     }
 
     public void onBindViewHolder(final ViewHolder holder, int i) {
