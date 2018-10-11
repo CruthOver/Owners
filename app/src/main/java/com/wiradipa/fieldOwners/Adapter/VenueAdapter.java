@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.wiradipa.fieldOwners.DetailVenueActivity;
 import com.wiradipa.fieldOwners.R;
@@ -94,7 +95,7 @@ public class VenueAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (myVenue!=null){
             ((MyVenueViewHolder) viewHolder).mNameVenue.setText(myVenue.mName);
             ((MyVenueViewHolder) viewHolder).mAddressVenue.setText(myVenue.mAddress);
-            Picasso.with(mContext).load("http://app.lapangbola.com" + myVenue.mPhotoUrl).into(((MyVenueViewHolder) viewHolder).imageVenue);
+            Glide.with(mContext).load("http://app.lapangbola.com" + myVenue.mPhotoUrl).into(((MyVenueViewHolder) viewHolder).imageVenue);
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -115,5 +116,9 @@ public class VenueAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public String getVenueId(int position){
         return listVenue.get(position).mId;
+    }
+
+    public void clear(){
+        listVenue.clear();
     }
 }

@@ -2,7 +2,9 @@ package com.wiradipa.fieldOwners;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -35,26 +37,22 @@ import retrofit2.Response;
 
 public class VenueActivity extends AppCompatActivity {
 
+    TextView mEmptyTextView;
     RecyclerView recyclerView;
     private VenueAdapter mAdapter;
-
-    TextView mEmptyTextView;
 
     Context mContext;
     BaseApiService mApiService;
     AppSession mAppSession;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_venue);
 
-
         mContext = this;
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
-
 
         recyclerView = (RecyclerView) findViewById(R.id.list_venue);
         mEmptyTextView = (TextView) findViewById(R.id.kosong);
@@ -62,11 +60,9 @@ public class VenueActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new VenueAdapter(mContext);
-        recyclerView.setAdapter(mAdapter);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-//                Toast.makeText(mContext, mAdapter.getVenueId(position), Toast.LENGTH_SHORT).show();
                 Intent detailVenue;
                 detailVenue = new Intent(mContext, DetailVenueActivity.class);
                 detailVenue.putExtra("idVenue", mAdapter.getVenueId(position));
@@ -75,15 +71,13 @@ public class VenueActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(View view, int position) {
-//                Toast.makeText(mContext, mAdapter.getVenueId(position), Toast.LENGTH_SHORT).show();
                 Intent detailVenue;
                 detailVenue = new Intent(mContext, DetailVenueActivity.class);
                 detailVenue.putExtra("idVenue", mAdapter.getVenueId(position));
+                detailVenue.putExtra("FLAG", "VenueActivity");
                 startActivity(detailVenue);
             }
         }));
-
-        listVenue();
 
         ImageView add = (ImageView) findViewById(R.id.tambah_venue);
         add.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +104,11 @@ public class VenueActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         if (jsonObject.getString("status").equals("Success")){
                             mAdapter.parsingData(jsonObject.getJSONArray("data"));
+                            if (mAdapter.getItemCount() == 0){
+                                mEmptyTextView.setVisibility(View.VISIBLE);
+                            } else {
+                                recyclerView.setAdapter(mAdapter);
+                            }
                             mAdapter.notifyDataSetChanged();
                         } else {
                             progressDialog.dismiss();
@@ -118,6 +117,20 @@ public class VenueActivity extends AppCompatActivity {
                         }
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
+                    }
+                } else {
+                    switch (response.code()){
+                        case 404:
+                            popupAllert(getString(R.string.server_not_found));
+                            break;
+                        case 500:
+                            popupAllert(getString(R.string.server_error));
+                            break;
+                        case 413:
+                            popupAllert(getString(R.string.error_large));
+                            break;
+                        default:
+                            popupAllert(getString(R.string.unknown_error));
                     }
                 }
             }
@@ -129,5 +142,24 @@ public class VenueActivity extends AppCompatActivity {
                 Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdapter.clear();
+        listVenue();
+    }
+
+    public void popupAllert(String alert) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_title_error)
+                .setMessage(alert)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
+
     }
 }

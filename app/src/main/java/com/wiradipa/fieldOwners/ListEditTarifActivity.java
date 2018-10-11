@@ -157,7 +157,6 @@ public class ListEditTarifActivity extends AppCompatActivity {
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
 

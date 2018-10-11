@@ -31,8 +31,6 @@ public class ListVenue {
         this.name = name;
     }
 
-
-    //to display object as a string in spinner
     @Override
     public String toString() {
         return name;

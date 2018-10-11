@@ -10,10 +10,6 @@ public class ListFacilities {
     @SerializedName("id")
     private int id;
 
-//    @SerializedName("address")
-//    private String address;
-
-
     public ListFacilities(String nama) {
         this.nama = nama;
     }
@@ -26,10 +22,6 @@ public class ListFacilities {
         this.id = id;
     }
 
-//    public void setAddress(String address) {
-//        this.address = address;
-//    }
-
     public String getNama() {
         return nama;
     }
@@ -37,10 +29,6 @@ public class ListFacilities {
     public int getId() {
         return id;
     }
-
-//    public String getAddress() {
-//        return address;
-//    }
 
     @Override
     public String toString() {

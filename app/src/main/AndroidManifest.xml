@@ -65,7 +65,7 @@
             android:label="JADWAL">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.wiradipa.fieldOwners.MainActivity" />
+                android:value="com.wiradipa.fieldOwners.DetailFieldActivity" />
         </activity>
         <activity
             android:name=".VenueActivity"

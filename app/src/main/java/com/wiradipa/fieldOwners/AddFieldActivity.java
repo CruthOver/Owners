@@ -72,20 +72,21 @@ import retrofit2.Response;
 public class AddFieldActivity extends AppCompatActivity {
 
     private static final int REQUEST_SELECT_IMAGE = 1;
-    private String jsonTarif;
+    private int mStartDay, mEndDay, mFieldType, mGrassType
+            , mStartHour, mEndHour, mIdVenue;
+    private String jsonTarif, id, fieldId;
     private RelativeLayout tarifRelativeLayout;
+    private Uri imageFile;
 
     EditText mFieldNameEditText, mDescriptionFieldEditText
             , mFieldSizeEditText, mFieldCostEditText;
     Spinner mFromDaySpinner, mUntilDaySpinner, mFieldTypeSpinner, mGrassTypeSpinner,
             mFromHourSpinner, mUntilHourSpinner, spinnerVenue;
-    CheckBox mFacilitiesCheckBox;
     TextView mResultPhoto, mEmptyViewTarif, mTextViewVenue;
     Button mBtnSubmit, mBtnCancel, addOtherTarif;
     ImageView mAddImageView;
-    String id, fieldId;
     String fileImagePath = "";
-
+    String imagePath = "";
     TimePickerDialog timePickerDialog;
 
     ArrayList<FieldTariff> fieldTarifs;
@@ -93,15 +94,9 @@ public class AddFieldActivity extends AppCompatActivity {
     NonScrollListView listViewTarif;
     TarifAdapter mAdapter;
 
-    private Uri imageFile;
-    private Bitmap bitmap;
-
     Context mContext;
     BaseApiService mApiService;
     AppSession mAppSession;
-
-    private int mStartDay, mEndDay, mFieldType, mGrassType
-            , mStartHour, mEndHour, mIdVenue;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -118,7 +113,6 @@ public class AddFieldActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
             id = bundle.getString("idVenue");
-
             try{
                 fieldId = bundle.getString("fieldID");
                 String flag  = (String) bundle.get("FLAG");
@@ -137,10 +131,8 @@ public class AddFieldActivity extends AppCompatActivity {
         fieldTarifs = new ArrayList<FieldTariff>();
         listViewTarif = (NonScrollListView) findViewById(R.id.list_tariff);
         listViewTarif.setNestedScrollingEnabled(false);
-        //fieldTarifs.add(new FieldTariff(01, 02, 1, 2 , "200.000"));
         mAdapter = new TarifAdapter(mContext, fieldTarifs);
         listViewTarif.setAdapter(mAdapter);
-
     }
 
     private boolean emptyCheck(){
@@ -161,9 +153,18 @@ public class AddFieldActivity extends AppCompatActivity {
             mFieldSizeEditText.setError(getString(R.string.error_field_required));
             status = false;
         }
-//        if(isStringEmpty(fileImagePath)){
-//            status = false;
-//        }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            if (isStringEmpty(fileImagePath)){
+                status = false;
+                popupAllert("Gambar belum dipilih");
+            }
+        } else {
+            if(isStringEmpty(imagePath)){
+                status = false;
+                popupAllert("Gambar belum dipilih");
+            }
+        }
 
         return status;
 
@@ -256,6 +257,20 @@ public class AddFieldActivity extends AppCompatActivity {
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    switch (response.code()){
+                        case 404:
+                            popupAllert(getString(R.string.server_not_found));
+                            break;
+                        case 500:
+                            popupAllert(getString(R.string.server_error));
+                            break;
+                        case 413:
+                            popupAllert(getString(R.string.error_large));
+                            break;
+                        default:
+                            popupAllert(getString(R.string.unknown_error));
+                    }
                 }
             }
 
@@ -263,7 +278,7 @@ public class AddFieldActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "OnFailure: ERROR > "+ t.toString());
                 progressDialog.dismiss();
-                Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                popupAllert("No Internet Connection !!!");
             }
         });
     }
@@ -730,7 +745,6 @@ public class AddFieldActivity extends AppCompatActivity {
                                         if (id !=null){
                                             if (idVenue == Integer.parseInt(id)){
                                                 listVenue.add(new ListVenue(idVenue,nameVenue));
-
                                                 mIdVenue = idVenue;
                                             }
                                         } else{
@@ -745,12 +759,17 @@ public class AddFieldActivity extends AppCompatActivity {
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            progressDialog.dismiss();
+                            popupAllert("Gagal Mengambil Data Tipe Lapangan");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                        progressDialog.dismiss();
+                        Log.d("onFailure", t.getMessage());
+                        popupAllert("No Internet Connection !!!");
                     }
                 }
         );
@@ -776,30 +795,20 @@ public class AddFieldActivity extends AppCompatActivity {
                         listSpinner.add(new ListVenue(typeID, typeName));
                         Log.d("DEBUGGING : ", typeID + " : " + listSpinner);
                     }
-
                     final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<>(mContext, R.layout.spinner_jadwal, listSpinner);
                     adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                     mGrassTypeSpinner.setAdapter(adapter);
-
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                    builder.setTitle(R.string.dialog_title_error);
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            System.exit(0);
-                            finish();
-                        }
-                    });
-                    builder.setMessage("Server Error !!");
-                    AlertDialog alert1 = builder.create();
-                    alert1.show();
+                    progressDialog.dismiss();
+                    popupAllert("Gagal Mengambil Data Tipe Rumput");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
-
+                progressDialog.dismiss();
+                Log.d("onFailure", t.getMessage());
+                popupAllert("No Internet Connection !!!");
             }
         });
     }
@@ -827,29 +836,20 @@ public class AddFieldActivity extends AppCompatActivity {
                         mFieldType = typeID;
                         Log.d("DEBUGGING : ", mFieldType + " : " + listSpinner);
                     }
-
                     final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<>(mContext, R.layout.spinner_jadwal, listSpinner);
                     adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                     mFieldTypeSpinner.setAdapter(adapter);
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                    builder.setTitle(R.string.dialog_title_error);
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            System.exit(0);
-                            finish();
-                        }
-                    });
-                    builder.setMessage("Server Error !!");
-                    AlertDialog alert1 = builder.create();
-                    alert1.show();
+                    progressDialog.dismiss();
+                    popupAllert("Gagal Mengambil Data Tipe Lapangan");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
-
+                progressDialog.dismiss();
+                Log.d("onFailure", t.getMessage());
+                popupAllert("No Internet Connection !!!");
             }
         });
     }
@@ -929,23 +929,20 @@ public class AddFieldActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
                 image = new File(fileImagePath);
             } else {
-                image = new File(imageFile.getPath());
+                image = new File(imagePath);
             }
             RequestBody mName = RequestBody.create(MultipartBody.FORM, mFieldNameEditText.getText().toString());
             RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
             RequestBody mDesc = RequestBody.create(MultipartBody.FORM, mDescriptionFieldEditText.getText().toString());
-    //        RequestBody typeField = RequestBody.create(MultipartBody.FORM, mFieldTypeSpinner.getSelectedItemPosition());
             RequestBody sizeField = RequestBody.create(MultipartBody.FORM, mFieldSizeEditText.getText().toString());
             RequestBody tariff = RequestBody.create(MultipartBody.FORM, stringJsonTarif);
 
             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
-            MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
+            final MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
 
 
-            mApiService.createField(token, mName, mDesc, mIdVenue,
-                    mGrassType,
-                    mFieldType, sizeField,
-                    tariff, partImage, null).enqueue(new Callback<ResponseBody>() {
+            mApiService.createField(token, mName, mDesc, mIdVenue, mGrassType, mFieldType,
+                    sizeField, tariff, partImage, null).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()){
@@ -953,18 +950,36 @@ public class AddFieldActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().string());
                             if (jsonObject.getString("status").equals("Success")){
-//                            Toast.makeText(mContext, "BERHASIL", Toast.LENGTH_SHORT).show();
                                 String message = jsonObject.getString("message");
                                 Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(mContext, FieldActivity.class);
+                                String field = jsonObject.getString("id");
+                                Intent intent = new Intent(mContext, DetailFieldActivity.class);
+                                intent.putExtra("id", field);
+                                intent.putExtra("FLAG", "addField");
                                 startActivity(intent);
                                 finish();
-                            }
-                            else {
-//                            Toast.makeText(mContext, "Add Field Failed", Toast.LENGTH_SHORT).show();
+                            } else {
+                                progressDialog.dismiss();
+                                String messageErr = jsonObject.getString("message");
+                                popupAllert(messageErr);
                             }
                         } catch (JSONException | IOException e) {
                             e.printStackTrace();
+                        }
+                    } else {
+                        progressDialog.dismiss();
+                        switch (response.code()){
+                            case 404:
+                                popupAllert(getString(R.string.server_not_found));
+                                break;
+                            case 500:
+                                popupAllert(getString(R.string.server_error));
+                                break;
+                            case 413:
+                                popupAllert(getString(R.string.error_large));
+                                break;
+                            default:
+                                popupAllert(getString(R.string.unknown_error));
                         }
                     }
                 }
@@ -973,11 +988,10 @@ public class AddFieldActivity extends AppCompatActivity {
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     progressDialog.dismiss();
                     Log.d("onFailure", t.getMessage());
+                    popupAllert("No Internet Connection !!!");
                 }
             });
         }
-
-
     }
 
     private void updateField(){
@@ -1000,22 +1014,11 @@ public class AddFieldActivity extends AppCompatActivity {
                 image = new File(imageFile.getPath());
             }
         }
-        Log.d("PAATTTTHHHHHZZZZ", image +"");
 
-        Log.d("FieldSPINNER ", mIdVenue + "");
-        Log.d("FieldSPINNERTYPE ", mFieldTypeSpinner.getSelectedItemPosition() + mFieldType + "");
-        Log.d("FieldSPINNERGRASS ", mFieldTypeSpinner.getSelectedItemPosition() + mGrassType + "");
-        Log.d("Size Field ", mFieldSizeEditText.getText().toString() + " ");
-        Log.d("Name Field ", mFieldNameEditText.getText().toString() + " ");
-        Log.d("Desc Field ", mDescriptionFieldEditText.getText().toString() + " ");
-
-        RequestBody idField = RequestBody.create(MultipartBody.FORM, fieldId);
         RequestBody mName = RequestBody.create(MultipartBody.FORM, mFieldNameEditText.getText().toString());
         RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
         RequestBody mDesc = RequestBody.create(MultipartBody.FORM, mDescriptionFieldEditText.getText().toString());
-//        RequestBody typeField = RequestBody.create(MultipartBody.FORM, mFieldTypeSpinner.getSelectedItemPosition());
         RequestBody sizeField = RequestBody.create(MultipartBody.FORM, mFieldSizeEditText.getText().toString());
-//        RequestBody tariff = RequestBody.create(MultipartBody.FORM, stringJsonTarif);
 
         MultipartBody.Part partImage = null;
         if (image != null){
@@ -1026,9 +1029,6 @@ public class AddFieldActivity extends AppCompatActivity {
             partImage = MultipartBody.Part.createFormData("picture", null, file);
         }
 
-//        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
-//        MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
-
         mApiService.updateField(fieldId, token, mName, mDesc, mIdVenue, mGrassType,
                 mFieldType, sizeField,null, partImage, null).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -1038,18 +1038,31 @@ public class AddFieldActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         if (jsonObject.getString("status").equals("Success")){
-//                            Toast.makeText(mContext, "BERHASIL", Toast.LENGTH_SHORT).show();
                             String message = jsonObject.getString("message");
                             Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(mContext, FieldActivity.class);
-                            startActivity(intent);
                             finish();
-                        }
-                        else {
-//                            Toast.makeText(mContext, "Add Field Failed", Toast.LENGTH_SHORT).show();
+                        } else {
+                            progressDialog.dismiss();
+                            String messageErr = jsonObject.getString("message");
+                            popupAllert(messageErr);
                         }
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
+                    }
+                } else {
+                    progressDialog.dismiss();
+                    switch (response.code()){
+                        case 404:
+                            popupAllert(getString(R.string.server_not_found));
+                            break;
+                        case 500:
+                            popupAllert(getString(R.string.server_error));
+                            break;
+                        case 413:
+                            popupAllert(getString(R.string.error_large));
+                            break;
+                        default:
+                            popupAllert(getString(R.string.unknown_error));
                     }
                 }
             }
@@ -1058,6 +1071,7 @@ public class AddFieldActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.d("onFailure", t.getMessage());
+                popupAllert("No Internet Connection !!!");
             }
         });
     }
@@ -1093,15 +1107,8 @@ public class AddFieldActivity extends AppCompatActivity {
                 }
             } else {
                 if (imageFile!=null){
-//                    try {
-//                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageFile);
-//                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-//                        bitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-                    File file = new File(imageFile.getPath());
+                    imagePath = imageFile.getPath();
+                    File file = new File(imagePath);
                     String result = file.getName();
                     mResultPhoto.setText(result);
                 } else {

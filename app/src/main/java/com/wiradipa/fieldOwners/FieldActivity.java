@@ -2,7 +2,9 @@ package com.wiradipa.fieldOwners;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -56,21 +58,20 @@ public class FieldActivity extends AppCompatActivity {
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
 
+        mEmptyData = findViewById(R.id.kosong);
         recyclerView = (RecyclerView) findViewById(R.id.list_field);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, OrientationHelper.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new FieldAdapter(mContext);
-
-        mEmptyData = findViewById(R.id.kosong);
-        recyclerView.setAdapter(mAdapter);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Intent detailField;
                 detailField = new Intent(mContext, DetailFieldActivity.class);
                 detailField.putExtra("idField", mAdapter.getFieldId(position));
+                detailField.putExtra("FLAG", "FieldActivity");
                 view.getContext().startActivity(detailField);
             }
 
@@ -83,18 +84,9 @@ public class FieldActivity extends AppCompatActivity {
             }
         }));
 
-//        if (mAdapter.getItemCount() == 0){
-//            mEmptyData.setVisibility(View.VISIBLE);
-//        } else {
-//            recyclerView.setAdapter(mAdapter);
-//        }
-
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
             id = bundle.getString("idVenueDetail");
-            listMyField();
-        } else {
-            listMyFields();
         }
 
         imgAddField = (ImageView) findViewById(R.id.add_field);
@@ -127,16 +119,29 @@ public class FieldActivity extends AppCompatActivity {
                                     if (mAdapter.getItemCount() == 0){
                                         mEmptyData.setVisibility(View.VISIBLE);
                                     } else {
-                                        mEmptyData.setVisibility(View.GONE
-                                        );
+                                        recyclerView.setAdapter(mAdapter);
                                     }
                                     mAdapter.notifyDataSetChanged();
                                 } else {
                                     String errMsg = jsonObject.getString("message");
-                                    Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
+                                    popupAllert(errMsg);
                                 }
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
+                            }
+                        } else {
+                            switch (response.code()){
+                                case 404:
+                                    popupAllert(getString(R.string.server_not_found));
+                                    break;
+                                case 500:
+                                    popupAllert(getString(R.string.server_error));
+                                    break;
+                                case 413:
+                                    popupAllert(getString(R.string.error_large));
+                                    break;
+                                default:
+                                    popupAllert(getString(R.string.unknown_error));
                             }
                         }
                     }
@@ -145,7 +150,7 @@ public class FieldActivity extends AppCompatActivity {
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.e("debug", "OnFailure: ERROR > "+ t.toString());
                         progressDialog.dismiss();
-                        Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                        popupAllert("No Internet Connection !!!");
                     }
                 });
     }
@@ -166,10 +171,15 @@ public class FieldActivity extends AppCompatActivity {
                                 JSONObject jsonObject = new JSONObject(response.body().string());
                                 if (jsonObject.getString("status").equals("Success")){
                                     mAdapter.parsingData(jsonObject.getJSONArray("data"));
+                                    if (mAdapter.getItemCount() == 0){
+                                        mEmptyData.setVisibility(View.VISIBLE);
+                                    } else {
+                                        recyclerView.setAdapter(mAdapter);
+                                    }
                                     mAdapter.notifyDataSetChanged();
                                 } else {
                                     String errMsg = jsonObject.getString("message");
-                                    Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
+                                    popupAllert(errMsg);
                                 }
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
@@ -181,8 +191,30 @@ public class FieldActivity extends AppCompatActivity {
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.e("debug", "OnFailure: ERROR > "+ t.toString());
                         progressDialog.dismiss();
-                        Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                        popupAllert("No Internet Connection !!!");
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdapter.clear();
+        if (id == null){
+            listMyFields();
+        } else {
+            listMyField();
+        }
+    }
+
+    public void popupAllert(String alert) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_title_error)
+                .setMessage(alert)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
     }
 }

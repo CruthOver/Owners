@@ -20,23 +20,26 @@
             android:maxHeight="128dp"
             android:layout_marginBottom="24dp"
             android:maxWidth="128dp"/>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list_venue"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="330dp"/>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/kosong"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tidak Ada Data"
+                android:textColor="@color/text_white"
+                android:textSize="16sp"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_venue"
+                android:layout_width="match_parent"
+                android:layout_height="330dp"/>
+        </RelativeLayout>
 
     </LinearLayout>
-    <TextView
-        android:id="@+id/kosong"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Tidak Ada Data"
-        android:gravity="center"
-        android:textColor="@color/text_white"
-        android:textSize="16sp"
-        android:visibility="gone"
-        android:layout_marginTop="120dp"
-        />
     <ImageView
         android:id="@+id/tambah_venue"
         android:layout_width="wrap_content"

@@ -3,9 +3,11 @@ package com.wiradipa.fieldOwners;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,6 +49,7 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
 
     LinearLayout linearFasilitas, linearFasilitasVenue, linearAreaVenue;
     TextView mDescriptionTextView;
+    TextView textViewFacilities;
     TextView mLokasiDetail, mNameVenueTextView;
     ScrollView mScrollView;
     Button mPilihLapang;
@@ -58,8 +61,6 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
     BaseApiService mApiService;
     AppSession mAppSession;
 
-    VenueActivity venueActivity;
-
     GoogleMap mGoogleMap;
 
     @Override
@@ -67,14 +68,18 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_venue);
 
-        venueActivity = new VenueActivity();
         mContext = this;
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
-            id = bundle.getString("idVenue");
+            String flag = bundle.getString("FLAG");
+            if (flag.equals("addVenue")){
+                id = bundle.getString("id");
+            } else {
+                id = bundle.getString("idVenue");
+            }
         }
 
         linearFasilitas = (LinearLayout) findViewById(R.id.fasilitas_detail_venue);
@@ -85,8 +90,6 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
         mScrollView = (ScrollView) findViewById(R.id.scrollViewDetailVenue);
         mNameVenueTextView = (TextView) findViewById(R.id.tv_name_venue);
         mPilihLapang = (Button) findViewById(R.id.pilih_lapang);
-
-        getDetailVenue();
 
         mPilihLapang.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,9 +148,6 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
                                 mLatitude = Double.parseDouble(latitude);
                                 mLongitude = Double.parseDouble(longitude);
                             }
-//                            LatLng location = new LatLng(mLatitude, mLongitude);
-//                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//                            builder.include(location);
                             if (mLatitude != null){
                                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLatitude, mLongitude)));
                                 mGoogleMap.animateCamera(CameraUpdateFactory.zoomIn());
@@ -163,10 +163,13 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
                             }
 
                             JSONArray jsonArray = jsonObject.getJSONArray("facilities");
+                            if(linearFasilitasVenue!=null)
+                                linearFasilitasVenue.removeAllViews();
+
                             for (int i=0; i<jsonArray.length(); i++){
                                 JSONObject jsonFacilities = jsonArray.getJSONObject(i);
                                 String facilities = jsonFacilities.getString("name");
-                                TextView textViewFacilities = new TextView(mContext);
+                                textViewFacilities = new TextView(mContext);
                                 textViewFacilities.setTextColor(Color.WHITE);
                                 textViewFacilities.setTextSize(14f);
                                 textViewFacilities.setText("- " + facilities);
@@ -175,6 +178,8 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
 
                             mNameVenueTextView.setText(mName);
                             mDescriptionTextView.setText(description);
+                            if (linearAreaVenue!=null)
+                                linearAreaVenue.removeAllViews();
                             JSONArray arrayArea = jsonObject.getJSONArray("areas");
                             for (int i=0; i<arrayArea.length(); i++){
                                 JSONObject jsonArea = arrayArea.getJSONObject(i);
@@ -185,10 +190,23 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
                                 textView.setText("- " + area);
                                 linearAreaVenue.addView(textView);
                             }
-
                         }
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
+                    }
+                } else {
+                    switch (response.code()){
+                        case 404:
+                            popupAllert(getString(R.string.server_not_found));
+                            break;
+                        case 500:
+                            popupAllert(getString(R.string.server_error));
+                            break;
+                        case 413:
+                            popupAllert(getString(R.string.error_large));
+                            break;
+                        default:
+                            popupAllert(getString(R.string.unknown_error));
                     }
                 }
             }
@@ -197,7 +215,7 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "OnFailure: ERROR > "+ t.toString());
                 progressDialog.dismiss();
-                Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                popupAllert("No Internet Connection !!!");
             }
         });
     }
@@ -222,5 +240,23 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getDetailVenue();
+    }
+
+    public void popupAllert(String alert) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_title_error)
+                .setMessage(alert)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
+
     }
 }

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.wiradipa.fieldOwners.R;
 
@@ -28,17 +29,8 @@ public class FieldAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public String mId;
         public String mName;
         public String mAddress;
-        public String mDescription;
-        public String mFieldOwnerId;
-        public String mGrassTypeId;
-        public String mFieldOwnerName;
-        public String mGrassTypeName;
         public String mFieldType;
-        public String mPitchSize;
         public String mPhotoUrl;
-        public String[] mFieldPhotos;
-        public String[] mFacilities;
-        public String[] mFieldTarifs;
     }
 
     ArrayList<MyField> listFields;
@@ -106,7 +98,7 @@ public class FieldAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ((MyFieldViewHolder) viewHolder).mAddressField.setText(myField.mAddress);
             ((MyFieldViewHolder) viewHolder).mTypeFieldName.setText(myField.mFieldType);
 //            Picasso.with(mContext).load("http://app.lapangbola.com" + myField.mPhotoUrl).into(((MyFieldViewHolder) viewHolder).mPhotoLapang);
-            Picasso.with(mContext).load("http://app.lapangbola.com" + myField.mPhotoUrl).into(((MyFieldViewHolder) viewHolder).mPhotoLapang);
+            Glide.with(mContext).load("http://app.lapangbola.com" + myField.mPhotoUrl).into(((MyFieldViewHolder) viewHolder).mPhotoLapang);
         }
     }
 
@@ -119,21 +111,7 @@ public class FieldAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return listFields.get(position).mId;
     }
 
-//    public FieldAdapter(@NonNull Context context, @NonNull List<Field> objects) {
-//        super(context, 0, objects);
-//    }
-//
-//    @NonNull
-//    @Override
-//    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-//        if (convertView == null)
-//            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_field, parent, false);
-//        Field current = getItem(position);
-//        TextView textView = (TextView) convertView.findViewById(R.id.text_field);
-//        ImageView img = (ImageView) convertView.findViewById(R.id.icon_field);
-//        textView.setText(current.getText());
-//        img.setImageResource(current.getImg());
-//
-//        return convertView;
-//    }
+    public void clear(){
+        listFields.clear();
+    }
 }

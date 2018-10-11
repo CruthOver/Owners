@@ -64,8 +64,16 @@ public class LoginActivity extends AppCompatActivity {
         return username.equals("");
     }
 
+    private boolean isUsernameValid(String username){
+        return username.length() >= 4;
+    }
+
     private boolean isPasswordEmpty(String password){
         return password.equals("");
+    }
+
+    private boolean isPasswordValid(String password){
+        return password.length() >= 8;
     }
 
     private void initComponents(){
@@ -76,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkLogin();
+                requestLogin();
             }
         });
 
@@ -117,7 +125,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void checkLogin(){
+    private boolean checkLogin(){
+        boolean status = true;
         etUsername.setError(null);
         etPassword.setError(null);
 
@@ -126,91 +135,87 @@ public class LoginActivity extends AppCompatActivity {
 
         if (isPasswordEmpty(password)){
             etPassword.setError(getString(R.string.error_field_required));
+            status = false;
+        } else if (!isPasswordValid(password)){
+            popupAllert(getString(R.string.error_invalid_password));
+            status = false;
         }
 
-        // check valid username
         if (isUsernameEmpty(username)){
             etUsername.setError(getString(R.string.error_field_required));
+            status = false;
+        } else if (!isUsernameValid(username)){
+            popupAllert(getString(R.string.error_invalid_username));
+            status = false;
         }
 
-        requestLogin();
+        return status;
     }
 
     private void requestLogin(){
-        final ProgressDialog progressDialog = new ProgressDialog(mContext);
-        progressDialog.setTitle("Proses");
-        progressDialog.setMessage("Tunggu Sebentar");
-        progressDialog.show();
-        mApiService.ownersLogin(etUsername.getText().toString(), etPassword.getText().toString()).enqueue(
-                new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()){
-                            progressDialog.dismiss();
-                            try {
-                                JSONObject jsonObject = new JSONObject(response.body().string());
-                                if (jsonObject.getString("status").equals("success")){
-                                    String username = jsonObject.getString("username");
-                                    String name = jsonObject.getString("name");
-                                    String email = jsonObject.getString("email");
-                                    String token = jsonObject.getString("token");
-                                    String ownerId = jsonObject.getString("owner_id");
-                                    String photoUrl = jsonObject.getString("photo_url");
-                                    String todayRentals = jsonObject.getString("today_rentals");
-                                    String monthRentals = jsonObject.getString("month_rentals");
-                                    Log.d("TESTING ", todayRentals + " & " + monthRentals);
-//                                    String phoneNumber = jsonObject.getString("phone_number");
+        if (checkLogin()){
+            final ProgressDialog progressDialog = new ProgressDialog(mContext);
+            progressDialog.setTitle("Proses");
+            progressDialog.setMessage("Tunggu Sebentar");
+            progressDialog.show();
+            mApiService.ownersLogin(etUsername.getText().toString(), etPassword.getText().toString()).enqueue(
+                    new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.isSuccessful()){
+                                progressDialog.dismiss();
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response.body().string());
+                                    if (jsonObject.getString("status").equals("success")){
+                                        String username = jsonObject.getString("username");
+                                        String name = jsonObject.getString("name");
+                                        String email = jsonObject.getString("email");
+                                        String token = jsonObject.getString("token");
+                                        String ownerId = jsonObject.getString("owner_id");
+                                        String photoUrl = jsonObject.getString("photo_url");
+                                        String todayRentals = jsonObject.getString("today_rentals");
+                                        String monthRentals = jsonObject.getString("month_rentals");
+                                        Log.d("TESTING ", todayRentals + " & " + monthRentals);
 
-                                    Intent login = new Intent(mContext, MainActivity.class);
-                                    login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                                    //Session Login
-                                    mAppSession.createSession(token, username, name, email, null, ownerId, photoUrl, todayRentals, monthRentals);
-                                    finish();
-                                    startActivity(login);
-
-                                } else {
-                                    String errMessage = jsonObject.getString("message");
-                                    popupAllert(errMessage);
+                                        Intent login = new Intent(mContext, MainActivity.class);
+                                        login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                        //Session Login
+                                        mAppSession.createSession(token, username, name, email, null, ownerId, photoUrl, todayRentals, monthRentals);
+                                        finish();
+                                        startActivity(login);
+                                    } else {
+                                        String errMessage = jsonObject.getString("message");
+                                        popupAllert(errMessage);
+                                    }
+                                } catch (JSONException | IOException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (JSONException | IOException e) {
-                                e.printStackTrace();
+                            } else {
+                                progressDialog.dismiss();
+                                switch (response.code()){
+                                    case 404:
+                                        popupAllert(getString(R.string.server_not_found));
+                                        break;
+                                    case 500:
+                                        popupAllert(getString(R.string.server_error));
+                                        break;
+                                    case 413:
+                                        popupAllert(getString(R.string.error_large));
+                                        break;
+                                    default:
+                                        popupAllert(getString(R.string.unknown_error));
+                                }
                             }
                         }
-//                          else {
-//                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//                            builder.setTitle(R.string.dialog_title_error);
-//                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    System.exit(0);
-//                                    finish();
-//                                }
-//                            });
-//                            builder.setMessage("Server Error !!");
-//                            AlertDialog alert1 = builder.create();
-//                            alert1.show();
-//                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.e("debug", "onFailure : ERROR > " + t.getMessage());
-                        progressDialog.dismiss();
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                        builder.setTitle("Kesalahan! ");
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                System.exit(0);
-                                finish();
-                            }
-                        });
-                        builder.setMessage(R.string.dialog_message_connection_error);
-                        AlertDialog alert1 = builder.create();
-                        alert1.show();
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.e("debug", "onFailure : ERROR > " + t.getMessage());
+                            progressDialog.dismiss();
+                            popupAllert(getString(R.string.dialog_message_connection_error));
+                        }
                     }
-                }
-        );
+            );
+        }
     }
 }

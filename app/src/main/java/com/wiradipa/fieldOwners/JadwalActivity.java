@@ -3,9 +3,11 @@ package com.wiradipa.fieldOwners;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -65,10 +67,15 @@ public class JadwalActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-
         mContext = this;
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle!=null){
+            id = bundle.getString("idField");
+        }
+
         listView = (RecyclerView) findViewById(R.id.list_jadwal);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, OrientationHelper.VERTICAL, false);
         listView.setLayoutManager(linearLayoutManager);
@@ -78,11 +85,6 @@ public class JadwalActivity extends AppCompatActivity {
 
         jadwal = new ArrayList<>();
         mJadwal = new Jadwal();
-
-        Bundle bundle = getIntent().getExtras();
-        if (bundle!=null){
-            id = bundle.getString("idField");
-        }
 
         final TextView tanggal = (TextView) findViewById(R.id.tanggal);
 
@@ -104,9 +106,7 @@ public class JadwalActivity extends AppCompatActivity {
             date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
         }
 
-        
         tanggal.setText(date);
-
         mDatePicker = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -185,20 +185,33 @@ public class JadwalActivity extends AppCompatActivity {
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            switch (response.code()){
+                                case 404:
+                                    popupAllert(getString(R.string.server_not_found));
+                                    break;
+                                case 500:
+                                    popupAllert(getString(R.string.server_error));
+                                    break;
+                                case 413:
+                                    popupAllert(getString(R.string.error_large));
+                                    break;
+                                default:
+                                    popupAllert(getString(R.string.unknown_error));
+                            }
                         }
-                        }
+                    }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.e("debug","OnFailure: JadwalError >" + t.toString());
                         progressDialog.dismiss();
-                        Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                        popupAllert("No Internet Connection !!!");
                     }
                 });
     }
 
     private void updateJadwal(){
-
         mApiService.listSchedule(mAppSession.getData(AppSession.TOKEN), date, id)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
@@ -217,13 +230,27 @@ public class JadwalActivity extends AppCompatActivity {
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            switch (response.code()){
+                                case 404:
+                                    popupAllert(getString(R.string.server_not_found));
+                                    break;
+                                case 500:
+                                    popupAllert(getString(R.string.server_error));
+                                    break;
+                                case 413:
+                                    popupAllert(getString(R.string.error_large));
+                                    break;
+                                default:
+                                    popupAllert(getString(R.string.unknown_error));
+                            }
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.e("debug","OnFailure: JadwalError >" + t.toString());
-                        Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                        popupAllert("No Internet Connection !!!");
                     }
                 });
     }
@@ -249,13 +276,27 @@ public class JadwalActivity extends AppCompatActivity {
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            switch (response.code()){
+                                case 404:
+                                    popupAllert(getString(R.string.server_not_found));
+                                    break;
+                                case 500:
+                                    popupAllert(getString(R.string.server_error));
+                                    break;
+                                case 413:
+                                    popupAllert(getString(R.string.error_large));
+                                    break;
+                                default:
+                                    popupAllert(getString(R.string.unknown_error));
+                            }
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.e("debug","OnFailure: JadwalError >" + t.toString());
-                        Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                        popupAllert("No Internet Connection !!!");
                     }
                 });
     }
@@ -290,14 +331,40 @@ public class JadwalActivity extends AppCompatActivity {
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            switch (response.code()){
+                                case 404:
+                                    popupAllert(getString(R.string.server_not_found));
+                                    break;
+                                case 500:
+                                    popupAllert(getString(R.string.server_error));
+                                    break;
+                                case 413:
+                                    popupAllert(getString(R.string.error_large));
+                                    break;
+                                default:
+                                    popupAllert(getString(R.string.unknown_error));
+                            }
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                        Log.e("debug","OnFailure: JadwalError >" + t.toString());
+                        popupAllert("No Internet Connection !!!");
                     }
                 }
         );
+    }
+
+    public void popupAllert(String alert) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_title_error)
+                .setMessage(alert)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int arg1) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
     }
 }

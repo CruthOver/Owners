@@ -84,6 +84,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -104,9 +105,12 @@ public class AddVenueActivity extends AppCompatActivity
     private static final int REQUEST_SELECT_IMAGE = 1;
     private static final int REQUEST_PLACE_PICKER = 0;
     private static final int PERMISSION_REQUEST_STORAGE = 77;
+    private int mStartHour, mEndHour;
     String jsonFacility, jsonAreas, result, venueId;
     String fileImagePath = "";
-    Double mLatitude, mLongitude;
+    String imagePath = "";
+    Double mLatitude = null;
+    Double mLongitude = null;
 
     ImageView mImageView;
     EditText mOpsiHourEditText, mOpsiFaciliesEditText
@@ -130,7 +134,7 @@ public class AddVenueActivity extends AppCompatActivity
     AppSession mAppSession;
 
     private Uri imageFile;
-    private Bitmap bitmap;
+    File image;
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -142,8 +146,6 @@ public class AddVenueActivity extends AppCompatActivity
 
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
             new LatLng(-40, -168), new LatLng(71, 136));
-
-    private int mStartHour, mEndHour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +162,6 @@ public class AddVenueActivity extends AppCompatActivity
         listCheckFac = new ArrayList<>();
         listCheckArea = new ArrayList<>();
 
-
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getLocationPermission();
         }
@@ -174,10 +175,6 @@ public class AddVenueActivity extends AppCompatActivity
         }
 
         initComponents();
-        setSpinnerFromHour();
-        setSpinnerEndHour();
-        setupcheckBoxesFacilities();
-        setupCheckboxesAreas();
     }
 
     private boolean emptyCheck(){
@@ -201,15 +198,22 @@ public class AddVenueActivity extends AppCompatActivity
             status = false;
         }
 
-//        if (isLatitudeEmpty(mPlace.getLatitude()) && isLongitudeEmpty(mPlace.getLongitude())){
-//            status = false;
-//            popupAllert("Anda belum menambahkan Lokasi !");
-//        }
+        if (isLatitudeEmpty(mLatitude) && isLongitudeEmpty(mLongitude)){
+            status = false;
+            popupAllert("Anda belum menambahkan Lokasi !");
+        }
 
-//        if(isStringEmpty(fileImagePath)){
-//            status = false;
-//            popupAllert("Gambar belum dipilih");
-//        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            if (isStringEmpty(fileImagePath)){
+                status = false;
+                popupAllert("Gambar belum dipilih");
+            }
+        } else {
+            if(isStringEmpty(imagePath)){
+                status = false;
+                popupAllert("Gambar belum dipilih");
+            }
+        }
         return status;
     }
 
@@ -309,6 +313,10 @@ public class AddVenueActivity extends AppCompatActivity
                 }
             }
         });
+        setSpinnerFromHour();
+        setSpinnerEndHour();
+        setupcheckBoxesFacilities();
+        setupCheckboxesAreas();
     }
 
     private void setSpinnerFromHour() {
@@ -485,6 +493,9 @@ public class AddVenueActivity extends AppCompatActivity
                         checkBoxFacilities.setOnClickListener(getOnClickListenerCheckBox(checkBoxFacilities));
                         checkBoxLinearLayout.addView(checkBoxFacilities);
                     }
+                } else {
+                    progressDialog.dismiss();
+                    popupAllert("Gagal Mengambil Data Fasilitas");
                 }
             }
 
@@ -492,6 +503,7 @@ public class AddVenueActivity extends AppCompatActivity
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.d("onFailure", t.getMessage());
+                popupAllert("No Internet Connection !!!");
             }
         });
     }
@@ -528,12 +540,16 @@ public class AddVenueActivity extends AppCompatActivity
                         checkBoxArea.setOnClickListener(getOnClickListenerCheckBoxArea(checkBoxArea));
                         cbAreaLinearLayout.addView(checkBoxArea);
                     }
+                } else {
+                    progressDialog.dismiss();
+                    popupAllert("Gagal Mengambil Data Tipe Rumput");
                 }
             }
             @Override
             public void onFailure (Call<ResponseData> call, Throwable t){
                 progressDialog.dismiss();
                 Log.d("onFailure", t.getMessage());
+                popupAllert("No Internet Connection !!!");
             }
         });
     }
@@ -604,7 +620,8 @@ public class AddVenueActivity extends AppCompatActivity
                 }
             } else {
                 if (imageFile !=null){
-                    File file = new File(imageFile.getPath());
+                    imagePath = imageFile.getPath();
+                    File file = new File(imagePath);
                     result = file.getName();
                     mResultImage.setText(result);
                 } else {
@@ -616,6 +633,8 @@ public class AddVenueActivity extends AppCompatActivity
             mPlace = new PlaceInfo();
             mPlace.setLatitude(place.getViewport().getCenter().latitude);
             mPlace.setLongitude(place.getViewport().getCenter().longitude);
+            mLatitude = mPlace.getLatitude();
+            mLongitude = mPlace.getLongitude();
             mPlace.setAddress(place.getAddress().toString());
             mAutoCompleteTextView.setText(mPlace.getAddress());
 
@@ -630,20 +649,15 @@ public class AddVenueActivity extends AppCompatActivity
             progressDialog.setMessage("Tunggu Sebentar");
             progressDialog.show();
 
-            File image;
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
                 image = new File(fileImagePath);
             } else {
-                image = new File(imageFile.getPath());
+                image = new File(imagePath);
             }
-            Log.d("PAATTTTHHHHHZZZZ", image + "");
 
             jsonFacility = new Gson().toJson(facilitiesArray);
             jsonAreas = new Gson().toJson(areasArray);
-            Log.d("FASILITAS ", jsonFacility + "");
-            Log.d("AREAAAA ", jsonAreas + "");
 
-            Log.d("LATLAANNGGG", mPlace.getLatitude() + " & " + mPlace.getLongitude() + "");
             RequestBody mName = RequestBody.create(MultipartBody.FORM, nameVenueEditText.getText().toString());
             RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
             RequestBody ownerId = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.OWNERID));
@@ -667,15 +681,35 @@ public class AddVenueActivity extends AppCompatActivity
                             JSONObject jsonObject = new JSONObject(response.body().string());
                             if (jsonObject.getString("status").equals("Success")) {
                                 String message = jsonObject.getString("message");
+                                String venue = jsonObject.getString("id");
                                 Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(mContext, VenueActivity.class);
-                                finish();
+                                Intent intent = new Intent(mContext, DetailFieldActivity.class);
+                                intent.putExtra("id", venue);
+                                intent.putExtra("FLAG", "addVenue");
                                 startActivity(intent);
+                                finish();
                             } else {
-                                Toast.makeText(mContext, "Add Venue Failed", Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+                                String messageErr = jsonObject.getString("message");
+                                popupAllert(messageErr);
                             }
                         } catch (JSONException | IOException e) {
                             e.printStackTrace();
+                        }
+                    } else {
+                        progressDialog.dismiss();
+                        switch (response.code()){
+                            case 404:
+                                popupAllert(getString(R.string.server_not_found));
+                                break;
+                            case 500:
+                                popupAllert(getString(R.string.server_error));
+                                break;
+                            case 413:
+                                popupAllert(getString(R.string.error_large));
+                                break;
+                            default:
+                                popupAllert(getString(R.string.unknown_error));
                         }
                     }
                 }
@@ -684,6 +718,7 @@ public class AddVenueActivity extends AppCompatActivity
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     progressDialog.dismiss();
                     Log.d("onFailure", t.getMessage());
+                    popupAllert("No Internet Connection !!!");
                 }
             });
         }
@@ -734,14 +769,9 @@ public class AddVenueActivity extends AppCompatActivity
                                         marker.remove();
                                     }
                                     marker = mMap.addMarker(new MarkerOptions().
-                                            title(name).position(new LatLng(mLatitude, mLongitude)));
+                                            title(name).position(new LatLng(mPlace.getLatitude(), mPlace.getLongitude())));
                                     mAutoCompleteTextView.setText(address);
-//                                    mPlace = new PlaceInfo();
-//                                    mPlace.setLatitude(mLatitude);
-//                                    mPlace.setLongitude(mLongitude);
-//                                    Log.d("LONGLAATT : ", mPlace.getLatitude() + " & " + mPlace.getLongitude());
                                 }
-
                                 JSONArray jsonArray = data.getJSONArray("facilities");
                                 for (int i=0; i<jsonArray.length(); i++){
                                     JSONObject jsonFacilities = jsonArray.getJSONObject(i);
@@ -769,12 +799,28 @@ public class AddVenueActivity extends AppCompatActivity
                             } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            progressDialog.dismiss();
+                            switch (response.code()){
+                                case 404:
+                                    popupAllert(getString(R.string.server_not_found));
+                                    break;
+                                case 500:
+                                    popupAllert(getString(R.string.server_error));
+                                    break;
+                                case 413:
+                                    popupAllert(getString(R.string.error_large));
+                                    break;
+                                default:
+                                    popupAllert(getString(R.string.unknown_error));
+                            }
                         }
                     }
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         progressDialog.dismiss();
                         Log.d("DEBUG EDIT ", t.getMessage());
+                        popupAllert("No Internet Connection !!!");
                     }
                 }
         );
@@ -799,12 +845,9 @@ public class AddVenueActivity extends AppCompatActivity
                 image = new File(imageFile.getPath());
             }
         }
-        Log.d("PAATTTTHHHHHZZZZ", image + "");
 
         jsonFacility  = new Gson().toJson(facilitiesArray);
         jsonAreas = new Gson().toJson(areasArray);
-        Log.d("FASILITAS ", jsonFacility + "");
-        Log.d("AREAAAA ", jsonAreas + "");
         RequestBody mName = RequestBody.create(MultipartBody.FORM, nameVenueEditText.getText().toString());
         RequestBody token = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.TOKEN));
         RequestBody ownerId = RequestBody.create(MultipartBody.FORM, mAppSession.getData(AppSession.OWNERID));
@@ -835,14 +878,29 @@ public class AddVenueActivity extends AppCompatActivity
                         if (jsonObject.getString("status").equals("Success")) {
                             String message = jsonObject.getString("message");
                             Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(mContext, VenueActivity.class);
                             finish();
-                            startActivity(intent);
                         } else {
-                            Toast.makeText(mContext, "Update Venue Failed", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                            String messageErr = jsonObject.getString("message");
+                            popupAllert(messageErr);
                         }
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
+                    }
+                } else {
+                    progressDialog.dismiss();
+                    switch (response.code()){
+                        case 404:
+                            popupAllert(getString(R.string.server_not_found));
+                            break;
+                        case 500:
+                            popupAllert(getString(R.string.server_error));
+                            break;
+                        case 413:
+                            popupAllert(getString(R.string.error_large));
+                            break;
+                        default:
+                            popupAllert(getString(R.string.unknown_error));
                     }
                 }
             }
@@ -851,6 +909,7 @@ public class AddVenueActivity extends AppCompatActivity
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.d("onFailure", t.getMessage());
+                popupAllert(getString(R.string.dialog_message_connection_error));
             }
         });
     }
@@ -1016,10 +1075,8 @@ public class AddVenueActivity extends AppCompatActivity
     }
 
     private void geoLocate(){
-        Log.d("DEBGU : ", "geoLocate: geolocating");
-
+        Log.d("DEBUG : ", "geoLocate: geolocating");
         String searchString = mAutoCompleteTextView.getText().toString();
-
         Geocoder geocoder = new Geocoder(mContext);
         List<Address> list = new ArrayList<>();
         try{
@@ -1030,13 +1087,9 @@ public class AddVenueActivity extends AppCompatActivity
 
         if(list.size() > 0){
             Address address = list.get(0);
-
             Log.d("DEBUG : ", "geoLocate: found a location: " + address.toString());
-            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
                     address.getAddressLine(0));
-
-
         }
     }
 
@@ -1099,6 +1152,8 @@ public class AddVenueActivity extends AppCompatActivity
                 mPlace.setName(place.getName().toString());
                 mPlace.setLatitude(place.getViewport().getCenter().latitude);
                 mPlace.setLongitude(place.getViewport().getCenter().longitude);
+                mLatitude = mPlace.getLatitude();
+                mLongitude = mPlace.getLongitude();
                 mPlace.setId(place.getId());
                 mPlace.setAddress(place.getAddress().toString());
                 mPlace.setPhoneNumber(place.getPhoneNumber().toString());

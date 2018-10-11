@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -51,8 +52,16 @@ public class RegisterActivity extends AppCompatActivity {
         return username.equals("");
     }
 
+    private boolean isUsernameValid(String username){
+        return username.length() >= 4;
+    }
+
     private boolean isPhoneNumberEmpty(String phoneNumber){
         return phoneNumber.equals("");
+    }
+
+    private boolean isPhoneNumberValid(String phoneNumber){
+        return phoneNumber.length() >= 10;
     }
 
     private boolean isFullNameEmpty(String fullName){
@@ -60,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password){
-        return password.length() >= 4;
+        return password.length() >= 8;
     }
 
     private boolean isPasswordEmpty(String password){
@@ -83,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validRegister();
+                requestRegisterOwner();
             }
         });
     }
@@ -100,7 +109,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    private void validRegister(){
+    private boolean validRegister(){
         etUsername.setError(null);
         etEmail.setError(null);
         etPassword.setError(null);
@@ -115,115 +124,105 @@ public class RegisterActivity extends AppCompatActivity {
         String password = etPassword.getText().toString();
         String confPassword = etConfirmPassword.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
+        boolean status = true;
 
         // check valid username
         if (isUsernameEmpty(username)){
             etUsername.setError(getString(R.string.error_field_required));
-            focusView = etUsername;
-            cancel = true;
+            status = false;
+        } else if (!isUsernameValid(username)){
+            popupAllert(getString(R.string.error_invalid_username));
+            status = false;
         }
 
         // check valid email
         if (TextUtils.isEmpty(email)){
             etEmail.setError(getString(R.string.error_field_required));
-            focusView = etEmail;
-            cancel = true;
+            status = false;
         }
 
         if (isPasswordEmpty(password)){
             etPassword.setError(getString(R.string.error_field_required));
-            focusView = etPassword;
-            cancel = true;
-        } else if (!isPasswordEmpty(password)){
-            etPassword.setError(getString(R.string.error_invalid_password));
-            focusView = etPassword;
-            cancel = true;
+            status = false;
+        } else if (!isPasswordValid(password)){
+            popupAllert(getString(R.string.error_invalid_password));
+            status = false;
         }
 
         if (isConfirmPasswordEmpty(confPassword)){
             etConfirmPassword.setError(getString(R.string.error_field_required));
-            focusView = etConfirmPassword;
-            cancel = true;
+            status = false;
         }
 
         if (isFullNameEmpty(fullName)){
             etFullName.setError(getString(R.string.error_field_required));
-            focusView = etFullName;
-            cancel = true;
+            status = false;
         }
 
         if (isPhoneNumberEmpty(phoneNumber)){
             etPhoneNumber.setError(getString(R.string.error_field_required));
-            focusView = etPhoneNumber;
-            cancel = true;
+            status = false;
+        } else if (!isPhoneNumberValid(phoneNumber)){
+            popupAllert(getString(R.string.error_invalid_phone_number));
+            status = false;
         }
 
-        requestRegisterOwner();
+        return status;
     }
 
     private void requestRegisterOwner(){
-        final ProgressDialog progressDialog = new ProgressDialog(mContext);
-        progressDialog.setTitle("Proses");
-        progressDialog.setMessage("Tunggu Sebentar");
-        progressDialog.show();
-        mApiService.registerOwner(etUsername.getText().toString(), etEmail.getText().toString(),
-                etPassword.getText().toString(), etConfirmPassword.getText().toString(), etPhoneNumber.getText().toString(),
-                etFullName.getText().toString()).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()){
-                            progressDialog.dismiss();
-                            Log.i("DEBUG ", "onResponse : SUCCESS");
-                            try {
-                                JSONObject jsonObject = new JSONObject(response.body().string());
-                                if (jsonObject.getString("status").equals("success")) {
-                                    String noHpResult = jsonObject.getString("phone_number");
-                                    Intent intent = new Intent(mContext, KodeAktivasiActivity.class);
-                                    intent.putExtra("resultNoHp", noHpResult);
-                                    startActivity(intent);
-                                } else {
-                                    String errorMessage = jsonObject.getString("message");
-                                    popupAllert(errorMessage);
-                                }
-                            } catch (JSONException | IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-//                        else {
-//                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//                            builder.setTitle(R.string.dialog_title_error);
-//                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    System.exit(0);
-//                                    finish();
-//                                }
-//                            });
-//                            builder.setMessage(R.string.dialog_message_connection_error);
-//                            AlertDialog alert1 = builder.create();
-//                            alert1.show();
-//                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+        if (validRegister()){
+            final ProgressDialog progressDialog = new ProgressDialog(mContext);
+            progressDialog.setTitle("Proses");
+            progressDialog.setMessage("Tunggu Sebentar");
+            progressDialog.show();
+            mApiService.registerOwner(etUsername.getText().toString(), etEmail.getText().toString(),
+                    etPassword.getText().toString(), etConfirmPassword.getText().toString(), etPhoneNumber.getText().toString(),
+                    etFullName.getText().toString()).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
                         progressDialog.dismiss();
-                        Log.e("debug", "onFailure : ERROR > " + t.getMessage());
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                        builder.setTitle(R.string.dialog_title_error);
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                System.exit(0);
-                                finish();
+                        Log.i("DEBUG ", "onResponse : SUCCESS");
+                        try {
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            if (jsonObject.getString("status").equals("success")) {
+                                String noHpResult = jsonObject.getString("phone_number");
+                                Intent intent = new Intent(mContext, KodeAktivasiActivity.class);
+                                intent.putExtra("resultNoHp", noHpResult);
+                                startActivity(intent);
+                            } else {
+                                String errorMessage = jsonObject.getString("message");
+                                popupAllert(errorMessage);
                             }
-                        });
-                        builder.setMessage(R.string.dialog_message_connection_error);
-                        AlertDialog alert1 = builder.create();
-                        alert1.show();
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        progressDialog.dismiss();
+                        switch (response.code()){
+                            case 404:
+                                popupAllert(getString(R.string.server_not_found));
+                                break;
+                            case 500:
+                                popupAllert(getString(R.string.server_error));
+                                break;
+                            case 413:
+                                popupAllert(getString(R.string.error_large));
+                                break;
+                            default:
+                                popupAllert(getString(R.string.unknown_error));
+                        }
                     }
-                });
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    progressDialog.dismiss();
+                    Log.e("debug", "onFailure : ERROR > " + t.getMessage());
+                    popupAllert(getString(R.string.dialog_message_connection_error));
+                }
+            });
+        }
     }
 }
