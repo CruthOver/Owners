@@ -66,6 +66,7 @@ public class VenueActivity extends AppCompatActivity {
                 Intent detailVenue;
                 detailVenue = new Intent(mContext, DetailVenueActivity.class);
                 detailVenue.putExtra("idVenue", mAdapter.getVenueId(position));
+                detailVenue.putExtra("FLAG", "VenueActivity");
                 view.getContext().startActivity(detailVenue);
             }
 

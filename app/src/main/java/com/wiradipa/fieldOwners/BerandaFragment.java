@@ -71,7 +71,6 @@ public class BerandaFragment extends Fragment {
         mPemesananMinggu.setText(mAppSession.getData(AppSession.ORDERED_WEEK) + " Pemesanan");
         mPemesananBulan.setText(mAppSession.getData(AppSession.ORDERED_MONTH) + " Pemesanan");
 
-        Log.d("PEMESANAN", mAppSession.getData(AppSession.ORDERED_WEEK) + " & " + mAppSession.getData(AppSession.ORDERED_MONTH));
 //        ImageView jadwal = (ImageView) view.findViewById(R.id.jadwal);
 //        jadwal.setOnClickListener(new View.OnClickListener() {
 //            @Override

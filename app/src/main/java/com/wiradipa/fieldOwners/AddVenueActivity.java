@@ -51,6 +51,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.Place;
@@ -59,6 +60,7 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -162,9 +164,8 @@ public class AddVenueActivity extends AppCompatActivity
         listCheckFac = new ArrayList<>();
         listCheckArea = new ArrayList<>();
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getLocationPermission();
-        }
+        getLocationPermission();
+
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             setTitle("Edit Venue");
@@ -173,7 +174,6 @@ public class AddVenueActivity extends AppCompatActivity
         } else {
             setTitle("Tambah Venue");
         }
-
         initComponents();
     }
 
@@ -203,7 +203,7 @@ public class AddVenueActivity extends AppCompatActivity
             popupAllert("Anda belum menambahkan Lokasi !");
         }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M || android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             if (isStringEmpty(fileImagePath)){
                 status = false;
                 popupAllert("Gambar belum dipilih");
@@ -211,7 +211,7 @@ public class AddVenueActivity extends AppCompatActivity
         } else {
             if(isStringEmpty(imagePath)){
                 status = false;
-                popupAllert("Gambar belum dipilih");
+                popupAllert("Gambar belum dipilih1");
             }
         }
         return status;
@@ -604,10 +604,10 @@ public class AddVenueActivity extends AppCompatActivity
             imageFile = data.getData();
             String[] projection = {MediaStore.Images.Media.DATA};
 
-            if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
-                Cursor cursor = getContentResolver().query(imageFile, projection, null, null, null);
-                if (cursor!=null){
-                        cursor.moveToFirst();
+            if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M || android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+                        Cursor cursor = getContentResolver().query(imageFile, projection, null, null, null);
+                        if (cursor!=null){
+                            cursor.moveToFirst();
                         int index = cursor.getColumnIndex(projection[0]);
                         fileImagePath = cursor.getString(index);
 
@@ -616,7 +616,7 @@ public class AddVenueActivity extends AppCompatActivity
                         mResultImage.setText(hasil);
                         cursor.close();
                 } else {
-                    fileImagePath = "";
+                    fileImagePath = imageFile.getPath();
                 }
             } else {
                 if (imageFile !=null){
@@ -637,7 +637,6 @@ public class AddVenueActivity extends AppCompatActivity
             mLongitude = mPlace.getLongitude();
             mPlace.setAddress(place.getAddress().toString());
             mAutoCompleteTextView.setText(mPlace.getAddress());
-
             geoLocate();
         }
     }
@@ -649,7 +648,7 @@ public class AddVenueActivity extends AppCompatActivity
             progressDialog.setMessage("Tunggu Sebentar");
             progressDialog.show();
 
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M || android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 image = new File(fileImagePath);
             } else {
                 image = new File(imagePath);
@@ -683,7 +682,7 @@ public class AddVenueActivity extends AppCompatActivity
                                 String message = jsonObject.getString("message");
                                 String venue = jsonObject.getString("id");
                                 Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(mContext, DetailFieldActivity.class);
+                                Intent intent = new Intent(mContext, DetailVenueActivity.class);
                                 intent.putExtra("id", venue);
                                 intent.putExtra("FLAG", "addVenue");
                                 startActivity(intent);
@@ -832,7 +831,7 @@ public class AddVenueActivity extends AppCompatActivity
         progressDialog.setMessage("Tunggu Sebentar");
         progressDialog.show();
         File image = null;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M || android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
             if (fileImagePath == null || fileImagePath.equals("")){
                 image = null;
             } else {
@@ -1095,7 +1094,6 @@ public class AddVenueActivity extends AppCompatActivity
 
     private void getDeviceLocation(){
         Log.d("DEBUG : ", "getDeviceLocation: getting the devices current location");
-
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try{
             if(mLocationPermissionGranted){
