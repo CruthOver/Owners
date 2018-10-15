@@ -175,12 +175,12 @@ public class LoginActivity extends AppCompatActivity {
                                         String photoUrl = jsonObject.getString("photo_url");
                                         String todayRentals = jsonObject.getString("today_rentals");
                                         String monthRentals = jsonObject.getString("month_rentals");
-                                        Log.d("TESTING ", todayRentals + " & " + monthRentals);
 
                                         Intent login = new Intent(mContext, MainActivity.class);
                                         login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
                                         //Session Login
-                                        mAppSession.createSession(token, username, name, email, null, ownerId, photoUrl, todayRentals, monthRentals);
+                                        mAppSession.createSession(token, username, name, email, null, ownerId, photoUrl, todayRentals,
+                                                monthRentals);
                                         finish();
                                         startActivity(login);
                                     } else {

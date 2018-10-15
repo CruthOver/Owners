@@ -111,8 +111,6 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(mContext, LoginActivity.class);
-                                        startActivity(intent);
                                         finish();
                                     }
                                 });
