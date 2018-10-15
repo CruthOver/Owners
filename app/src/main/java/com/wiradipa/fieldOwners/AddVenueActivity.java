@@ -164,7 +164,7 @@ public class AddVenueActivity extends AppCompatActivity
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getLocationPermission();
-        }
+        } else  initMap();
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             setTitle("Edit Venue");
