@@ -154,7 +154,7 @@ public class AddFieldActivity extends AppCompatActivity {
             status = false;
         }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M|| android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             if (isStringEmpty(fileImagePath)){
                 status = false;
                 popupAllert("Gambar belum dipilih");
@@ -278,7 +278,7 @@ public class AddFieldActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "OnFailure: ERROR > "+ t.toString());
                 progressDialog.dismiss();
-                popupAllert("No Internet Connection !!!");
+                popupAllert(t.getMessage());
             }
         });
     }
@@ -926,7 +926,7 @@ public class AddFieldActivity extends AppCompatActivity {
             progressDialog.show();
 
             File image ;
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M|| android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 image = new File(fileImagePath);
             } else {
                 image = new File(imagePath);
@@ -1001,7 +1001,7 @@ public class AddFieldActivity extends AppCompatActivity {
         progressDialog.show();
 
         File image = null;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M|| android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             if (fileImagePath == null || fileImagePath.equals("")){
                 image = null;
             } else {
@@ -1083,7 +1083,7 @@ public class AddFieldActivity extends AppCompatActivity {
             imageFile = data.getData();
             String[] projection = {MediaStore.Images.Media.DATA};
 
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M|| android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 Cursor cursor = getContentResolver().query(imageFile, projection, null, null, null);
                 if (cursor!=null){
 //                    try {

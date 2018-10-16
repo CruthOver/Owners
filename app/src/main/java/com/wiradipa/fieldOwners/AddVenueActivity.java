@@ -503,7 +503,7 @@ public class AddVenueActivity extends AppCompatActivity
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 progressDialog.dismiss();
                 Log.d("onFailure", t.getMessage());
-                popupAllert("No Internet Connection !!!");
+                popupAllert(t.getMessage());
             }
         });
     }
@@ -549,7 +549,7 @@ public class AddVenueActivity extends AppCompatActivity
             public void onFailure (Call<ResponseData> call, Throwable t){
                 progressDialog.dismiss();
                 Log.d("onFailure", t.getMessage());
-                popupAllert("No Internet Connection !!!");
+                popupAllert(t.getMessage());
             }
         });
     }
@@ -717,7 +717,7 @@ public class AddVenueActivity extends AppCompatActivity
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     progressDialog.dismiss();
                     Log.d("onFailure", t.getMessage());
-                    popupAllert("No Internet Connection !!!");
+                    popupAllert(t.getMessage());
                 }
             });
         }
@@ -819,7 +819,7 @@ public class AddVenueActivity extends AppCompatActivity
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         progressDialog.dismiss();
                         Log.d("DEBUG EDIT ", t.getMessage());
-                        popupAllert("No Internet Connection !!!");
+                        popupAllert(t.getMessage());
                     }
                 }
         );
@@ -1104,7 +1104,7 @@ public class AddVenueActivity extends AppCompatActivity
                         if(task.isSuccessful()){
                             Log.d("DEBUG : ", "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
-                            if (venueId == null){
+                            if (venueId == null&&currentLocation!=null){
                                 moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                         DEFAULT_ZOOM,"My Location");
                             }
