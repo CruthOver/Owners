@@ -21,9 +21,7 @@ import com.wiradipa.fieldOwners.Adapter.RecyclerTouchListener;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
-import com.wiradipa.fieldOwners.Model.Jadwal;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,10 +40,10 @@ public class ListEditTarifActivity extends AppCompatActivity {
 
     ListEditTarifAdapter adapter;
     RecyclerView recyclerView;
+    Spinner spinnerDay;
 
     String id;
     int mStartDay;
-    Spinner spinnerDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +65,13 @@ public class ListEditTarifActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, OrientationHelper.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
         recyclerView.setAdapter(adapter);
 
         setSpinnerDay();
         getDataTarif();
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView,
+                new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Toast.makeText(mContext, "YEEEEAAAAHHH", Toast.LENGTH_SHORT).show();

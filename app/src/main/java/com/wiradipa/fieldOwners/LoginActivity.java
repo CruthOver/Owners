@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
@@ -122,7 +121,6 @@ public class LoginActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
-
     }
 
     private boolean checkLogin(){

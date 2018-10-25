@@ -108,7 +108,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.DetailFieldActivity" />
         </activity>
-        <activity android:name=".DetailTransaksi"
+        <activity android:name=".DetailTransaksiActivity"
             android:label="Detail Transaksi"
             android:parentActivityName=".MainActivity">
             <meta-data

@@ -1,5 +1,4 @@
-package com.wiradipa.fieldOwners;
-
+package com.wiradipa.fieldOwners.Fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,7 +17,10 @@ import android.widget.TextView;
 
 import com.wiradipa.fieldOwners.Adapter.ViewPagerAdapter;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
-
+import com.wiradipa.fieldOwners.FieldActivity;
+import com.wiradipa.fieldOwners.JadwalActivity;
+import com.wiradipa.fieldOwners.R;
+import com.wiradipa.fieldOwners.VenueActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -71,14 +73,14 @@ public class BerandaFragment extends Fragment {
         mPemesananMinggu.setText(mAppSession.getData(AppSession.ORDERED_WEEK) + " Pemesanan");
         mPemesananBulan.setText(mAppSession.getData(AppSession.ORDERED_MONTH) + " Pemesanan");
 
-//        ImageView jadwal = (ImageView) view.findViewById(R.id.jadwal);
-//        jadwal.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(getActivity(), JadwalActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        ImageView jadwal = (ImageView) view.findViewById(R.id.jadwal);
+        jadwal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), JadwalActivity.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 }

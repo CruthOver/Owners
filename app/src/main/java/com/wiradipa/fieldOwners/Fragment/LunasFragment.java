@@ -1,4 +1,4 @@
-package com.wiradipa.fieldOwners;
+package com.wiradipa.fieldOwners.Fragment;
 
 
 import android.os.Bundle;
@@ -9,8 +9,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.wiradipa.fieldOwners.Model.DataTransaksi;
+import com.wiradipa.fieldOwners.Adapter.DataTransaksiAdapter;
+import com.wiradipa.fieldOwners.R;
+
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 
 /**

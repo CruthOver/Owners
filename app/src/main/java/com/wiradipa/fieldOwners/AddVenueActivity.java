@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -51,7 +50,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.Place;
@@ -60,7 +58,6 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -74,6 +71,7 @@ import com.wiradipa.fieldOwners.Adapter.PlaceAutocompleteAdapter;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
+import com.wiradipa.fieldOwners.Fragment.WorkArroundMapFragment;
 import com.wiradipa.fieldOwners.Model.AreasValue;
 import com.wiradipa.fieldOwners.Model.FasilitasValue;
 import com.wiradipa.fieldOwners.Model.FieldData;
@@ -86,7 +84,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -211,7 +208,7 @@ public class AddVenueActivity extends AppCompatActivity
         } else {
             if(isStringEmpty(imagePath)){
                 status = false;
-                popupAllert("Gambar belum dipilih1");
+                popupAllert("Gambar belum dipilih");
             }
         }
         return status;
@@ -400,7 +397,6 @@ public class AddVenueActivity extends AppCompatActivity
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selection = (String) adapterView.getItemAtPosition(i);
                 if (!TextUtils.isEmpty(selection)) {
-
                     if (selection.equals("1")) {
                         mEndHour = 1; //monday
                         Log.d("START HOUR ", mEndHour + "");
@@ -605,16 +601,16 @@ public class AddVenueActivity extends AppCompatActivity
             String[] projection = {MediaStore.Images.Media.DATA};
 
             if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M || android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
-                        Cursor cursor = getContentResolver().query(imageFile, projection, null, null, null);
-                        if (cursor!=null){
-                            cursor.moveToFirst();
-                        int index = cursor.getColumnIndex(projection[0]);
-                        fileImagePath = cursor.getString(index);
+                Cursor cursor = getContentResolver().query(imageFile, projection, null, null, null);
+                if (cursor!=null){
+                    cursor.moveToFirst();
+                    int index = cursor.getColumnIndex(projection[0]);
+                    fileImagePath = cursor.getString(index);
 
-                        File file = new File(fileImagePath);
-                        String hasil = file.getName();
-                        mResultImage.setText(hasil);
-                        cursor.close();
+                    File file = new File(fileImagePath);
+                    String hasil = file.getName();
+                    mResultImage.setText(hasil);
+                    cursor.close();
                 } else {
                     fileImagePath = imageFile.getPath();
                 }
@@ -653,7 +649,6 @@ public class AddVenueActivity extends AppCompatActivity
             } else {
                 image = new File(imagePath);
             }
-
             jsonFacility = new Gson().toJson(facilitiesArray);
             jsonAreas = new Gson().toJson(areasArray);
 
@@ -943,8 +938,8 @@ public class AddVenueActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         Log.d("DEBUG : ", "onMapReady: map is ready");
         mMap = googleMap;
+        getDeviceLocation();
         if (mLocationPermissionGranted) {
-            getDeviceLocation();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -1047,7 +1042,6 @@ public class AddVenueActivity extends AppCompatActivity
                 LAT_LNG_BOUNDS, null);
 
         mAutoCompleteTextView.setAdapter(mPlaceAutoComplete);
-
         mAutoCompleteTextView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -1097,7 +1091,7 @@ public class AddVenueActivity extends AppCompatActivity
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try{
             if(mLocationPermissionGranted){
-                final Task location = mFusedLocationProviderClient.getLastLocation();
+                Task location = mFusedLocationProviderClient.getLastLocation();
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {

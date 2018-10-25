@@ -1,4 +1,4 @@
-package com.wiradipa.fieldOwners;
+package com.wiradipa.fieldOwners.Fragment;
 
 
 import android.content.Intent;
@@ -9,6 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.wiradipa.fieldOwners.Model.DataTransaksi;
+import com.wiradipa.fieldOwners.Adapter.DataTransaksiAdapter;
+import com.wiradipa.fieldOwners.DetailTransaksiActivity;
+import com.wiradipa.fieldOwners.R;
 
 import java.util.ArrayList;
 
@@ -47,7 +52,7 @@ public class BookedFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 adapter.getItem(position);
-                Intent intent = new Intent(getActivity(), DetailTransaksi.class);
+                Intent intent = new Intent(getActivity(), DetailTransaksiActivity.class);
                 startActivity(intent);
             }
         });

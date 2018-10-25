@@ -2,6 +2,7 @@ package com.wiradipa.fieldOwners.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.squareup.picasso.Picasso;
 import com.wiradipa.fieldOwners.DetailVenueActivity;
 import com.wiradipa.fieldOwners.R;
@@ -95,7 +97,9 @@ public class VenueAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (myVenue!=null){
             ((MyVenueViewHolder) viewHolder).mNameVenue.setText(myVenue.mName);
             ((MyVenueViewHolder) viewHolder).mAddressVenue.setText(myVenue.mAddress);
-            Glide.with(mContext).load("http://app.lapangbola.com" + myVenue.mPhotoUrl).into(((MyVenueViewHolder) viewHolder).imageVenue);
+            Glide.with(mContext).load("http://app.lapangbola.com" + myVenue.mPhotoUrl).
+                    apply(new RequestOptions().placeholder(R.drawable.ic_image_black_24dp).error(R.drawable.ic_image_black_24dp))
+                    .into(((MyVenueViewHolder) viewHolder).imageVenue);
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

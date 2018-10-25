@@ -57,9 +57,7 @@ public class TarifAdapter extends BaseAdapter{
         view = LayoutInflater.from(mContext).inflate(R.layout.listview_tarif, viewGroup, false);
 
         fieldTariff = new FieldTariff();
-
         //        tvEndHour.setText(String.valueOf(tariffs.get(i).getEndHour()));
-
         if (tariffs.get(i).getStartDay()==1){
             startDay = "Senin"; //monday
         } else if (tariffs.get(i).getStartDay()==2){

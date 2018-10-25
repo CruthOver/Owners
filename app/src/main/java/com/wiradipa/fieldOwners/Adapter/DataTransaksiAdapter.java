@@ -1,4 +1,4 @@
-package com.wiradipa.fieldOwners;
+package com.wiradipa.fieldOwners.Adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.wiradipa.fieldOwners.Model.DataTransaksi;
+import com.wiradipa.fieldOwners.R;
 
 import java.util.List;
 

@@ -26,8 +26,6 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
         private String mEndHour;
         private String mHarga;
         private String mDay;
-
-        public ListEditTarif() {}
     }
 
     public ArrayList<ListEditTarif> listEditTarifs;
@@ -83,7 +81,6 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
                 JSONObject jsonObject = dataJsonArray.getJSONObject(i);
                 ListEditTarif jsonClass = new ListEditTarif();
 
-
                 jsonClass.mDay = jsonObject.getString("wday");
                 jsonClass.mStartHour = jsonObject.getString("start_hour");
                 jsonClass.mEndHour = jsonObject.getString("end_hour");
@@ -94,8 +91,6 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
                         + jsonClass.mEndHour + " "
                         + jsonClass.mHarga + " ");
             }
-            Log.d("arraySize", String.valueOf(dataJsonArray.length()));
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -119,9 +114,7 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
                             + jsonClass.mEndHour + " "
                             + jsonClass.mHarga + " ");
                 }
-
             }
-            Log.d("arraySize", String.valueOf(dataJsonArray.length()));
 
         } catch (JSONException e) {
             e.printStackTrace();

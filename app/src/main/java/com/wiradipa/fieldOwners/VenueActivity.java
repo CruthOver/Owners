@@ -9,12 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -60,7 +57,8 @@ public class VenueActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new VenueAdapter(mContext);
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView,
+                new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Intent detailVenue;
@@ -140,7 +138,7 @@ public class VenueActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "OnFailure: ERROR > "+ t.toString());
                 progressDialog.dismiss();
-                Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                popupAllert("No Internet Connection !!!");
             }
         });
     }
@@ -161,6 +159,5 @@ public class VenueActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
-
     }
 }

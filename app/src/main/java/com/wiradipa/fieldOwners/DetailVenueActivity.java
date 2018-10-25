@@ -1,16 +1,13 @@
 package com.wiradipa.fieldOwners;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,13 +23,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
-import com.wiradipa.fieldOwners.Model.FieldTariff;
-import com.wiradipa.fieldOwners.Model.PlaceInfo;
+import com.wiradipa.fieldOwners.Fragment.WorkArroundMapFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -102,7 +97,6 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
         });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_detail);
-
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
@@ -222,7 +216,6 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.edit_menu, menu);
         return true;
     }
@@ -257,6 +250,5 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
                         dialog.dismiss();
                     }
                 }).create().show();
-
     }
 }

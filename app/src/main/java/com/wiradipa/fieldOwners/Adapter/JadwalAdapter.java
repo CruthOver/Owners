@@ -87,26 +87,12 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.ViewHolder
         if (jadwalList!=null){
             ((ViewHolder) holder).startHour.setText(checkDigit(jadwalList.startHour));
             ((ViewHolder) holder).endHour.setText(checkDigit(jadwalList.endHours));
-//            ((ViewHolder) holder).status.setText(jadwalList.mRentalStatus);
             if (jadwalList.status == 0){
                 ((ViewHolder) holder).status.setImageResource(R.drawable.booked_btn);
             } else {
                 ((ViewHolder) holder).status.setImageResource(R.drawable.tersedia_btn);
             }
         }
-//        holder.status.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (toogle == 0){
-//                    holder.status.setImageResource(R.drawable.booked_btn);
-//                    toogle = 1;
-//                }
-//                else{
-//                    holder.status.setImageResource(R.drawable.tersedia_btn);
-//                    toogle = 0;
-//                }
-//            }
-//        });
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.wiradipa.fieldOwners;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
@@ -87,7 +85,6 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
-
     }
 
     private void forgotPassword(){
@@ -122,7 +119,6 @@ public class ForgetPasswordActivity extends AppCompatActivity {
                                 String errMsg = jsonObject.getString("message");
                                 popupAllert(errMsg);
                             }
-
                         } catch (JSONException | IOException e) {
                             e.printStackTrace();
                         }

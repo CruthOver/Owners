@@ -349,7 +349,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
                 map:mapType="normal"
-                class="com.wiradipa.fieldOwners.WorkArroundMapFragment"
+                class="com.wiradipa.fieldOwners.Fragment.WorkArroundMapFragment"
                 android:layout_marginBottom="24dp" />
             <Button
                 android:id="@+id/add_new_venue"

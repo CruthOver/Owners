@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".BerandaFragment">
+    tools:context=".Fragment.BerandaFragment">
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="160dp"
@@ -126,15 +126,15 @@
             android:maxWidth="88dp"
             android:src="@drawable/field_btn"
             android:layout_marginTop="20dp"/>
-        <!--<ImageView-->
-            <!--android:id="@+id/jadwal"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/jadwal_btn"-->
-            <!--android:maxHeight="55dp"-->
-            <!--android:adjustViewBounds="true"-->
-            <!--android:maxWidth="88dp"-->
-            <!--android:layout_marginTop="20dp"-->
-            <!--android:layout_marginBottom="16dp"/>-->
+        <ImageView
+            android:id="@+id/jadwal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/jadwal_btn"
+            android:maxHeight="55dp"
+            android:adjustViewBounds="true"
+            android:maxWidth="88dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="16dp"/>
     </LinearLayout>
 </LinearLayout>

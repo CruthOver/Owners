@@ -1,4 +1,4 @@
-package com.wiradipa.fieldOwners;
+package com.wiradipa.fieldOwners.Model;
 
 public class DataTransaksi {
     private String mNamaLapang, mTanggalLapang, mNamaPenyewa, mNamaLapangPenyewa, mWaktuMain,

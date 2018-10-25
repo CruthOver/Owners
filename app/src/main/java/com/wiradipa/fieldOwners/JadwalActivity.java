@@ -16,9 +16,10 @@ import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +29,9 @@ import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
 import com.wiradipa.fieldOwners.Model.Jadwal;
+import com.wiradipa.fieldOwners.Model.ListVenue;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,13 +53,15 @@ public class JadwalActivity extends AppCompatActivity {
 
     String id, date;
     String startHour = "Belum ada Data";
+    int mIdField;
+    Spinner spinnerListField;
 
     private RecyclerView listView;
     ArrayList<Jadwal> jadwal;
+    ListVenue field;
     private JadwalAdapter jadwalAdapter;
     Jadwal mJadwal;
     DatePickerDialog.OnDateSetListener mDatePicker;
-    final Calendar myCalendar = Calendar.getInstance(Locale.US);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +79,10 @@ public class JadwalActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
             id = bundle.getString("idField");
+            Toast.makeText(mContext, id, Toast.LENGTH_SHORT).show();
         }
 
+        spinnerListField = (Spinner) findViewById(R.id.spinner_id_field);
         listView = (RecyclerView) findViewById(R.id.list_jadwal);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, OrientationHelper.VERTICAL, false);
         listView.setLayoutManager(linearLayoutManager);
@@ -96,7 +103,6 @@ public class JadwalActivity extends AppCompatActivity {
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
         month = month + 1;
-
         date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
 
         tempDate = getIntent().getStringExtra("date");
@@ -105,6 +111,8 @@ public class JadwalActivity extends AppCompatActivity {
         }else{
             date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
         }
+
+        Toast.makeText(mContext, id, Toast.LENGTH_SHORT).show();
 
         tanggal.setText(date);
         mDatePicker = new DatePickerDialog.OnDateSetListener() {
@@ -135,8 +143,21 @@ public class JadwalActivity extends AppCompatActivity {
             }
         });
 
-        listJadwal();
+        spinnerListField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                field = (ListVenue) adapterView.getSelectedItem();
+                mIdField = field.getId();
+                id = String.valueOf(mIdField);
+                listJadwal();
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        setSpinnerField();
         listView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), listView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -153,6 +174,64 @@ public class JadwalActivity extends AppCompatActivity {
 
             }
         }));
+    }
+
+    private void setSpinnerField(){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+
+        mApiService.listFields(mAppSession.getData(AppSession.TOKEN)).enqueue(
+                new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()){
+                            progressDialog.dismiss();
+                            try {
+                                int idField;
+                                String nameField = "";
+                                JSONObject jsonObject = new JSONObject(response.body().string());
+                                if (jsonObject.getString("status").equals("Success")){
+                                    JSONArray jsonArray = jsonObject.getJSONArray("data");
+                                    ArrayList<ListVenue> listVenue = new ArrayList<>();
+                                    for (int i=0; i<jsonArray.length(); i++){
+                                        jsonObject = jsonArray.getJSONObject(i);
+                                        idField = jsonObject.getInt("id");
+                                        nameField = jsonObject.getString("name");
+                                        if (id != null){
+                                            if (idField == Integer.parseInt(id)){
+                                                listVenue.add(new ListVenue(idField, nameField));
+                                                mIdField = idField;
+                                            }
+                                        } else{
+                                            listVenue.add(new ListVenue(idField, nameField));
+                                        }
+                                    }
+                                    final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<ListVenue>(mContext,
+                                            R.layout.spinner_jadwal, listVenue);
+                                    adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                    spinnerListField.setAdapter(adapter);
+                                }
+
+                            } catch (JSONException | IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            progressDialog.dismiss();
+                            popupAllert("Gagal Mengambil Data Tipe Lapangan");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        progressDialog.dismiss();
+                        Log.d("onFailure", t.getMessage());
+                        popupAllert("No Internet Connection !!!");
+                        Toast.makeText(mContext, "BLALBLABLAB", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     public String checkDigit(int number)

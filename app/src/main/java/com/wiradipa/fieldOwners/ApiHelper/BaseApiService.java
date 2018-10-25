@@ -144,7 +144,7 @@ public interface BaseApiService {
     @GET("fields/schedule")
     Call<ResponseBody> listSchedule(@Query("auth_token") String token,
                                     @Query("rental_date") String date,
-                                    @Query("field_id") String fieldId);
+                                    @Query("field_id") String  fieldId);
 
     @FormUrlEncoded
     @POST("field_rentals")
@@ -152,7 +152,7 @@ public interface BaseApiService {
                                         @Field("rental_date") String rental_date,
                                         @Field("start_hour") String startHour,
                                         @Field("end_hour") String endHour,
-                                        @Field("field_id") String field_id,
+                                        @Field("field_id") String  field_id,
                                         @Field("payment_status") int paymentStatus);
 
     @FormUrlEncoded

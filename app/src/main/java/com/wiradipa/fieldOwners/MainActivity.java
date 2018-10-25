@@ -26,6 +26,9 @@ import android.widget.Toast;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
+import com.wiradipa.fieldOwners.Fragment.BerandaFragment;
+import com.wiradipa.fieldOwners.Fragment.TarikDanaFragment;
+import com.wiradipa.fieldOwners.Fragment.TransaksiFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -138,9 +141,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-
         Fragment fragment = null;
-
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {

@@ -89,7 +89,6 @@ public class KodeAktivasiActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
-
     }
 
     private void initComponents(){

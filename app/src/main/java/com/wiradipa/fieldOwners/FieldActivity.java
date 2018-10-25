@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wiradipa.fieldOwners.Adapter.FieldAdapter;
 import com.wiradipa.fieldOwners.Adapter.RecyclerTouchListener;
@@ -27,8 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -65,7 +62,8 @@ public class FieldActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new FieldAdapter(mContext);
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView,
+                new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Intent detailField;
@@ -108,51 +106,51 @@ public class FieldActivity extends AppCompatActivity {
 
         mApiService.listField(mAppSession.getData(AppSession.TOKEN), id)
                 .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()){
-                            progressDialog.dismiss();
-                            try {
-                                JSONObject jsonObject = new JSONObject(response.body().string());
-                                if (jsonObject.getString("status").equals("Success")){
-                                    mAdapter.parsingData(jsonObject.getJSONArray("data"));
-                                    if (mAdapter.getItemCount() == 0){
-                                        mEmptyData.setVisibility(View.VISIBLE);
-                                    } else {
-                                        recyclerView.setAdapter(mAdapter);
-                                    }
-                                    mAdapter.notifyDataSetChanged();
-                                } else {
-                                    String errMsg = jsonObject.getString("message");
-                                    popupAllert(errMsg);
-                                }
-                            } catch (JSONException | IOException e) {
-                                e.printStackTrace();
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    progressDialog.dismiss();
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        if (jsonObject.getString("status").equals("Success")){
+                            mAdapter.parsingData(jsonObject.getJSONArray("data"));
+                            if (mAdapter.getItemCount() == 0){
+                                mEmptyData.setVisibility(View.VISIBLE);
+                            } else {
+                                recyclerView.setAdapter(mAdapter);
                             }
+                            mAdapter.notifyDataSetChanged();
                         } else {
-                            switch (response.code()){
-                                case 404:
-                                    popupAllert(getString(R.string.server_not_found));
-                                    break;
-                                case 500:
-                                    popupAllert(getString(R.string.server_error));
-                                    break;
-                                case 413:
-                                    popupAllert(getString(R.string.error_large));
-                                    break;
-                                default:
-                                    popupAllert(getString(R.string.unknown_error));
-                            }
+                            String errMsg = jsonObject.getString("message");
+                            popupAllert(errMsg);
                         }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
                     }
+                } else {
+                    switch (response.code()){
+                        case 404:
+                            popupAllert(getString(R.string.server_not_found));
+                            break;
+                        case 500:
+                            popupAllert(getString(R.string.server_error));
+                            break;
+                        case 413:
+                            popupAllert(getString(R.string.error_large));
+                            break;
+                        default:
+                            popupAllert(getString(R.string.unknown_error));
+                    }
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.e("debug", "OnFailure: ERROR > "+ t.toString());
-                        progressDialog.dismiss();
-                        popupAllert("No Internet Connection !!!");
-                    }
-                });
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "OnFailure: ERROR > "+ t.toString());
+                progressDialog.dismiss();
+                popupAllert("No Internet Connection !!!");
+            }
+        });
     }
 
     private void listMyFields(){
@@ -163,37 +161,37 @@ public class FieldActivity extends AppCompatActivity {
 
         mApiService.listFields(mAppSession.getData(AppSession.TOKEN))
                 .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()){
-                            progressDialog.dismiss();
-                            try {
-                                JSONObject jsonObject = new JSONObject(response.body().string());
-                                if (jsonObject.getString("status").equals("Success")){
-                                    mAdapter.parsingData(jsonObject.getJSONArray("data"));
-                                    if (mAdapter.getItemCount() == 0){
-                                        mEmptyData.setVisibility(View.VISIBLE);
-                                    } else {
-                                        recyclerView.setAdapter(mAdapter);
-                                    }
-                                    mAdapter.notifyDataSetChanged();
-                                } else {
-                                    String errMsg = jsonObject.getString("message");
-                                    popupAllert(errMsg);
-                                }
-                            } catch (JSONException | IOException e) {
-                                e.printStackTrace();
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    progressDialog.dismiss();
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        if (jsonObject.getString("status").equals("Success")){
+                            mAdapter.parsingData(jsonObject.getJSONArray("data"));
+                            if (mAdapter.getItemCount() == 0){
+                                mEmptyData.setVisibility(View.VISIBLE);
+                            } else {
+                                recyclerView.setAdapter(mAdapter);
                             }
+                            mAdapter.notifyDataSetChanged();
+                        } else {
+                            String errMsg = jsonObject.getString("message");
+                            popupAllert(errMsg);
                         }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
                     }
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.e("debug", "OnFailure: ERROR > "+ t.toString());
-                        progressDialog.dismiss();
-                        popupAllert("No Internet Connection !!!");
-                    }
-                });
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "OnFailure: ERROR > "+ t.toString());
+                progressDialog.dismiss();
+                popupAllert("No Internet Connection !!!");
+            }
+        });
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
@@ -45,7 +43,6 @@ public class RegisterActivity extends AppCompatActivity {
         mContext =  this;
         mApiService = UtilsApi.getApiService();
         initComponents();
-
     }
 
     private boolean isUsernameEmpty(String username){
@@ -106,10 +103,10 @@ public class RegisterActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
-
     }
 
     private boolean validRegister(){
+        boolean status = true;
         etUsername.setError(null);
         etEmail.setError(null);
         etPassword.setError(null);
@@ -123,8 +120,6 @@ public class RegisterActivity extends AppCompatActivity {
         String fullName = etFullName.getText().toString();
         String password = etPassword.getText().toString();
         String confPassword = etConfirmPassword.getText().toString();
-
-        boolean status = true;
 
         // check valid username
         if (isUsernameEmpty(username)){
@@ -166,7 +161,6 @@ public class RegisterActivity extends AppCompatActivity {
             popupAllert(getString(R.string.error_invalid_phone_number));
             status = false;
         }
-
         return status;
     }
 

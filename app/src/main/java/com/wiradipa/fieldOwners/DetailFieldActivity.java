@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.squareup.picasso.Picasso;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
@@ -117,7 +118,9 @@ public class DetailFieldActivity extends AppCompatActivity {
                             String descField = jsonObject.getString("description");
                             String costField = jsonObject.getString("min_tariff");
 
-                            Glide.with(mContext).load("http://app.lapangbola.com" + url).into(iv);
+                            Glide.with(mContext).load("http://app.lapangbola.com" + url)
+                                    .apply(new RequestOptions().placeholder(R.drawable.ic_image_black_24dp)
+                                            .error(R.drawable.ic_image_black_24dp)).into(iv);
                             mSizeField.setText(sizeField);
                             mGrassType.setText(typeGrass);
                             mTypeField.setText(typeField);
