@@ -28,15 +28,12 @@ import com.wiradipa.fieldOwners.VenueActivity;
 public class BerandaFragment extends Fragment {
 
     private AppBarLayout appBarLayout;
-
     TextView mPemesananMinggu, mPemesananBulan;
-
     AppSession mAppSession;
 
     public BerandaFragment() {
         // Required empty public constructor
     }
-
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -46,7 +43,6 @@ public class BerandaFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_beranda, container, false);
 
         mAppSession = new AppSession(getActivity().getApplicationContext());
-
         appBarLayout = (AppBarLayout) view.findViewById(R.id.app_bar_id);
 
         ImageView venue = (ImageView) view.findViewById(R.id.venue);

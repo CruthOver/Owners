@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -32,7 +31,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -54,7 +52,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,7 +64,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 
 public class AddFieldActivity extends AppCompatActivity {
 
@@ -125,7 +121,6 @@ public class AddFieldActivity extends AppCompatActivity {
             }catch (Exception e){
                 e.printStackTrace();
             }
-
         }
 
         fieldTarifs = new ArrayList<FieldTariff>();
@@ -154,7 +149,7 @@ public class AddFieldActivity extends AppCompatActivity {
             status = false;
         }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M|| android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M || android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             if (isStringEmpty(fileImagePath)){
                 status = false;
                 popupAllert("Gambar belum dipilih");
@@ -165,9 +160,7 @@ public class AddFieldActivity extends AppCompatActivity {
                 popupAllert("Gambar belum dipilih");
             }
         }
-
         return status;
-
     }
 
     private boolean isStringEmpty(String x){
@@ -183,7 +176,6 @@ public class AddFieldActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
-
     }
 
     private void detailField(String requestID){
@@ -278,7 +270,7 @@ public class AddFieldActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "OnFailure: ERROR > "+ t.toString());
                 progressDialog.dismiss();
-                popupAllert(t.getMessage());
+                popupAllert("No Internet Connection !!!");
             }
         });
     }
@@ -291,7 +283,6 @@ public class AddFieldActivity extends AppCompatActivity {
         mFieldSizeEditText = (EditText) findViewById(R.id.et_size_field);
 
         spinnerVenue = (Spinner) findViewById(R.id.spinner_id_venue);
-
         mFieldTypeSpinner = (Spinner) findViewById(R.id.spinner_type_field);
         mGrassTypeSpinner = (Spinner) findViewById(R.id.spinner_type_floor);
 
@@ -300,7 +291,6 @@ public class AddFieldActivity extends AppCompatActivity {
         mTextViewVenue = (TextView) findViewById(R.id.textVenue);
 
         addOtherTarif = (Button) findViewById(R.id.add_other_opsi);
-
         mBtnSubmit = (Button) findViewById(R.id.add_new_field);
         if (fieldId == null){
             mBtnSubmit.setText("SIMPAN");
@@ -328,7 +318,6 @@ public class AddFieldActivity extends AppCompatActivity {
         });
 
         mAddImageView = (ImageView) findViewById(R.id.add_photo);
-
         mAddImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -355,7 +344,6 @@ public class AddFieldActivity extends AppCompatActivity {
                 dialogTarif();
             }
         });
-
 
         mFieldTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -397,17 +385,14 @@ public class AddFieldActivity extends AppCompatActivity {
             }
         });
 
-
         setupSpinnerTypeGrass();
         setupSpinnerTypeField();
         setSpinnerVenue();
     }
 
     private void setSpinnerFromHour() {
-
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.startHour, R.layout.spinner_jadwal);
-
         fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         mFromHourSpinner.setAdapter(fromDaySpinner);
@@ -477,6 +462,7 @@ public class AddFieldActivity extends AppCompatActivity {
                 Toast.makeText(mContext, "Hari belum dipilih", Toast.LENGTH_SHORT).show();
             }
         });
+
         mFromHourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -566,10 +552,8 @@ public class AddFieldActivity extends AppCompatActivity {
     }
 
     private void setSpinnerEndHour() {
-
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.endHour, R.layout.spinner_jadwal);
-
         fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         mUntilHourSpinner.setAdapter(fromDaySpinner);
@@ -581,7 +565,6 @@ public class AddFieldActivity extends AppCompatActivity {
                     if (selection.equals(getString(R.string.optionDay))) {
                         Toast.makeText(mContext, "Pilih Jam Terlebih Dahulu", Toast.LENGTH_SHORT).show();
                     }
-
                     if (selection.equals("1")) {
                         mEndHour = 1; //monday
                         Log.d("START HOUR ", mEndHour + "");
@@ -645,7 +628,6 @@ public class AddFieldActivity extends AppCompatActivity {
     private void setupSpinnerFromDay(){
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.day, R.layout.spinner_jadwal);
-
         fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         mFromDaySpinner.setAdapter(fromDaySpinner);
@@ -685,7 +667,6 @@ public class AddFieldActivity extends AppCompatActivity {
     private void setupSpinnerUntilDay(){
         ArrayAdapter untilDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.day, R.layout.spinner_jadwal);
-
         untilDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         mUntilDaySpinner.setAdapter(untilDaySpinner);
@@ -751,7 +732,8 @@ public class AddFieldActivity extends AppCompatActivity {
                                             listVenue.add(new ListVenue(idVenue, nameVenue));
                                         }
                                     }
-                                    final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<ListVenue>(mContext, R.layout.spinner_jadwal, listVenue);
+                                    final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<ListVenue>(mContext,
+                                            R.layout.spinner_jadwal, listVenue);
                                     adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                                     spinnerVenue.setAdapter(adapter);
                                 }
@@ -855,19 +837,15 @@ public class AddFieldActivity extends AppCompatActivity {
     }
 
     private void dialogTarif(){
-
         String titleText = "Tambah Tarif";
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
         View dialogView = LayoutInflater.from(mContext).inflate(R.layout.list_tariff, null);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setCancelable(true);
-
         // Initialize a new foreground color span instance
         ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.WHITE);
-
         // Initialize a new spannable string builder instance
         SpannableStringBuilder ssBuilder = new SpannableStringBuilder(titleText);
-
         // Apply the text color span
         ssBuilder.setSpan(
                 foregroundColorSpan,
@@ -875,8 +853,6 @@ public class AddFieldActivity extends AppCompatActivity {
                 titleText.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
-
-
         dialogBuilder.setTitle(ssBuilder);
 
         mFromDaySpinner = (Spinner) dialogView.findViewById(R.id.spinner_from_day);
@@ -898,11 +874,6 @@ public class AddFieldActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
                 jsonTarif= new Gson().toJson(fieldTarifs);
                 Log.d("JSONTARIF ", jsonTarif);
-//                if(mAdapter.getCount()==0){
-//                    mEmptyViewTarif.setVisibility(View.VISIBLE);
-//                }else{
-//                    mEmptyViewTarif.setVisibility(View.GONE);
-//                }
                 listViewTarif.setEmptyView(mEmptyViewTarif);
             }
         });
@@ -925,8 +896,8 @@ public class AddFieldActivity extends AppCompatActivity {
             progressDialog.setMessage("Tunggu Sebentar");
             progressDialog.show();
 
-            File image ;
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M|| android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            File image;
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M || android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
                 image = new File(fileImagePath);
             } else {
                 image = new File(imagePath);
@@ -936,10 +907,8 @@ public class AddFieldActivity extends AppCompatActivity {
             RequestBody mDesc = RequestBody.create(MultipartBody.FORM, mDescriptionFieldEditText.getText().toString());
             RequestBody sizeField = RequestBody.create(MultipartBody.FORM, mFieldSizeEditText.getText().toString());
             RequestBody tariff = RequestBody.create(MultipartBody.FORM, stringJsonTarif);
-
             RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
             final MultipartBody.Part partImage = MultipartBody.Part.createFormData("picture", image.getName(), requestBody);
-
 
             mApiService.createField(token, mName, mDesc, mIdVenue, mGrassType, mFieldType,
                     sizeField, tariff, partImage, null).enqueue(new Callback<ResponseBody>() {
@@ -1001,7 +970,7 @@ public class AddFieldActivity extends AppCompatActivity {
         progressDialog.show();
 
         File image = null;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M|| android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M || android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
             if (fileImagePath == null || fileImagePath.equals("")){
                 image = null;
             } else {
@@ -1083,7 +1052,7 @@ public class AddFieldActivity extends AppCompatActivity {
             imageFile = data.getData();
             String[] projection = {MediaStore.Images.Media.DATA};
 
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M|| android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M || android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
                 Cursor cursor = getContentResolver().query(imageFile, projection, null, null, null);
                 if (cursor!=null){
 //                    try {
@@ -1103,7 +1072,7 @@ public class AddFieldActivity extends AppCompatActivity {
                     mResultPhoto.setText(hasil);
                     cursor.close();
                 } else {
-                    fileImagePath = "";
+                    fileImagePath = imageFile.getPath();
                 }
             } else {
                 if (imageFile!=null){

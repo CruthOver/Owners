@@ -79,7 +79,6 @@ public class JadwalActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
             id = bundle.getString("idField");
-            Toast.makeText(mContext, id, Toast.LENGTH_SHORT).show();
         }
 
         spinnerListField = (Spinner) findViewById(R.id.spinner_id_field);
@@ -111,8 +110,6 @@ public class JadwalActivity extends AppCompatActivity {
         }else{
             date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
         }
-
-        Toast.makeText(mContext, id, Toast.LENGTH_SHORT).show();
 
         tanggal.setText(date);
         mDatePicker = new DatePickerDialog.OnDateSetListener() {
@@ -148,7 +145,7 @@ public class JadwalActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 field = (ListVenue) adapterView.getSelectedItem();
                 mIdField = field.getId();
-                id = String.valueOf(mIdField);
+                jadwalAdapter.clearData();
                 listJadwal();
             }
 
@@ -245,7 +242,7 @@ public class JadwalActivity extends AppCompatActivity {
         progressDialog.setMessage("Tunggu Sebentar");
         progressDialog.show();
 
-        mApiService.listSchedule(mAppSession.getData(AppSession.TOKEN), date, id)
+        mApiService.listSchedule(mAppSession.getData(AppSession.TOKEN), date, mIdField)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -291,7 +288,7 @@ public class JadwalActivity extends AppCompatActivity {
     }
 
     private void updateJadwal(){
-        mApiService.listSchedule(mAppSession.getData(AppSession.TOKEN), date, id)
+        mApiService.listSchedule(mAppSession.getData(AppSession.TOKEN), date, mIdField)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -336,7 +333,7 @@ public class JadwalActivity extends AppCompatActivity {
 
     private void createPeminjaman(String startHour, String endHour){
         mApiService.createPeminjaman(mAppSession.getData(AppSession.TOKEN), date,
-                startHour, endHour, id, 0)
+                startHour, endHour, mIdField, 0)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -392,7 +389,7 @@ public class JadwalActivity extends AppCompatActivity {
 
     private void cancelPeminjaman(String startHour, String endHour){
         mApiService.cancelPeminjaman(mAppSession.getData(AppSession.TOKEN), date,
-                startHour, endHour, id).enqueue(
+                startHour, endHour, mIdField).enqueue(
                 new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

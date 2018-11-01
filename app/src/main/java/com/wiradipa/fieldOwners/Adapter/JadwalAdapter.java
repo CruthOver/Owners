@@ -145,4 +145,8 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.ViewHolder
         }
         this.notifyDataSetChanged();
     }
+
+    public void clearData(){
+        listJadwal.clear();
+    }
 }
