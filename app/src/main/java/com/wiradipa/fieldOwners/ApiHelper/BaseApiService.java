@@ -162,4 +162,13 @@ public interface BaseApiService {
                                         @Field("start_hour") String startHour,
                                         @Field("end_hour") String endHour,
                                         @Field("field_id") int fieldId);
+
+    @GET("field_rentals")
+    Call<ResponseBody> dataTransaksi(@Query("auth_token") String token,
+                                     @Query("owner") int owner);
+
+    @GET("field_rentals/{id}")
+    Call<ResponseBody> detailTransaksi(@Path("id") int id,
+                                       @Query("auth_token") String token,
+                                       @Query("owner") int owner);
 }

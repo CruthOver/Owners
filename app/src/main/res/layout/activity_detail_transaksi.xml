@@ -22,6 +22,7 @@
                 android:gravity="center"
                 android:layout_weight="2">
                 <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/photo_player"
                     android:layout_width="88dp"
                     android:layout_height="88dp"
                     android:src="@drawable/lapangan"/>
@@ -32,12 +33,14 @@
                 android:orientation="vertical"
                 android:layout_weight="1">
                 <TextView
+                    android:id="@+id/player_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Ali Samsudin"
                     android:textSize="18sp"
                     android:textColor="@android:color/black"/>
                 <TextView
+                    android:id="@+id/club_player"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Meteor FC"
@@ -45,6 +48,7 @@
             </LinearLayout>
         </LinearLayout>
         <TextView
+            android:id="@+id/detail_tr_namaVenue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="LAPANGAN 1"
@@ -53,6 +57,7 @@
             android:textColor="@color/colorPrimary"
             android:textStyle="bold"/>
         <TextView
+            android:id="@+id/detail_tr_namaLapang"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Rajawali Sport Center"
@@ -121,6 +126,7 @@
                     android:layout_marginLeft="16dp"
                     android:textSize="14sp"/>
                 <TextView
+                    android:id="@+id/detail_tr_idTransaction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="0012"
@@ -143,6 +149,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold"/>
                 <TextView
+                    android:id="@+id/detail_tr_tanggalMain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="31 Agustus 2018"
@@ -175,6 +182,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold"/>
                 <TextView
+                    android:id="@+id/detail_tr_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="19.00 - 20.00"
@@ -256,6 +264,7 @@
 
     </LinearLayout>
     <Button
+        android:id="@+id/btnLunas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -269,6 +278,7 @@
         android:textSize="14sp"
         android:textStyle="bold" />
     <Button
+        android:id="@+id/btnBatal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

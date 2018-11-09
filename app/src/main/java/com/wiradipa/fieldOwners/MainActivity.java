@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_transaksi) {
             fragment = new TransaksiFragment();
-            getSupportActionBar().setTitle("Transaksi");
+            getSupportActionBar().setTitle("TRANSAKSI");
         }
 //        else if (id == R.id.nav_slideshow) {
 //

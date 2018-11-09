@@ -1,10 +1,14 @@
 package com.wiradipa.fieldOwners.Model;
 
 public class DataTransaksi {
-    private String mNamaLapang, mTanggalLapang, mNamaPenyewa, mNamaLapangPenyewa, mWaktuMain,
+    public String mNamaLapang, mTanggalLapang, mNamaPenyewa, mNamaLapangPenyewa,
     mNamaLapangMain, mTotalTagihan;
+    public int mWaktuMain, id;
+    public int mStartHour, mEndHour;
 
-    public DataTransaksi(String mNamaLapang, String mTanggalLapang, String mNamaPenyewa, String mNamaLapangPenyewa, String mWaktuMain, String mNamaLapangMain, String mTotalTagihan) {
+    public DataTransaksi() { }
+
+    public DataTransaksi(String mNamaLapang, String mTanggalLapang, String mNamaPenyewa, String mNamaLapangPenyewa, int mWaktuMain, String mNamaLapangMain, String mTotalTagihan) {
         this.mNamaLapang = mNamaLapang;
         this.mTanggalLapang = mTanggalLapang;
         this.mNamaPenyewa = mNamaPenyewa;
@@ -46,11 +50,11 @@ public class DataTransaksi {
         this.mNamaLapangPenyewa = mNamaLapangPenyewa;
     }
 
-    public String getmWaktuMain() {
+    public int getmWaktuMain() {
         return mWaktuMain;
     }
 
-    public void setmWaktuMain(String mWaktuMain) {
+    public void setmWaktuMain(int mWaktuMain) {
         this.mWaktuMain = mWaktuMain;
     }
 

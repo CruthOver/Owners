@@ -14,7 +14,6 @@ public class ListVenue {
         this.name = name;
     }
 
-
     public int getId() {
         return id;
     }
