@@ -125,4 +125,42 @@
             android:textColor="@color/colorPrimaryDark"
             android:gravity="right"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Status Uang Muka"
+            android:textSize="14sp"
+            android:gravity="left"/>
+        <TextView
+            android:id="@+id/tr_status_approve"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Approve"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:gravity="right"/>
+    </LinearLayout>
+    <!--<TextView-->
+        <!--android:id="@+id/tr_receipt_url"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="1"-->
+        <!--android:text="Lihat Bukti Pembayaran"-->
+        <!--android:textSize="14sp"-->
+        <!--android:textStyle="bold"-->
+        <!--android:layout_marginTop="12dp"-->
+        <!--android:textColor="@color/colorPrimaryDark"-->
+        <!--android:layout_gravity="center"/>-->
 </LinearLayout>

@@ -56,5 +56,4 @@ public class LunasFragment extends Fragment {
 
         return view;
     }
-
 }

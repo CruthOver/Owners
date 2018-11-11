@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:weightSum="1"
+    android:background="@color/background"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/drawer_imageview"
+            android:layout_gravity="center"
+            android:src="@drawable/venue_biru"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxHeight="50dp"
+            android:text="VENUE"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:id="@+id/actionbar_titleview"
+            android:textSize="24sp"/>
+    </LinearLayout>
+
+    <!--<ImageView-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_weight="0.5"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:id="@+id/drawer_imageview_done"-->
+        <!--android:src="@drawable/icon_check"/>-->
+
+</LinearLayout>

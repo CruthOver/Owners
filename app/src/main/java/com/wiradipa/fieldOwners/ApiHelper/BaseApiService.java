@@ -171,4 +171,8 @@ public interface BaseApiService {
     Call<ResponseBody> detailTransaksi(@Path("id") int id,
                                        @Query("auth_token") String token,
                                        @Query("owner") int owner);
+
+    @POST("field_rentals/{id}/approve_down_payment")
+    Call<ResponseBody> approveDownPayment(@Path("id") int id,
+                                          @Query("auth_token") String token);
 }

@@ -2,13 +2,13 @@ package com.wiradipa.fieldOwners.Model;
 
 public class DataTransaksi {
     public String mNamaLapang, mTanggalLapang, mNamaPenyewa, mNamaLapangPenyewa,
-    mNamaLapangMain, mTotalTagihan;
-    public int mWaktuMain, id;
-    public int mStartHour, mEndHour;
+    mNamaLapangMain, urlBuktiDp;
+    public int mWaktuMain, id, mTotalTagihan;
+    public int mStartHour, mEndHour, mStatus;
 
     public DataTransaksi() { }
 
-    public DataTransaksi(String mNamaLapang, String mTanggalLapang, String mNamaPenyewa, String mNamaLapangPenyewa, int mWaktuMain, String mNamaLapangMain, String mTotalTagihan) {
+    public DataTransaksi(String mNamaLapang, String mTanggalLapang, String mNamaPenyewa, String mNamaLapangPenyewa, int mWaktuMain, String mNamaLapangMain, int mTotalTagihan) {
         this.mNamaLapang = mNamaLapang;
         this.mTanggalLapang = mTanggalLapang;
         this.mNamaPenyewa = mNamaPenyewa;
@@ -66,11 +66,11 @@ public class DataTransaksi {
         this.mNamaLapangMain = mNamaLapangMain;
     }
 
-    public String getmTotalTagihan() {
+    public int getmTotalTagihan() {
         return mTotalTagihan;
     }
 
-    public void setmTotalTagihan(String mTotalTagihan) {
+    public void setmTotalTagihan(int mTotalTagihan) {
         this.mTotalTagihan = mTotalTagihan;
     }
 }

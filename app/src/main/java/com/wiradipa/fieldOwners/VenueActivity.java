@@ -1,5 +1,6 @@
 package com.wiradipa.fieldOwners;
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,8 +14,10 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -55,8 +58,8 @@ public class VenueActivity extends AppCompatActivity {
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
 
-        recyclerView = (RecyclerView) findViewById(R.id.list_venue);
-        mEmptyTextView = (TextView) findViewById(R.id.kosong);
+        recyclerView = findViewById(R.id.list_venue);
+        mEmptyTextView = findViewById(R.id.kosong);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -82,7 +85,7 @@ public class VenueActivity extends AppCompatActivity {
             }
         }));
 
-        ImageView add = (ImageView) findViewById(R.id.tambah_venue);
+        ImageView add = findViewById(R.id.tambah_venue);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

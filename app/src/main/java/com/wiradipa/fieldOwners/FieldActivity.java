@@ -182,6 +182,20 @@ public class FieldActivity extends AppCompatActivity {
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    switch (response.code()){
+                        case 404:
+                            popupAllert(getString(R.string.server_not_found));
+                            break;
+                        case 500:
+                            popupAllert(getString(R.string.server_error));
+                            break;
+                        case 413:
+                            popupAllert(getString(R.string.error_large));
+                            break;
+                        default:
+                            popupAllert(getString(R.string.unknown_error));
+                    }
                 }
             }
 

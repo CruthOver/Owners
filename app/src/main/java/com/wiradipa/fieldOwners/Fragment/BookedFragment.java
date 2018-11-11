@@ -86,6 +86,7 @@ public class BookedFragment extends Fragment {
                 Intent detailTrasantion;
                 detailTrasantion = new Intent(mContext, DetailTransaksiActivity.class);
                 detailTrasantion.putExtra("idTransaction", mAdapter.getTransaksiId(position));
+                detailTrasantion.putExtra("receiptUrl", mAdapter.getReceiptUrl(position));
                 view.getContext().startActivity(detailTrasantion);
             }
 

@@ -14,4 +14,6 @@
     <color name="line">#D6D6D6</color>
     <color name="text_kuning">#FBCA11</color>
     <color name="text_box">#D6EAF8</color>
+    <color name="not_approved">#FF0000</color>
+    <color name="approved">#00FF00</color>
 </resources>
