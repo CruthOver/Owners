@@ -1,34 +1,25 @@
 package com.wiradipa.fieldOwners.Fragment;
 
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.wiradipa.fieldOwners.Adapter.JadwalAdapter;
 import com.wiradipa.fieldOwners.Adapter.RecyclerTouchListener;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
-import com.wiradipa.fieldOwners.Model.DataTransaksi;
-import com.wiradipa.fieldOwners.Adapter.DataTransaksiAdapter;
+import com.wiradipa.fieldOwners.Adapter.DataTransaksiBookedAdapter;
 import com.wiradipa.fieldOwners.DetailTransaksiActivity;
 import com.wiradipa.fieldOwners.R;
 
@@ -36,14 +27,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -53,8 +41,7 @@ public class BookedFragment extends Fragment {
     AppSession mAppSession;
 
     private RecyclerView recyclerView;
-    ArrayList<DataTransaksi> dataTransaksi;
-    DataTransaksiAdapter mAdapter;
+    DataTransaksiBookedAdapter mAdapter;
 
     public BookedFragment() {
         // Required empty public constructor
@@ -70,14 +57,12 @@ public class BookedFragment extends Fragment {
         mContext = getActivity();
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(getActivity());
-        Log.d("TOKEEENN ", mAppSession.getData(AppSession.TOKEN));
 
         recyclerView = (RecyclerView) view.findViewById(R.id.list_item);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-//        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new DataTransaksiAdapter(mContext);
+        mAdapter = new DataTransaksiBookedAdapter(mContext);
         recyclerView.setAdapter(mAdapter);
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(mContext, recyclerView, new RecyclerTouchListener.ClickListener() {
@@ -95,7 +80,6 @@ public class BookedFragment extends Fragment {
 
             }
         }));
-        listBookedTransaksi();
 
         return view;
     }
@@ -159,5 +143,12 @@ public class BookedFragment extends Fragment {
                         dialog.dismiss();
                     }
                 }).create().show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.clear();
+        listBookedTransaksi();
     }
 }

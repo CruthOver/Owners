@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,10 +49,14 @@ public class FieldActivity extends AppCompatActivity {
 
     String id;
 
+    private Toolbar mToolbar;
+    private TextView mTvTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_field);
+        initToolbar();
 
         mContext =  this;
         mApiService = UtilsApi.getApiService();
@@ -228,5 +235,31 @@ public class FieldActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
+    }
+
+    private void initToolbar(){
+        mToolbar = (Toolbar) findViewById(R.id.app_bar);
+        mTvTitle = (TextView) findViewById(R.id.textViewTitle);
+
+        //Init mToolbar
+        if (mToolbar != null){
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        //Load title
+        try {
+            ActivityInfo activityInfo = getPackageManager().getActivityInfo(
+                    getComponentName(), PackageManager.GET_META_DATA);
+            String title = activityInfo.loadLabel(getPackageManager())
+                    .toString();
+
+            if (mTvTitle != null){
+                mTvTitle.setText(title);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        }
     }
 }

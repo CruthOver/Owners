@@ -65,7 +65,6 @@ public class DetailTransaksiActivity extends AppCompatActivity {
         if (extras!=null){
             id = extras.getInt("idTransaction");
             mUrlBukti = extras.getString("receiptUrl");
-            Toast.makeText(mContext, id + "", Toast.LENGTH_SHORT).show();
         }
 
         initComponents();
@@ -94,7 +93,7 @@ public class DetailTransaksiActivity extends AppCompatActivity {
         btnLunas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                lunasPayment();
             }
         });
 
@@ -166,8 +165,8 @@ public class DetailTransaksiActivity extends AppCompatActivity {
                             mNamaVenue = data.getString("field_owner_name");
                             mPayment = data.getString("payment_status");
                             mTagihan = data.getInt("amount");
-//                            mUangMuka = data.getInt("down_payment");
-//                            mPiutang = data.getInt("receivable");
+                            mUangMuka = data.getInt("down_payment");
+                            mPiutang = data.getInt("receivable");
 
                             tvPlayerName.setText(mPenyewa);
                             tvFieldName.setText(mNamaLapang);
@@ -175,8 +174,8 @@ public class DetailTransaksiActivity extends AppCompatActivity {
                             tvDate.setText(mTanggal);
                             tvIdTransaction.setText(mIdTransaksi);
                             tvTime.setText(checkDigit(mStartHour) + " - " + checkDigit(mEndHour));
-//                            tvDownPayment.setText(checkDigitMoney(mUangMuka));
-//                            tvReceiveable.setText(checkDigitMoney(mPiutang));
+                            tvDownPayment.setText(checkDigitMoney(mUangMuka));
+                            tvReceiveable.setText(checkDigitMoney(mPiutang));
                             tvAmount.setText(checkDigitMoney(mTagihan));
                         } else {
                             String errMsg = data.getString("message");
@@ -305,5 +304,52 @@ public class DetailTransaksiActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
+
+    private void lunasPayment(){
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Proses");
+        progressDialog.setMessage("Tunggu Sebentar");
+        progressDialog.show();
+
+        mApiService.lunasPayment(id, mAppSession.getData(AppSession.TOKEN))
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()){
+                            progressDialog.dismiss();
+                            try {
+                                JSONObject data = new JSONObject(response.body().string());
+                                String message = data.getString("message");
+                                if (data.getString("status").equals("Success")){
+                                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                    finish();
+                                } else {
+                                    popupAllert(message);
+                                }
+                            } catch (JSONException | IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            switch (response.code()){
+                                case 404:
+                                    popupAllert(getString(R.string.server_not_found));
+                                    break;
+                                case 500:
+                                    popupAllert(getString(R.string.server_error));
+                                    break;
+                                default:
+                                    popupAllert(getString(R.string.unknown_error));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e("debug", "OnFailure: ERROR > "+ t.toString());
+                        progressDialog.dismiss();
+                        popupAllert("No Internet Connection !!!");
+                    }
+                });
     }
 }

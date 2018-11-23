@@ -3,8 +3,8 @@ package com.wiradipa.fieldOwners.Model;
 public class DataTransaksi {
     public String mNamaLapang, mTanggalLapang, mNamaPenyewa, mNamaLapangPenyewa,
     mNamaLapangMain, urlBuktiDp;
-    public int mWaktuMain, id, mTotalTagihan;
-    public int mStartHour, mEndHour, mStatus;
+    public int mWaktuMain, id, mTotalTagihan, mStatus, mPaymentStatus;
+    public int mStartHour, mEndHour;
 
     public DataTransaksi() { }
 

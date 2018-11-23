@@ -68,10 +68,6 @@ public class JadwalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jadwal);
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
         mContext = this;
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
