@@ -34,6 +34,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -43,13 +45,13 @@ import retrofit2.Response;
 public class DetailVenueActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     LinearLayout linearFasilitas, linearFasilitasVenue, linearAreaVenue;
-    TextView mDescriptionTextView;
-    TextView textViewFacilities;
-    TextView mLokasiDetail, mNameVenueTextView;
+    TextView mDescriptionTextView, textViewFacilities,
+            mLokasiDetail, mNameVenueTextView, mMinTariffTextView;
     ScrollView mScrollView;
     Button mPilihLapang;
 
     String id, description, mLokasi, mName, idDetail;
+    int minTariff;
     Double mLatitude, mLongitude;
 
     Context mContext;
@@ -83,6 +85,7 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
         mDescriptionTextView = (TextView) findViewById(R.id.desc_detail_venue);
         mLokasiDetail = (TextView) findViewById(R.id.lokasi_detail);
         mScrollView = (ScrollView) findViewById(R.id.scrollViewDetailVenue);
+        mMinTariffTextView = (TextView) findViewById(R.id.min_tariff);
         mNameVenueTextView = (TextView) findViewById(R.id.tv_name_venue);
         mPilihLapang = (Button) findViewById(R.id.pilih_lapang);
 
@@ -133,6 +136,7 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
                             mName = jsonObject.getString("name");
                             description = jsonObject.getString("description");
                             mLokasi = jsonObject.getString("address");
+                            minTariff = jsonObject.getInt("min_tariff");
                             String latitude = jsonObject.getString("latitude");
                             String longitude = jsonObject.getString("longitude");
                             if (latitude.equals("")){
@@ -172,6 +176,7 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
 
                             mNameVenueTextView.setText(mName);
                             mDescriptionTextView.setText(description);
+                            mMinTariffTextView.setText(checkDigitMoney(minTariff));
                             if (linearAreaVenue!=null)
                                 linearAreaVenue.removeAllViews();
                             JSONArray arrayArea = jsonObject.getJSONArray("areas");
@@ -250,5 +255,11 @@ public class DetailVenueActivity extends AppCompatActivity implements OnMapReady
                         dialog.dismiss();
                     }
                 }).create().show();
+    }
+
+    public String checkDigitMoney(int number) {
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format((double) number);
     }
 }

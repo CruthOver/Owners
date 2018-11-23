@@ -175,4 +175,8 @@ public interface BaseApiService {
     @POST("field_rentals/{id}/approve_down_payment")
     Call<ResponseBody> approveDownPayment(@Path("id") int id,
                                           @Query("auth_token") String token);
+
+    @POST("field_rentals/{id}/make_paid")
+    Call<ResponseBody> lunasPayment(@Path("id") int id,
+                                    @Query("auth_token") String token);
 }

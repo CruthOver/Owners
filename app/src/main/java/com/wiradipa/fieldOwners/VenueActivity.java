@@ -1,10 +1,12 @@
 package com.wiradipa.fieldOwners;
 
-import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
@@ -14,13 +16,11 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
+import android.support.v7.widget.Toolbar;
 
 import com.wiradipa.fieldOwners.Adapter.RecyclerTouchListener;
 import com.wiradipa.fieldOwners.Adapter.VenueAdapter;
@@ -48,11 +48,15 @@ public class VenueActivity extends AppCompatActivity {
     BaseApiService mApiService;
     AppSession mAppSession;
 
+    private Toolbar mToolbar;
+    private TextView mTvTitle;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_venue);
+        initToolbar();
 
         mContext = this;
         mApiService = UtilsApi.getApiService();
@@ -166,5 +170,31 @@ public class VenueActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
+    }
+
+    private void initToolbar(){
+        mToolbar = (Toolbar) findViewById(R.id.app_bar);
+        mTvTitle = (TextView) findViewById(R.id.textViewTitle);
+
+        //Init mToolbar
+        if (mToolbar != null){
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        //Load title
+        try {
+            ActivityInfo activityInfo = getPackageManager().getActivityInfo(
+                    getComponentName(), PackageManager.GET_META_DATA);
+            String title = activityInfo.loadLabel(getPackageManager())
+                    .toString();
+
+            if (mTvTitle != null){
+                mTvTitle.setText(title);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        }
     }
 }

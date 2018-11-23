@@ -17,14 +17,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdapter.ViewHolder> {
 
     public static class ListEditTarif{
         private String mStartHour;
         private String mEndHour;
-        private String mHarga;
+        private int mHarga;
         private String mDay;
     }
 
@@ -64,7 +66,7 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
         if (editTarif !=null){
             ((ViewHolder) viewHolder).startHour.setText(editTarif.mStartHour);
             ((ViewHolder) viewHolder).endHour.setText(editTarif.mEndHour);
-            ((ViewHolder) viewHolder).cost.setText(editTarif.mHarga);
+            ((ViewHolder) viewHolder).cost.setText(checkDigitMoney(editTarif.mHarga));
             ((ViewHolder) viewHolder).day.setText(editTarif.mDay);
         }
     }
@@ -84,7 +86,7 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
                 jsonClass.mDay = jsonObject.getString("wday");
                 jsonClass.mStartHour = jsonObject.getString("start_hour");
                 jsonClass.mEndHour = jsonObject.getString("end_hour");
-                jsonClass.mHarga = jsonObject.getString("tariff");
+                jsonClass.mHarga = jsonObject.getInt("tariff");
                 listEditTarifs.add(jsonClass);
                 Log.d("arrayContent", jsonClass.mDay + " "
                         + jsonClass.mStartHour + " "
@@ -107,7 +109,7 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
                     jsonClass.mDay = jsonObject.getString("wday");
                     jsonClass.mStartHour = jsonObject.getString("start_hour");
                     jsonClass.mEndHour = jsonObject.getString("end_hour");
-                    jsonClass.mHarga = jsonObject.getString("tariff");
+                    jsonClass.mHarga = jsonObject.getInt("tariff");
                     listEditTarifs.add(jsonClass);
                     Log.d("arrayContent", jsonClass.mDay + " "
                             + jsonClass.mStartHour + " "
@@ -119,6 +121,12 @@ public class ListEditTarifAdapter extends RecyclerView.Adapter<ListEditTarifAdap
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public String checkDigitMoney(int number) {
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format((double) number);
     }
 
     public String getDay(int position){

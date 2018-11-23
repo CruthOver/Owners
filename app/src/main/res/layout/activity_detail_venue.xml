@@ -291,6 +291,7 @@
                         android:textColor="@color/textHint"
                         android:gravity="center"/>
                     <TextView
+                        android:id="@+id/min_tariff"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="120.000"

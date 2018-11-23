@@ -28,6 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -116,7 +118,7 @@ public class DetailFieldActivity extends AppCompatActivity {
                             String typeGrass = jsonObject.getString("grass_type_name");
                             String typeField = jsonObject.getString("field_type_name");
                             String descField = jsonObject.getString("description");
-                            String costField = jsonObject.getString("min_tariff");
+                            int costField = jsonObject.getInt("min_tariff");
 
                             Glide.with(mContext).load("http://app.lapangbola.com" + url)
                                     .apply(new RequestOptions().placeholder(R.drawable.ic_image_black_24dp)
@@ -124,7 +126,7 @@ public class DetailFieldActivity extends AppCompatActivity {
                             mSizeField.setText(sizeField);
                             mGrassType.setText(typeGrass);
                             mTypeField.setText(typeField);
-                            mDetailHarga.setText(costField);
+                            mDetailHarga.setText(checkDigitMoney(costField));
                             mDescField.setText(descField);
                         }
                     } catch (IOException | JSONException e) {
@@ -194,6 +196,11 @@ public class DetailFieldActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
+    }
 
+    public String checkDigitMoney(int number) {
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format((double) number);
     }
 }
