@@ -18,6 +18,12 @@
             android:id="@+id/app_bar"
             android:background="@color/colorPrimary">
 
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/venue_biru"
+                android:layout_margin="8dp"/>
             <TextView
                 android:id="@+id/textViewTitle"
                 android:layout_width="wrap_content"
@@ -27,14 +33,8 @@
                 android:layout_gravity="center"
                 android:textColor="@android:color/white"
                 android:textSize="20dp"
-                android:layout_margin="8dp"
                 android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:src="@drawable/venue_biru"/>
         </android.support.v7.widget.Toolbar>
 
         <LinearLayout

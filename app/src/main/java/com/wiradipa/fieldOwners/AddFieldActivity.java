@@ -919,8 +919,8 @@ public class AddFieldActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().string());
                             if (jsonObject.getString("status").equals("Success")){
-                                String message = jsonObject.getString("message");
-                                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+//                                String message = jsonObject.getString("message");
+                                Toast.makeText(mContext, "Field Berhasil Disimpan !!", Toast.LENGTH_SHORT).show();
                                 String field = jsonObject.getString("id");
                                 Intent intent = new Intent(mContext, DetailFieldActivity.class);
                                 intent.putExtra("id", field);
@@ -1007,8 +1007,8 @@ public class AddFieldActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         if (jsonObject.getString("status").equals("Success")){
-                            String message = jsonObject.getString("message");
-                            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+//                            String message = jsonObject.getString("message");
+                            Toast.makeText(mContext, "Field Berhasil Diperbarui!!", Toast.LENGTH_SHORT).show();
                             finish();
                         } else {
                             progressDialog.dismiss();

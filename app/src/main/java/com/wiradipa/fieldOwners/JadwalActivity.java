@@ -130,7 +130,7 @@ public class JadwalActivity extends AppCompatActivity {
                 DatePickerDialog dialog = new DatePickerDialog(JadwalActivity.this,
                         R.style.Theme_AppCompat_DayNight_Dialog_MinWidth,
                         mDatePicker,year,month,day);
-
+                dialog.getDatePicker().setMinDate(cal.getTimeInMillis());
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
                 dialog.show();
             }
@@ -337,8 +337,8 @@ public class JadwalActivity extends AppCompatActivity {
                             try {
                                 JSONObject jsonObject = new JSONObject(response.body().string());
                                 if (jsonObject.getString("status").equals("Success")){
-                                    String message = jsonObject.getString("message");
-                                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+//                                    String message = jsonObject.getString("message");
+                                    Toast.makeText(mContext, "Pemesanan Berhasil", Toast.LENGTH_SHORT).show();
                                     jadwalAdapter.notifyDataSetChanged();
                                 }else {
                                     String errorMsg = jsonObject.getString("message");
@@ -393,7 +393,7 @@ public class JadwalActivity extends AppCompatActivity {
                             try {
                                 JSONObject jsonObject = new JSONObject(response.body().string());
                                 if (jsonObject.getString("status").equals("Success")){
-                                    Toast.makeText(mContext, "Berhasil", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(mContext, "Pemesanan Dibatalkan", Toast.LENGTH_SHORT).show();
                                     jadwalAdapter.notifyDataSetChanged();
                                 } else {
                                     String errorMsg = jsonObject.getString("message");
