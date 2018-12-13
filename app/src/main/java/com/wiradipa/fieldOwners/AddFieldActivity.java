@@ -43,6 +43,7 @@ import com.wiradipa.fieldOwners.Adapter.TarifAdapter;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
+import com.wiradipa.fieldOwners.Model.CurrencyTextWatcher;
 import com.wiradipa.fieldOwners.Model.FieldData;
 import com.wiradipa.fieldOwners.Model.FieldTariff;
 import com.wiradipa.fieldOwners.Model.ListVenue;
@@ -358,6 +359,7 @@ public class AddFieldActivity extends AppCompatActivity {
             }
         });
 
+        Log.d("FIELD TYPE", mFieldType + " ");
         mGrassTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -388,6 +390,7 @@ public class AddFieldActivity extends AppCompatActivity {
         setupSpinnerTypeGrass();
         setupSpinnerTypeField();
         setSpinnerVenue();
+        Log.d("FIELD TYPE1", mFieldType + " ");
     }
 
     private void setSpinnerFromHour() {
@@ -396,73 +399,6 @@ public class AddFieldActivity extends AppCompatActivity {
         fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         mFromHourSpinner.setAdapter(fromDaySpinner);
-        mFromHourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String selection = (String) adapterView.getItemAtPosition(i);
-                if (!TextUtils.isEmpty(selection)){
-                    if (selection.equals("-- Pilih Jam -- ")){
-                        Toast.makeText(mContext, "Pilih Jam Terlebih Dahulu", Toast.LENGTH_SHORT).show();;
-                    }
-                    if (selection.equals("0")){
-                        mStartHour = 0;
-                        Log.d("START HOUR ", mStartHour + "");
-                    } else if (selection.equals("1")){
-                        mStartHour = 1; //monday
-                    } else if (selection.equals("2")){
-                        mStartHour = 2;
-                    } else if (selection.equals("3")){
-                        mStartHour = 3;
-                    } else if (selection.equals("4")){
-                        mStartHour = 4;
-                    } else if (selection.equals("5")){
-                        mStartHour = 5;
-                    } else if (selection.equals("6")){
-                        mStartHour = 6;
-                    } else if (selection.equals("7")){
-                        mStartHour = 7;
-                    } else if (selection.equals("8")){
-                        mStartHour = 8;
-                    } else if (selection.equals("9")){
-                        mStartHour = 9;
-                    } else if (selection.equals("10")){
-                        mStartHour = 10;
-                    } else if (selection.equals("11")){
-                        mStartHour = 11;
-                    } else if (selection.equals("12")){
-                        mStartHour = 12;
-                    } else if (selection.equals("13")){
-                        mStartHour = 13;
-                    } else if (selection.equals("14")){
-                        mStartHour = 14;
-                    } else if (selection.equals("15")){
-                        mStartHour = 15;
-                    } else if (selection.equals("16")){
-                        mStartHour = 16;
-                    } else if (selection.equals("17")){
-                        mStartHour = 17;
-                    } else if (selection.equals("18")){
-                        mStartHour = 18;
-                    } else if (selection.equals("19")){
-                        mStartHour = 19;
-                    } else if (selection.equals("20")){
-                        mStartHour = 20;
-                    } else if (selection.equals("21")){
-                        mStartHour = 21;
-                    } else if (selection.equals("22")){
-                        mStartHour = 22;
-                    } else if (selection.equals("23")){
-                        mStartHour = 23;
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                Toast.makeText(mContext, "Hari belum dipilih", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         mFromHourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -567,7 +503,6 @@ public class AddFieldActivity extends AppCompatActivity {
                     }
                     if (selection.equals("1")) {
                         mEndHour = 1; //monday
-                        Log.d("START HOUR ", mEndHour + "");
                     } else if (selection.equals("2")) {
                         mEndHour = 2;
                     } else if (selection.equals("3")) {
@@ -839,7 +774,7 @@ public class AddFieldActivity extends AppCompatActivity {
     private void dialogTarif(){
         String titleText = "Tambah Tarif";
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
-        View dialogView = LayoutInflater.from(mContext).inflate(R.layout.list_tariff, null);
+        View dialogView = LayoutInflater.from(mContext).inflate(R.layout.dialog_list_tariff, null);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setCancelable(true);
         // Initialize a new foreground color span instance
@@ -861,6 +796,8 @@ public class AddFieldActivity extends AppCompatActivity {
         mFromHourSpinner = (Spinner) dialogView.findViewById(R.id.et_from_hour);
         mFieldCostEditText = (EditText) dialogView.findViewById(R.id.et_cost_field);
 
+        mFieldCostEditText.addTextChangedListener(new CurrencyTextWatcher(mFieldCostEditText));
+
         setupSpinnerFromDay();
         setupSpinnerUntilDay();
         setSpinnerFromHour();
@@ -869,8 +806,8 @@ public class AddFieldActivity extends AppCompatActivity {
         dialogBuilder.setPositiveButton("Tambah", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                fieldTarifs.add(
-                        new FieldTariff(mStartDay, mEndDay, mStartHour, mEndHour, mFieldCostEditText.getText().toString()));
+                fieldTarifs.add(new FieldTariff(mStartDay, mEndDay, mStartHour, mEndHour,
+                        mFieldCostEditText.getText().toString().replaceAll("[Rp,.\\s]", "")));
                 mAdapter.notifyDataSetChanged();
                 jsonTarif= new Gson().toJson(fieldTarifs);
                 Log.d("JSONTARIF ", jsonTarif);

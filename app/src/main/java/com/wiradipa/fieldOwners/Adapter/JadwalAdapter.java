@@ -25,30 +25,10 @@ public class JadwalAdapter extends RecyclerView.Adapter<JadwalAdapter.ViewHolder
 //        public String mStartHour;
 //        public String mEndHour;
 //        public int mRentalStatus;
-//
-//        public String getmRentalDate() {
-//            return mRentalDate;
-//        }
-//
-//        public String getmStartHour() {
-//            return mStartHour;
-//        }
-//
-//        public String getmEndHour() {
-//            return mEndHour;
-//        }
-//
-//        public int getmRentalStatus() {
-//            return mRentalStatus;
-//        }
-//
-//        public void setmRentalStatus(int mRentalStatus) {
-//            this.mRentalStatus = mRentalStatus;
-//        }
 //    }
 
-    public ArrayList<Jadwal> listJadwal;
-    Context mContext;
+    private ArrayList<Jadwal> listJadwal;
+    private Context mContext;
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 

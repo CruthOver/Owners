@@ -48,9 +48,6 @@ public class VenueActivity extends AppCompatActivity {
     BaseApiService mApiService;
     AppSession mAppSession;
 
-    private Toolbar mToolbar;
-    private TextView mTvTitle;
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,8 +170,8 @@ public class VenueActivity extends AppCompatActivity {
     }
 
     private void initToolbar(){
-        mToolbar = (Toolbar) findViewById(R.id.app_bar);
-        mTvTitle = (TextView) findViewById(R.id.textViewTitle);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.app_bar);
+        TextView mTvTitle = (TextView) findViewById(R.id.textViewTitle);
 
         //Init mToolbar
         if (mToolbar != null){

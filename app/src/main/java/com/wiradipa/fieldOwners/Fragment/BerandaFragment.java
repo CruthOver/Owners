@@ -1,24 +1,19 @@
 package com.wiradipa.fieldOwners.Fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.wiradipa.fieldOwners.Adapter.ViewPagerAdapter;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.FieldActivity;
-import com.wiradipa.fieldOwners.JadwalActivity;
+import com.wiradipa.fieldOwners.ScheduleActivity;
 import com.wiradipa.fieldOwners.R;
 import com.wiradipa.fieldOwners.VenueActivity;
 
@@ -66,17 +61,23 @@ public class BerandaFragment extends Fragment {
         mPemesananMinggu = (TextView) view.findViewById(R.id.week_rentals);
         mPemesananBulan = (TextView) view.findViewById(R.id.month_rentals);
 
-        mPemesananMinggu.setText(mAppSession.getData(AppSession.ORDERED_WEEK) + " Pemesanan");
-        mPemesananBulan.setText(mAppSession.getData(AppSession.ORDERED_MONTH) + " Pemesanan");
 
         ImageView jadwal = (ImageView) view.findViewById(R.id.jadwal);
         jadwal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), JadwalActivity.class);
+                Intent intent = new Intent(getActivity(), ScheduleActivity.class);
                 startActivity(intent);
             }
         });
         return view;
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onResume() {
+        mPemesananMinggu.setText(mAppSession.getData(AppSession.ORDERED_WEEK) + " Pemesanan");
+        mPemesananBulan.setText(mAppSession.getData(AppSession.ORDERED_MONTH) + " Pemesanan");
+        super.onResume();
     }
 }

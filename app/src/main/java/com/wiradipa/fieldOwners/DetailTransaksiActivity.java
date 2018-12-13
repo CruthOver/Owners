@@ -45,7 +45,7 @@ public class DetailTransaksiActivity extends AppCompatActivity {
 
     TextView tvPlayerName, tvFieldName, tvVenueName, tvDate, tvIdTransaction
             , tvTime, tvClubPlayer, tvDownPayment, tvReceiveable, tvAmount;
-    Button btnLunas, btnBatal, btnApprove, btnProofPayment;
+    Button btnLunas, btnBatal, btnProofPayment;
     CircleImageView civPlayer;
 
     String mIdTransaksi, mNamaLapang, mNamaVenue, mStartHour, mEndHour,
@@ -64,7 +64,7 @@ public class DetailTransaksiActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras!=null){
             id = extras.getInt("idTransaction");
-            mUrlBukti = extras.getString("receiptUrl");
+//            mUrlBukti = extras.getString("receiptUrl");
         }
 
         initComponents();
@@ -87,8 +87,7 @@ public class DetailTransaksiActivity extends AppCompatActivity {
 
         btnLunas = (Button) findViewById(R.id.btnLunas);
         btnBatal = (Button) findViewById(R.id.btnBatal);
-//        btnApprove = (Button) findViewById(R.id.btnApproveDP);
-        btnProofPayment = (Button) findViewById(R.id.proofOfPayment);
+//        btnProofPayment = (Button) findViewById(R.id.proofOfPayment);
 
         btnLunas.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,19 +103,12 @@ public class DetailTransaksiActivity extends AppCompatActivity {
             }
         });
 
-//        btnApprove.setOnClickListener(new View.OnClickListener() {
+//        btnProofPayment.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                approveDownPayment();
+//                dialogReceiptUrl(mUrlBukti);
 //            }
 //        });
-
-        btnProofPayment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialogReceiptUrl(mUrlBukti);
-            }
-        });
     }
 
     public String checkDigit(String number) {
@@ -207,7 +199,7 @@ public class DetailTransaksiActivity extends AppCompatActivity {
         });
     }
 
-    private void approveDownPayment(){
+    /*private void approveDownPayment(){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setTitle("Proses");
         progressDialog.setMessage("Tunggu Sebentar");
@@ -252,9 +244,9 @@ public class DetailTransaksiActivity extends AppCompatActivity {
                 popupAllert("No Internet Connection !!!");
             }
         });
-    }
+    }*/
 
-    public void dialogReceiptUrl(String url){
+/*    public void dialogReceiptUrl(String url){
         String titleText = "Tambah Tarif";
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext);
         View view = LayoutInflater.from(mContext).inflate(R.layout.custom_alert_dialog, null);
@@ -304,7 +296,7 @@ public class DetailTransaksiActivity extends AppCompatActivity {
             }
         });
         dialog.show();
-    }
+    }*/
 
     private void lunasPayment(){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);

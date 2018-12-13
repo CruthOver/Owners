@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
@@ -14,11 +16,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,14 +42,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class JadwalActivity extends AppCompatActivity {
+public class ScheduleActivity extends AppCompatActivity {
 
     Context mContext;
     BaseApiService mApiService;
@@ -55,40 +58,76 @@ public class JadwalActivity extends AppCompatActivity {
     String startHour = "Belum ada Data";
     int mIdField;
     Spinner spinnerListField;
+    ImageView imgAddRental;
+    TextView tanggal;
 
-    private RecyclerView listView;
+    RecyclerView recyclerView;
     ArrayList<Jadwal> jadwal;
     ListVenue field;
     private JadwalAdapter jadwalAdapter;
-    Jadwal mJadwal;
     DatePickerDialog.OnDateSetListener mDatePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_jadwal);
+        setContentView(R.layout.activity_schedule);
+        initToolbar();
 
         mContext = this;
         mApiService = UtilsApi.getApiService();
         mAppSession = new AppSession(mContext);
+
+        initComponents();
 
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
             id = bundle.getString("idField");
         }
 
-        spinnerListField = (Spinner) findViewById(R.id.spinner_id_field);
-        listView = (RecyclerView) findViewById(R.id.list_jadwal);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, OrientationHelper.VERTICAL, false);
-        listView.setLayoutManager(linearLayoutManager);
-        listView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         jadwalAdapter = new JadwalAdapter(mContext);
-        listView.setAdapter(jadwalAdapter);
+        recyclerView.setAdapter(jadwalAdapter);
 
         jadwal = new ArrayList<>();
-        mJadwal = new Jadwal();
 
-        final TextView tanggal = (TextView) findViewById(R.id.tanggal);
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView,
+                new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                if (jadwalAdapter.getJadwalId(position) == 1){
+                    createPeminjaman(jadwalAdapter.getStartHour(position), jadwalAdapter.getEndHour(position));
+//                    jadwalAdapter.clearData();
+//                    listJadwal();
+                } else{
+                    cancelPeminjaman(jadwalAdapter.getStartHour(position), jadwalAdapter.getEndHour(position));
+//                    jadwalAdapter.clearData();
+//                    listJadwal();
+                }
+                refreshActivity();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+    }
+
+    private void initComponents(){
+        spinnerListField = (Spinner) findViewById(R.id.spinner_id_field);
+        recyclerView = (RecyclerView) findViewById(R.id.list_jadwal);
+        tanggal = (TextView) findViewById(R.id.tanggal);
+
+        imgAddRental = (ImageView) findViewById(R.id.add_jadwal);
+        imgAddRental.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, AddFieldRentalActivity.class);
+                startActivity(intent);
+            }
+        });
 
         String tempDate = null;
 
@@ -114,8 +153,10 @@ public class JadwalActivity extends AppCompatActivity {
                 month = month + 1;
                 date = year + "-" + checkDigit(month)+ "-" + checkDigit(dayOfMonth);
                 tanggal.setText(date);
+                jadwalAdapter.clearData();
                 listJadwal();
-                refreshActivity();
+//                refreshActivity();
+
             }
         };
 
@@ -127,7 +168,7 @@ public class JadwalActivity extends AppCompatActivity {
                 int month = cal.get(Calendar.MONTH);
                 int day = cal.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog dialog = new DatePickerDialog(JadwalActivity.this,
+                DatePickerDialog dialog = new DatePickerDialog(ScheduleActivity.this,
                         R.style.Theme_AppCompat_DayNight_Dialog_MinWidth,
                         mDatePicker,year,month,day);
                 dialog.getDatePicker().setMinDate(cal.getTimeInMillis());
@@ -135,7 +176,7 @@ public class JadwalActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-
+        setSpinnerField();
         spinnerListField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -150,23 +191,6 @@ public class JadwalActivity extends AppCompatActivity {
 
             }
         });
-        setSpinnerField();
-        listView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), listView, new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                if (jadwalAdapter.getJadwalId(position) == 1){
-                    createPeminjaman(jadwalAdapter.getStartHour(position), jadwalAdapter.getEndHour(position));
-                } else{
-                    cancelPeminjaman(jadwalAdapter.getStartHour(position), jadwalAdapter.getEndHour(position));
-                }
-                refreshActivity();
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
     }
 
     private void setSpinnerField(){
@@ -376,7 +400,7 @@ public class JadwalActivity extends AppCompatActivity {
     public void refreshActivity(){
         finish();
         overridePendingTransition(0, 0);
-        Intent intent = new Intent(JadwalActivity.this, JadwalActivity.class);
+        Intent intent = new Intent(ScheduleActivity.this, ScheduleActivity.class);
         intent.putExtra("date", date);
         intent.putExtra("idField", id);
         startActivity(intent);
@@ -438,5 +462,37 @@ public class JadwalActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 }).create().show();
+    }
+
+    private void initToolbar(){
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.app_bar);
+        TextView mTvTitle = (TextView) findViewById(R.id.textViewTitle);
+
+        //Init mToolbar
+        if (mToolbar != null){
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        //Load title
+        try {
+            ActivityInfo activityInfo = getPackageManager().getActivityInfo(
+                    getComponentName(), PackageManager.GET_META_DATA);
+            String title = activityInfo.loadLabel(getPackageManager())
+                    .toString();
+
+            if (mTvTitle != null){
+                mTvTitle.setText(title);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        initComponents();
+        super.onResume();
     }
 }

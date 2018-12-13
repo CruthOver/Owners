@@ -2,6 +2,7 @@ package com.wiradipa.fieldOwners;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -41,6 +44,7 @@ public class ListEditTarifActivity extends AppCompatActivity {
     ListEditTarifAdapter adapter;
     RecyclerView recyclerView;
     Spinner spinnerDay;
+    ImageView btnAddTarif;
 
     String id;
     int mStartDay;
@@ -58,7 +62,7 @@ public class ListEditTarifActivity extends AppCompatActivity {
         if (bundle!=null){
             id = bundle.getString("fieldId");
         }
-
+        btnAddTarif = (ImageView) findViewById(R.id.add_tarif);
         spinnerDay = (Spinner) findViewById(R.id.edit_tarif_hari);
         adapter = new ListEditTarifAdapter(mContext);
         recyclerView = (RecyclerView) findViewById(R.id.list_edit_tarif);
@@ -74,7 +78,7 @@ public class ListEditTarifActivity extends AppCompatActivity {
                 new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(mContext, "YEEEEAAAAHHH", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Dalam Taham Pengembangan", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -82,6 +86,15 @@ public class ListEditTarifActivity extends AppCompatActivity {
 
             }
         }));
+
+        btnAddTarif.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, AddTarifActivity.class);
+                intent.putExtra("fieldId", id);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setSpinnerDay(){
@@ -200,5 +213,11 @@ public class ListEditTarifActivity extends AppCompatActivity {
                 Log.e("debug","OnFailure: JadwalError >" + t.toString());
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getDataTarif();
     }
 }

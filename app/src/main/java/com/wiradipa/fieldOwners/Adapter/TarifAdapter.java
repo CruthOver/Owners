@@ -25,11 +25,11 @@ import java.util.List;
 
 public class TarifAdapter extends BaseAdapter{
 
-    ArrayList<FieldTariff> tariffs = new ArrayList<FieldTariff>();
-    Context mContext;
-    FieldTariff fieldTariff;
+    private ArrayList<FieldTariff> tariffs = new ArrayList<FieldTariff>();
+    private Context mContext;
+    private FieldTariff fieldTariff;
 
-    String startDay, endDay, startHours, endHours;
+    private String startDay, endDay, startHours, endHours;
 
     public TarifAdapter(Context mContext, ArrayList<FieldTariff> tariffs) {
         this.tariffs = tariffs;
@@ -109,10 +109,8 @@ public class TarifAdapter extends BaseAdapter{
             public void onClick(View view) {
                 tariffs.remove(i);
                 notifyDataSetChanged();
-                Log.d("COUNTTT", getCount() + "");
             }
         });
-        Log.d("TARIFFFF", tariffs.get(i).getTariff());
 
         return view;
     }

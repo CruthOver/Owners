@@ -49,9 +49,6 @@ public class FieldActivity extends AppCompatActivity {
 
     String id;
 
-    private Toolbar mToolbar;
-    private TextView mTvTitle;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +63,6 @@ public class FieldActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.list_field);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, OrientationHelper.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new FieldAdapter(mContext);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView,
@@ -238,8 +234,8 @@ public class FieldActivity extends AppCompatActivity {
     }
 
     private void initToolbar(){
-        mToolbar = (Toolbar) findViewById(R.id.app_bar);
-        mTvTitle = (TextView) findViewById(R.id.textViewTitle);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.app_bar);
+        TextView mTvTitle = (TextView) findViewById(R.id.textViewTitle);
 
         //Init mToolbar
         if (mToolbar != null){

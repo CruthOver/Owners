@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".JadwalActivity">
+    tools:context=".ScheduleActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -66,11 +66,25 @@
                 android:textSize="16sp"
                 android:text="Status"/>
         </LinearLayout>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list_edit_tarif"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-        </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_edit_tarif"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <ImageView
+                android:id="@+id/add_tarif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/add_icon"
+                android:adjustViewBounds="true"
+                android:maxWidth="54dp"
+                android:maxHeight="54dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="24dp"
+                android:layout_marginEnd="20dp"/>
+        </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

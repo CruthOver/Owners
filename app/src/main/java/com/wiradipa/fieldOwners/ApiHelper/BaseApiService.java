@@ -172,11 +172,27 @@ public interface BaseApiService {
                                        @Query("auth_token") String token,
                                        @Query("owner") int owner);
 
-    @POST("field_rentals/{id}/approve_down_payment")
+/*    @POST("field_rentals/{id}/approve_down_payment")
     Call<ResponseBody> approveDownPayment(@Path("id") int id,
-                                          @Query("auth_token") String token);
+                                          @Query("auth_token") String token);*/
 
     @POST("field_rentals/{id}/make_paid")
     Call<ResponseBody> lunasPayment(@Path("id") int id,
                                     @Query("auth_token") String token);
+
+    @FormUrlEncoded
+    @POST("field_rentals/manual_create")
+    Call<ResponseBody> addFieldRentalManually(@Field("auth_token") String authToken,
+                                              @Field("rental_date") String rentalDate,
+                                              @Field("start_hour") int startHour,
+                                              @Field("end_hour") int endHour,
+                                              @Field("name") String nameRenter,
+                                              @Field("phone_number") String phoneNumberRenter,
+                                              @Field("field_owner_id") int fieldOwnerId,
+                                              @Field("field_id") int fieldId);
+
+    @POST("fields/{id}/create_new_tariff")
+    Call<ResponseBody> addFieldTarif(@Path("id") String fieldId,
+                                     @Query("auth_token") String token,
+                                     @Query("field_tariffs") String fieldTarif);
 }

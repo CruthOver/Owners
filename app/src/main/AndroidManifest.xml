@@ -7,6 +7,13 @@
         android:name="org.wiradipa.fieldOwners.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
+    <uses-permission android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.BATTERY_STATS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="org.wiradipa.fieldOwners.permission.MAPS_RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -42,12 +49,12 @@
                 android:value="com.wiradipa.fieldOwners.LoginActivity" />
         </activity>
         <activity
-            android:name=".KodeAktivasiActivity"
+            android:name=".ActivationCodeActivity"
             android:label="KODEAKTIVASI" />
         <activity
             android:name=".MainActivity"
             android:label="BERANDA"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AddVenueActivity"
             android:label="Tambah Venue">
@@ -64,8 +71,9 @@
                 android:value="com.wiradipa.fieldOwners.MainActivity" />
         </activity>
         <activity
-            android:name=".JadwalActivity"
-            android:label="JADWAL">
+            android:name=".ScheduleActivity"
+            android:label="JADWAL"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.DetailFieldActivity" />
@@ -106,18 +114,40 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.FieldActivity" />
         </activity>
-        <activity android:name=".ListEditTarifActivity"
+        <activity
+            android:name=".ListEditTarifActivity"
             android:label="Edit Tarif">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.DetailFieldActivity" />
         </activity>
-        <activity android:name=".DetailTransaksiActivity"
+        <activity
+            android:name=".DetailTransaksiActivity"
             android:label="Detail Transaksi"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.wiradipa.fieldOwners.MainActivity" />
+        </activity>
+        <activity
+            android:name=".AddTarifActivity"
+            android:label="Tambah Tarif">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.wiradipa.fieldOwners.ListEditTarifActivity" />
+        </activity>
+        <activity
+            android:name=".AddFieldRentalActivity"
+            android:label="Tambah Sewa Lapangan">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.wiradipa.fieldOwners.ScheduleActivity" />
+        </activity>
+        <activity android:name=".TarikDanaActivity"
+            android:label="TARIK DANA">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.wiradipa.fieldOwners.ScheduleActivity" />
         </activity>
     </application>
 

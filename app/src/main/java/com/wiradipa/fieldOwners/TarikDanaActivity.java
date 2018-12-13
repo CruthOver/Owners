@@ -1,23 +1,12 @@
-package com.wiradipa.fieldOwners.Fragment;
+package com.wiradipa.fieldOwners;
 
-import android.os.Build;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.support.v4.app.Fragment;
 import android.widget.ImageView;
 import android.widget.Toolbar;
 
-import com.wiradipa.fieldOwners.R;
-
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class TarikDanaFragment extends Fragment {
-
+public class TarikDanaActivity extends AppCompatActivity {
 
     ImageView bca;
     ImageView bni;
@@ -25,24 +14,15 @@ public class TarikDanaFragment extends Fragment {
     ImageView bri;
     Toolbar toolbar;
 
-    public TarikDanaFragment() {
-        // Required empty public constructor
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_tarik_dana);
 
-        View view = inflater.inflate(R.layout.fragment_tarik_dana, container, false);
-
-
-        bca = (ImageView) view.findViewById(R.id.bca);
-        bni = (ImageView) view.findViewById(R.id.bni);
-        mandiri = (ImageView) view.findViewById(R.id.mandiri);
-        bri = (ImageView) view.findViewById(R.id.bri);
+        bca = (ImageView) findViewById(R.id.bca);
+        bni = (ImageView) findViewById(R.id.bni);
+        mandiri = (ImageView) findViewById(R.id.mandiri);
+        bri = (ImageView) findViewById(R.id.bri);
 
         bca.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,8 +67,5 @@ public class TarikDanaFragment extends Fragment {
                 mandiri.setBackgroundResource(R.color.highlight);
             }
         });
-
-        return view;
     }
-
 }

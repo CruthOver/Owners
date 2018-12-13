@@ -23,11 +23,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.testfairy.TestFairy;
 import com.wiradipa.fieldOwners.ApiHelper.AppSession;
 import com.wiradipa.fieldOwners.ApiHelper.BaseApiService;
 import com.wiradipa.fieldOwners.ApiHelper.UtilsApi;
 import com.wiradipa.fieldOwners.Fragment.BerandaFragment;
-import com.wiradipa.fieldOwners.Fragment.TarikDanaFragment;
 import com.wiradipa.fieldOwners.Fragment.TransaksiFragment;
 
 import org.json.JSONException;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView mEmailTv, mUsernameTv;
-    Button  mLogout;
+    Button mLogout;
 
     AppSession mAppSession;
     Context mContext;
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        TestFairy.begin(this, "0f80e33eee4aa53ac474ec02bd32071633a0452f");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -115,6 +116,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -131,6 +134,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(mContext, TarikDanaActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -148,10 +153,11 @@ public class MainActivity extends AppCompatActivity
             fragment = new BerandaFragment();
             getSupportActionBar().setTitle("BERANDA");
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-            fragment = new TarikDanaFragment();
-            getSupportActionBar().setTitle("TARIK DANA");
         }
+//        else if (id == R.id.nav_gallery) {
+//            fragment = new TarikDanaFragment();
+//            getSupportActionBar().setTitle("TARIK DANA");
+//        }
         else if (id == R.id.nav_transaksi) {
             fragment = new TransaksiFragment();
             getSupportActionBar().setTitle("TRANSAKSI");

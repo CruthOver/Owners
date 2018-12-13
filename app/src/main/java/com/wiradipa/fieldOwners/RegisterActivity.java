@@ -182,7 +182,7 @@ public class RegisterActivity extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(response.body().string());
                             if (jsonObject.getString("status").equals("success")) {
                                 String noHpResult = jsonObject.getString("phone_number");
-                                Intent intent = new Intent(mContext, KodeAktivasiActivity.class);
+                                Intent intent = new Intent(mContext, ActivationCodeActivity.class);
                                 intent.putExtra("resultNoHp", noHpResult);
                                 startActivity(intent);
                             } else {

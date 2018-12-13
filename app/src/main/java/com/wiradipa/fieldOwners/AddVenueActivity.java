@@ -399,7 +399,6 @@ public class AddVenueActivity extends AppCompatActivity
                 if (!TextUtils.isEmpty(selection)) {
                     if (selection.equals("1")) {
                         mEndHour = 1; //monday
-                        Log.d("START HOUR ", mEndHour + "");
                     } else if (selection.equals("2")) {
                         mEndHour = 2;
                     } else if (selection.equals("3")) {
