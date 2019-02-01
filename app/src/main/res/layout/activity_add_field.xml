@@ -29,7 +29,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nama"
+                android:text="Nama Lapangan"
                 android:layout_marginTop="16dp"
                 android:textColor="@color/text_color"
                 android:textSize="12sp" />
@@ -43,7 +43,7 @@
                 android:inputType="text"
                 android:maxLines="1"
                 android:textColor="@color/text_white"
-                android:textColorHint="@color/text_white"
+                android:textColorHint="@android:color/darker_gray"
                 android:paddingTop="4dp"/>
             <TextView
                 android:layout_width="match_parent"
@@ -53,7 +53,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Deskripsi"
+                android:text="Deskripsi Lapangan"
                 android:layout_marginTop="16dp"
                 android:textColor="@color/text_color"
                 android:textSize="12sp" />
@@ -66,7 +66,7 @@
                 android:hint="Deskripsi Lapangan"
                 android:inputType="text"
                 android:textColor="@color/text_white"
-                android:textColorHint="@color/text_white"
+                android:textColorHint="@android:color/darker_gray"
                 android:paddingTop="4dp"/>
             <TextView
                 android:layout_width="match_parent"
@@ -134,9 +134,9 @@
                 android:textSize="14sp"
                 android:inputType="text"
                 android:maxLines="1"
-                android:hint="15 x 25 m"
+                android:hint="ex : 15 x 25 m"
                 android:textColor="@color/text_white"
-                android:textColorHint="@color/text_white"
+                android:textColorHint="@android:color/darker_gray"
                 android:paddingTop="4dp"/>
             <TextView
                 android:layout_width="match_parent"
@@ -181,26 +181,26 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"/>
 
-                <RelativeLayout
-                    android:id="@+id/tarif_RL"
+            <RelativeLayout
+                android:id="@+id/tarif_RL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.wiradipa.fieldOwners.NonScrollListView
+                    android:id="@+id/list_tariff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <com.wiradipa.fieldOwners.NonScrollListView
-                        android:id="@+id/list_tariff"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                    </com.wiradipa.fieldOwners.NonScrollListView>
+                </com.wiradipa.fieldOwners.NonScrollListView>
 
-                    <TextView
-                        android:id="@+id/empty_tarif_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Belum Ada Tarif Terdaftar"
-                        android:layout_marginTop="16dp"
-                        android:textColor="@color/text_color"
-                        android:layout_centerInParent="true"
-                        android:textSize="20sp" />
-                </RelativeLayout>
+                <TextView
+                    android:id="@+id/empty_tarif_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Belum Ada Tarif Terdaftar"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/text_color"
+                    android:layout_centerInParent="true"
+                    android:textSize="20sp" />
+            </RelativeLayout>
 
 
             <Button

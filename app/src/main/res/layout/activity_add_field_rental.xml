@@ -76,7 +76,7 @@
                 android:maxLines="1"
                 android:hint="Nama Penyewa"
                 android:textColor="@color/text_white"
-                android:textColorHint="@color/text_white"
+                android:textColorHint="@android:color/darker_gray"
                 android:paddingTop="4dp"/>
             <TextView
                 android:layout_width="match_parent"
@@ -100,7 +100,7 @@
                 android:hint="Nomor Telepon"
                 android:inputType="number"
                 android:textColor="@color/text_white"
-                android:textColorHint="@color/text_white"
+                android:textColorHint="@android:color/darker_gray"
                 android:paddingTop="4dp"/>
             <TextView
                 android:layout_width="match_parent"
