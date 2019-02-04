@@ -43,9 +43,9 @@ import retrofit2.Response;
 public class AddFieldRentalActivity extends AppCompatActivity {
 
     Spinner spinnerStartHour, spinnerDuration, spinnerField
-            , spinnerVenue;
+            , spinnerVenue,spinnerDay;
     EditText etNameRenter, etPhoneNumberRenter;
-    TextView tvDate;
+    TextView tvDate, tvKalender;
     Button btnAddRentals, btnCancel;
 
     Context mContext;
@@ -53,7 +53,7 @@ public class AddFieldRentalActivity extends AppCompatActivity {
     AppSession mAppSession;
 
     int mIdVenue, mIdField, mStartHour, mEndHour;
-    String date;
+    String date,mDay;
 
     ListVenue venue;
     DatePickerDialog.OnDateSetListener mDatePicker;
@@ -106,11 +106,13 @@ public class AddFieldRentalActivity extends AppCompatActivity {
         spinnerDuration = (Spinner) findViewById(R.id.spinner_duration);
         spinnerField = (Spinner) findViewById(R.id.spinner_field);
         spinnerVenue = (Spinner) findViewById(R.id.spinner_venue);
+        spinnerDay = (Spinner) findViewById(R.id.spinner_day_booking);
 
         etNameRenter = (EditText) findViewById(R.id.name_renter);
         etPhoneNumberRenter = (EditText) findViewById(R.id.phoneNumberRenter);
 
         tvDate = (TextView) findViewById(R.id.tv_date);
+        tvKalender = (TextView) findViewById(R.id.kalendar);
 
         btnAddRentals = (Button) findViewById(R.id.add_new_rental);
         btnCancel = (Button) findViewById(R.id.btnCancel);
@@ -160,6 +162,8 @@ public class AddFieldRentalActivity extends AppCompatActivity {
         setSpinnerDate();
         setSpinnerStartHour();
         setSpinnerDuration();
+        setSpinnerKalender();
+        setSpinnerDay();
     }
 
     private void setSpinnerVenue(){
@@ -189,7 +193,7 @@ public class AddFieldRentalActivity extends AppCompatActivity {
                                     }
                                     final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<ListVenue>(mContext,
                                             R.layout.spinner_jadwal, listVenue);
-                                    adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                    adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
                                     spinnerVenue.setAdapter(adapter);
                                 }
 
@@ -240,7 +244,8 @@ public class AddFieldRentalActivity extends AppCompatActivity {
                                     }
                                     final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<ListVenue>(mContext,
                                             R.layout.spinner_jadwal, listVenue);
-                                    adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                    adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1
+                                    );
                                     spinnerField.setAdapter(adapter);
                                 }
 
@@ -320,6 +325,49 @@ public class AddFieldRentalActivity extends AppCompatActivity {
             }
         });
     }
+    private void setSpinnerKalender(){
+        String tempDate = null;
+
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        month = month + 1;
+        date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
+
+        tempDate = getIntent().getStringExtra("date");
+        if(tempDate!=null){
+            date = tempDate;
+        }else{
+            date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
+        }
+        mDatePicker = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                month = month + 1;
+                date = year + "-" + checkDigit(month)+ "-" + checkDigit(dayOfMonth);
+                tvKalender.setText(date);
+            }
+        };
+
+        tvKalender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog = new DatePickerDialog(mContext,
+                        R.style.Theme_AppCompat_DayNight_Dialog_MinWidth,
+                        mDatePicker,year,month,day);
+                dialog.getDatePicker().setMinDate(cal.getTimeInMillis());
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+                dialog.show();
+            }
+        });
+    }
 
     public String checkDigit(int number)
     {
@@ -329,7 +377,7 @@ public class AddFieldRentalActivity extends AppCompatActivity {
     private void setSpinnerStartHour() {
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.startHour, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         spinnerStartHour.setAdapter(fromDaySpinner);
         spinnerStartHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -399,7 +447,7 @@ public class AddFieldRentalActivity extends AppCompatActivity {
     private void setSpinnerDuration() {
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.endHour, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         spinnerDuration.setAdapter(fromDaySpinner);
         spinnerDuration.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -465,6 +513,46 @@ public class AddFieldRentalActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void setSpinnerDay() {
+        ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
+                R.array.day, R.layout.spinner_jadwal);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
+
+        spinnerDay.setAdapter(fromDaySpinner);
+        spinnerDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String selection = (String) adapterView.getItemAtPosition(i);
+                if (!TextUtils.isEmpty(selection)) {
+                    if (selection.equals(R.string.optionDay)) {
+                        mDay = "--- pilih hari ---";
+                    } else if (selection.equals(R.string.monday)) {
+                        mDay = "senin";
+                    } else if (selection.equals(R.string.tuesday)) {
+                        mDay = "selasa";
+                    } else if (selection.equals(R.string.wednesday)) {
+                        mDay = "rabu";
+                    } else if (selection.equals(R.string.thursday)) {
+                        mDay = "kamis";
+                    } else if (selection.equals(R.string.friday)) {
+                        mDay = "jumat";
+                    } else if (selection.equals(R.string.saturday)) {
+                        mDay = "sabtu";
+                    } else if (selection.equals(R.string.sunday)) {
+                        mDay = "minggu";
+                    }
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                Toast.makeText(mContext, "Jam Main belum dipilih", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     private void addFieldRental(){
         if (emptyCheck()){
