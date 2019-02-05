@@ -7,10 +7,14 @@ public class FasilitasValue {
 
     @SerializedName("facility_id")
     @Expose
-    private int id;
+    public int id;
 
     public FasilitasValue(int id) {
         this.id = id;
+    }
+
+    public FasilitasValue() {
+
     }
 
     public void setImage(int id) {

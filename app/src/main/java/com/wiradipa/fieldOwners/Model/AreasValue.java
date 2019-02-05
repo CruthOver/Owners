@@ -7,10 +7,14 @@ public class AreasValue {
 
     @SerializedName("area_id")
     @Expose
-    private int id;
+    public int id;
 
     public AreasValue(int id) {
         this.id = id;
+    }
+
+    public AreasValue() {
+
     }
 
     public void setImage(int id) {

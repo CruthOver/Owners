@@ -134,9 +134,9 @@
                 android:textSize="14sp"
                 android:inputType="text"
                 android:maxLines="1"
-                android:hint="15 x 25 m"
+                android:hint="ex : 15 x 25 m"
                 android:textColor="@color/text_white"
-                android:textColorHint="@color/text_white"
+                android:textColorHint="@android:color/darker_gray"
                 android:paddingTop="4dp"/>
             <TextView
                 android:layout_width="match_parent"

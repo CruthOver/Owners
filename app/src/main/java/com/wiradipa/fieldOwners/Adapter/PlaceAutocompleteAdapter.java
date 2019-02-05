@@ -75,6 +75,8 @@ public class PlaceAutocompleteAdapter
         mPlaceFilter = filter;
     }
 
+
+
     /**
      * Sets the bounds for all subsequent queries.
      */
