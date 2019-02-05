@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class VenueActivity extends AppCompatActivity {
     Context mContext;
     BaseApiService mApiService;
     AppSession mAppSession;
+    SwipeRefreshLayout mrefresh;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -65,26 +67,39 @@ public class VenueActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new VenueAdapter(mContext);
+        mrefresh = (SwipeRefreshLayout) findViewById(R.id.swiperesfresh);
+        mrefresh.post(new Runnable() {
+            @Override
+            public void run() {
+                listVenue();
+            }
+        });
+        mrefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                listVenue();
+            }
+        });
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView,
                 new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Intent detailVenue;
-                detailVenue = new Intent(mContext, DetailVenueActivity.class);
-                detailVenue.putExtra("idVenue", mAdapter.getVenueId(position));
-                detailVenue.putExtra("FLAG", "VenueActivity");
-                view.getContext().startActivity(detailVenue);
-            }
+                    @Override
+                    public void onClick(View view, int position) {
+                        Intent detailVenue;
+                        detailVenue = new Intent(mContext, DetailVenueActivity.class);
+                        detailVenue.putExtra("idVenue", mAdapter.getVenueId(position));
+                        detailVenue.putExtra("FLAG", "VenueActivity");
+                        view.getContext().startActivity(detailVenue);
+                    }
 
-            @Override
-            public void onLongClick(View view, int position) {
-                Intent detailVenue;
-                detailVenue = new Intent(mContext, DetailVenueActivity.class);
-                detailVenue.putExtra("idVenue", mAdapter.getVenueId(position));
-                detailVenue.putExtra("FLAG", "VenueActivity");
-                startActivity(detailVenue);
-            }
-        }));
+                    @Override
+                    public void onLongClick(View view, int position) {
+                        Intent detailVenue;
+                        detailVenue = new Intent(mContext, DetailVenueActivity.class);
+                        detailVenue.putExtra("idVenue", mAdapter.getVenueId(position));
+                        detailVenue.putExtra("FLAG", "VenueActivity");
+                        startActivity(detailVenue);
+                    }
+                }));
 
         ImageView add = findViewById(R.id.tambah_venue);
         add.setOnClickListener(new View.OnClickListener() {
@@ -101,12 +116,14 @@ public class VenueActivity extends AppCompatActivity {
         progressDialog.setTitle("Proses");
         progressDialog.setMessage("Tunggu Sebentar");
         progressDialog.show();
+        mrefresh.setRefreshing(true);
 
         mApiService.listVenue(mAppSession.getData(AppSession.TOKEN)).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()){
                     progressDialog.dismiss();
+                    mrefresh.setRefreshing(false);
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().string());
                         if (jsonObject.getString("status").equals("Success")){
@@ -123,6 +140,7 @@ public class VenueActivity extends AppCompatActivity {
                             Toast.makeText(mContext, errMsg, Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException | IOException e) {
+                        mrefresh.setRefreshing(false);
                         e.printStackTrace();
                     }
                 } else {
@@ -147,6 +165,7 @@ public class VenueActivity extends AppCompatActivity {
                 Log.e("debug", "OnFailure: ERROR > "+ t.toString());
                 progressDialog.dismiss();
                 popupAllert("No Internet Connection !!!");
+                mrefresh.setRefreshing(false);
             }
         });
     }

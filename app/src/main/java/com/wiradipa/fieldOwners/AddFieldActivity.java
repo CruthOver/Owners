@@ -396,7 +396,7 @@ public class AddFieldActivity extends AppCompatActivity {
     private void setSpinnerFromHour() {
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.startHour, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         mFromHourSpinner.setAdapter(fromDaySpinner);
         mFromHourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -490,7 +490,7 @@ public class AddFieldActivity extends AppCompatActivity {
     private void setSpinnerEndHour() {
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.endHour, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         mUntilHourSpinner.setAdapter(fromDaySpinner);
         mUntilHourSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -563,7 +563,7 @@ public class AddFieldActivity extends AppCompatActivity {
     private void setupSpinnerFromDay(){
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.day, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         mFromDaySpinner.setAdapter(fromDaySpinner);
         mFromDaySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -602,7 +602,7 @@ public class AddFieldActivity extends AppCompatActivity {
     private void setupSpinnerUntilDay(){
         ArrayAdapter untilDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.day, R.layout.spinner_jadwal);
-        untilDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        untilDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         mUntilDaySpinner.setAdapter(untilDaySpinner);
         mUntilDaySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -669,7 +669,7 @@ public class AddFieldActivity extends AppCompatActivity {
                                     }
                                     final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<ListVenue>(mContext,
                                             R.layout.spinner_jadwal, listVenue);
-                                    adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                    adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
                                     spinnerVenue.setAdapter(adapter);
                                 }
 
@@ -713,7 +713,7 @@ public class AddFieldActivity extends AppCompatActivity {
                         Log.d("DEBUGGING : ", typeID + " : " + listSpinner);
                     }
                     final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<>(mContext, R.layout.spinner_jadwal, listSpinner);
-                    adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
                     mGrassTypeSpinner.setAdapter(adapter);
                 } else {
                     progressDialog.dismiss();
@@ -754,7 +754,7 @@ public class AddFieldActivity extends AppCompatActivity {
                         Log.d("DEBUGGING : ", mFieldType + " : " + listSpinner);
                     }
                     final ArrayAdapter<ListVenue> adapter = new ArrayAdapter<>(mContext, R.layout.spinner_jadwal, listSpinner);
-                    adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    adapter.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
                     mFieldTypeSpinner.setAdapter(adapter);
                 } else {
                     progressDialog.dismiss();

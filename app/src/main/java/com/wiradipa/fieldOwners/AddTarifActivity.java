@@ -127,7 +127,7 @@ public class AddTarifActivity extends AppCompatActivity {
     private void setSpinnerStartHour() {
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.startHour, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         mSpinStartHour.setAdapter(fromDaySpinner);
         mSpinStartHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -201,7 +201,7 @@ public class AddTarifActivity extends AppCompatActivity {
     private void setSpinnerEndHour() {
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.endHour, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         mSpinEndHour.setAdapter(fromDaySpinner);
         mSpinEndHour.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -274,7 +274,7 @@ public class AddTarifActivity extends AppCompatActivity {
     private void setSpinnerStartDay(){
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.day, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         mSpinStartDay.setAdapter(fromDaySpinner);
         mSpinStartDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -313,7 +313,7 @@ public class AddTarifActivity extends AppCompatActivity {
     private void setSpinnerUntilDay(){
         ArrayAdapter untilDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.day, R.layout.spinner_jadwal);
-        untilDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        untilDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         mSpinEndDay.setAdapter(untilDaySpinner);
         mSpinEndDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

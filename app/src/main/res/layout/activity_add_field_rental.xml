@@ -6,178 +6,210 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     tools:context=".AddVenueActivity">
+
     <ScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
+            android:layout_alignParentBottom="true"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp">
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="0dp"
+            android:orientation="vertical">
+
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/jadwal_2"
-                android:adjustViewBounds="true"
                 android:layout_gravity="center"
                 android:layout_marginTop="28dp"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginBottom="24dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/jadwal_2" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tanggal"
                 android:layout_marginTop="16dp"
+                android:text="Tanggal"
                 android:textColor="@color/text_color"
                 android:textSize="12sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/tv_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.3"
-                    android:text="Pilih Tanggal"
-                    android:textSize="16sp"
-                    android:textColor="@color/text_white"
                     android:clickable="true"
-                    android:focusable="false"/>
+                    android:focusable="false"
+                    android:text="Pilih Tanggal"
+                    android:textColor="@color/text_white"
+                    android:textSize="16sp" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_arrow_drop_down_black_24dp"
+                    android:layout_gravity="right"
                     android:background="@color/text_white"
-                    android:layout_gravity="right"/>
+                    android:src="@drawable/ic_arrow_drop_down_black_24dp" />
             </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/white"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:background="@android:color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nama Penyewa"
                 android:layout_marginTop="16dp"
+                android:text="Nama Penyewa"
                 android:textColor="@color/text_color"
                 android:textSize="12sp" />
+
             <EditText
                 android:id="@+id/name_renter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:inputType="text"
-                android:textSize="14sp"
-                android:maxLines="1"
                 android:hint="Nama Penyewa"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingTop="4dp"
                 android:textColor="@color/text_white"
-                android:textColorHint="@color/text_white"
-                android:paddingTop="4dp"/>
+                android:textColorHint="@android:color/darker_gray"
+                android:textSize="14sp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/white"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:background="@android:color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nomor Telepon Penyewa"
                 android:layout_marginTop="16dp"
+                android:text="Nomor Telepon Penyewa"
                 android:textColor="@color/text_color"
                 android:textSize="12sp" />
+
             <EditText
                 android:id="@+id/phoneNumberRenter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:textSize="14sp"
                 android:hint="Nomor Telepon"
                 android:inputType="number"
+                android:paddingTop="4dp"
                 android:textColor="@color/text_white"
-                android:textColorHint="@color/text_white"
-                android:paddingTop="4dp"/>
+                android:textColorHint="@android:color/darker_gray"
+                android:textSize="14sp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/white"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="8dp"
+                android:background="@android:color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pilih Venue"
                 android:layout_marginTop="16dp"
+                android:text="Pilih Venue"
                 android:textColor="@color/text_color"
                 android:textSize="12sp" />
+
             <Spinner
                 android:id="@+id/spinner_venue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:backgroundTint="@color/text_color"/>
+                android:backgroundTint="@color/text_color"
+                android:padding="4dp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/white"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pilih Field"
                 android:layout_marginTop="16dp"
+                android:text="Pilih Field"
                 android:textColor="@color/text_color"
                 android:textSize="12sp" />
+
             <Spinner
                 android:id="@+id/spinner_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:backgroundTint="@color/text_color"/>
+                android:backgroundTint="@color/text_color"
+                android:padding="4dp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/white"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/white" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Penentuan jadwal booking"
+                android:textColor="@color/text_color"
+                android:textSize="12sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginRight="16dp"
+                    android:layout_weight="1"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Jam Mulai"
                         android:layout_marginTop="16dp"
+                        android:text="Hari Sewa"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
+
                     <Spinner
-                        android:id="@+id/spinner_start_hour"
+                        android:id="@+id/spinner_day_booking"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:backgroundTint="@color/text_color"
-                        android:spinnerMode="dropdown"
-                        android:padding="4dp"/>
+                        android:padding="4dp"
+                        android:spinnerMode="dropdown" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/white"
-                        android:layout_marginTop="10dp"/>
+                        android:background="@android:color/white" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -185,25 +217,97 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Durasi"
                         android:layout_marginTop="16dp"
+                        android:text="Batas Akhir Booking"
                         android:textColor="@color/text_color"
                         android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/kalendar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="23dp"
+                        android:drawableRight="@drawable/ic_date_range_black_24dp"
+                        android:hint="Pilih Tanggal"
+                        android:textColor="@color/text_color"
+                        android:textColorHint="@color/text_white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/white" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Jam Mulai"
+                        android:textColor="@color/text_color"
+                        android:textSize="12sp" />
+
+                    <Spinner
+                        android:id="@+id/spinner_start_hour"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/text_color"
+                        android:padding="4dp"
+                        android:spinnerMode="dropdown" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@android:color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Durasi"
+                        android:textColor="@color/text_color"
+                        android:textSize="12sp" />
+
                     <Spinner
                         android:id="@+id/spinner_duration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/text_color"
-                        android:spinnerMode="dropdown"
-                        android:padding="4dp"/>
+                        android:padding="4dp"
+                        android:spinnerMode="dropdown" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/white"
-                        android:layout_marginTop="10dp"/>
+                        android:layout_marginTop="10dp"
+                        android:background="@android:color/white" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -211,24 +315,25 @@
                 android:id="@+id/add_new_rental"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SIMPAN"
-                android:textSize="16sp"
-                android:textColor="@color/text_button"
-                android:padding="8dp"
-                android:textStyle="bold"
+                android:layout_marginBottom="16dp"
                 android:backgroundTint="@color/text_color"
-                android:layout_marginBottom="16dp"/>
+                android:padding="8dp"
+                android:text="SIMPAN"
+                android:textColor="@color/text_button"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
             <Button
                 android:id="@+id/btnCancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Batal"
-                android:textSize="16sp"
-                android:textColor="@color/text_white"
-                android:padding="8dp"
-                android:textStyle="bold"
+                android:layout_marginBottom="16dp"
                 android:background="@color/background"
-                android:layout_marginBottom="16dp"/>
+                android:padding="8dp"
+                android:text="Batal"
+                android:textColor="@color/text_white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

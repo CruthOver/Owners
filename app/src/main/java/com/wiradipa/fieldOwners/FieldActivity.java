@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,8 +35,13 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.widget.Button;
+import android.widget.Toast;
 
-public class FieldActivity extends AppCompatActivity {
+public class FieldActivity extends AppCompatActivity  {
 
     ImageView imgAddField;
     TextView mEmptyData;
@@ -46,6 +52,7 @@ public class FieldActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     FieldAdapter mAdapter;
+    SwipeRefreshLayout mrefresh;
 
     String id;
 
@@ -65,25 +72,40 @@ public class FieldActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new FieldAdapter(mContext);
+        mrefresh = (SwipeRefreshLayout) findViewById(R.id.swiperesfresh);
+        mrefresh.post(new Runnable() {
+            @Override
+            public void run() {
+                listMyFields();
+
+            }
+        });
+        mrefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                listMyFields();
+                internet();
+            }
+        });
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView,
                 new RecyclerTouchListener.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Intent detailField;
-                detailField = new Intent(mContext, DetailFieldActivity.class);
-                detailField.putExtra("idField", mAdapter.getFieldId(position));
-                detailField.putExtra("FLAG", "FieldActivity");
-                view.getContext().startActivity(detailField);
-            }
+                    @Override
+                    public void onClick(View view, int position) {
+                        Intent detailField;
+                        detailField = new Intent(mContext, DetailFieldActivity.class);
+                        detailField.putExtra("idField", mAdapter.getFieldId(position));
+                        detailField.putExtra("FLAG", "FieldActivity");
+                        view.getContext().startActivity(detailField);
+                    }
 
-            @Override
-            public void onLongClick(View view, int position) {
-                Intent detailField;
-                detailField = new Intent(mContext, DetailFieldActivity.class);
-                detailField.putExtra("idField", mAdapter.getFieldId(position));
-                view.getContext().startActivity(detailField);
-            }
-        }));
+                    @Override
+                    public void onLongClick(View view, int position) {
+                        Intent detailField;
+                        detailField = new Intent(mContext, DetailFieldActivity.class);
+                        detailField.putExtra("idField", mAdapter.getFieldId(position));
+                        view.getContext().startActivity(detailField);
+                    }
+                }));
 
         Bundle bundle = getIntent().getExtras();
         if (bundle!=null){
@@ -109,106 +131,114 @@ public class FieldActivity extends AppCompatActivity {
 
         mApiService.listField(mAppSession.getData(AppSession.TOKEN), id)
                 .enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()){
-                    progressDialog.dismiss();
-                    try {
-                        JSONObject jsonObject = new JSONObject(response.body().string());
-                        if (jsonObject.getString("status").equals("Success")){
-                            mAdapter.parsingData(jsonObject.getJSONArray("data"));
-                            if (mAdapter.getItemCount() == 0){
-                                mEmptyData.setVisibility(View.VISIBLE);
-                            } else {
-                                recyclerView.setAdapter(mAdapter);
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()){
+                            progressDialog.dismiss();
+                            try {
+                                JSONObject jsonObject = new JSONObject(response.body().string());
+                                if (jsonObject.getString("status").equals("Success")){
+                                    mAdapter.parsingData(jsonObject.getJSONArray("data"));
+                                    if (mAdapter.getItemCount() == 0){
+                                        mEmptyData.setVisibility(View.VISIBLE);
+                                    } else {
+                                        recyclerView.setAdapter(mAdapter);
+                                    }
+                                    mAdapter.notifyDataSetChanged();
+                                } else {
+                                    String errMsg = jsonObject.getString("message");
+                                    popupAllert(errMsg);
+                                }
+                            } catch (JSONException | IOException e) {
+                                e.printStackTrace();
                             }
-                            mAdapter.notifyDataSetChanged();
                         } else {
-                            String errMsg = jsonObject.getString("message");
-                            popupAllert(errMsg);
+                            switch (response.code()){
+                                case 404:
+                                    popupAllert(getString(R.string.server_not_found));
+                                    break;
+                                case 500:
+                                    popupAllert(getString(R.string.server_error));
+                                    break;
+                                case 413:
+                                    popupAllert(getString(R.string.error_large));
+                                    break;
+                                default:
+                                    popupAllert(getString(R.string.unknown_error));
+                            }
                         }
-                    } catch (JSONException | IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    switch (response.code()){
-                        case 404:
-                            popupAllert(getString(R.string.server_not_found));
-                            break;
-                        case 500:
-                            popupAllert(getString(R.string.server_error));
-                            break;
-                        case 413:
-                            popupAllert(getString(R.string.error_large));
-                            break;
-                        default:
-                            popupAllert(getString(R.string.unknown_error));
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("debug", "OnFailure: ERROR > "+ t.toString());
-                progressDialog.dismiss();
-                popupAllert("No Internet Connection !!!");
-            }
-        });
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e("debug", "OnFailure: ERROR > "+ t.toString());
+                        progressDialog.dismiss();
+                        popupAllert("No Internet Connection !!!");
+                    }
+                });
     }
 
     private void listMyFields(){
+
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setTitle("Proses");
         progressDialog.setMessage("Tunggu Sebentar");
         progressDialog.show();
+        mrefresh.setRefreshing(true);
 
         mApiService.listFields(mAppSession.getData(AppSession.TOKEN))
                 .enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()){
-                    progressDialog.dismiss();
-                    try {
-                        JSONObject jsonObject = new JSONObject(response.body().string());
-                        if (jsonObject.getString("status").equals("Success")){
-                            mAdapter.parsingData(jsonObject.getJSONArray("data"));
-                            if (mAdapter.getItemCount() == 0){
-                                mEmptyData.setVisibility(View.VISIBLE);
-                            } else {
-                                recyclerView.setAdapter(mAdapter);
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()){
+                            progressDialog.dismiss();
+                            mrefresh.setRefreshing(false);
+                            try {
+                                JSONObject jsonObject = new JSONObject(response.body().string());
+                                if (jsonObject.getString("status").equals("Success")){
+                                    mAdapter.parsingData(jsonObject.getJSONArray("data"));
+                                    if (mAdapter.getItemCount() == 0){
+                                        mEmptyData.setVisibility(View.VISIBLE);
+                                    } else {
+                                        recyclerView.setAdapter(mAdapter);
+                                    }
+                                    mAdapter.notifyDataSetChanged();
+                                    mrefresh.setRefreshing(false);
+                                } else {
+                                    String errMsg = jsonObject.getString("message");
+                                    popupAllert(errMsg);
+                                }
+                            } catch (JSONException | IOException e) {
+                                mrefresh.setRefreshing(false);
+                                e.printStackTrace();
                             }
-                            mAdapter.notifyDataSetChanged();
                         } else {
-                            String errMsg = jsonObject.getString("message");
-                            popupAllert(errMsg);
+                            switch (response.code()){
+                                case 404:
+                                    popupAllert(getString(R.string.server_not_found));
+                                    break;
+                                case 500:
+                                    popupAllert(getString(R.string.server_error));
+                                    break;
+                                case 413:
+                                    popupAllert(getString(R.string.error_large));
+                                    break;
+                                default:
+                                    popupAllert(getString(R.string.unknown_error));
+                            }
                         }
-                    } catch (JSONException | IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    switch (response.code()){
-                        case 404:
-                            popupAllert(getString(R.string.server_not_found));
-                            break;
-                        case 500:
-                            popupAllert(getString(R.string.server_error));
-                            break;
-                        case 413:
-                            popupAllert(getString(R.string.error_large));
-                            break;
-                        default:
-                            popupAllert(getString(R.string.unknown_error));
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("debug", "OnFailure: ERROR > "+ t.toString());
-                progressDialog.dismiss();
-                popupAllert("No Internet Connection !!!");
-            }
-        });
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.e("debug", "OnFailure: ERROR > "+ t.toString());
+                        progressDialog.dismiss();
+                        popupAllert("No Internet Connection !!!");
+                        mrefresh.setRefreshing(false);
+                    }
+                });
     }
 
     @Override
@@ -258,4 +288,22 @@ public class FieldActivity extends AppCompatActivity {
 
         }
     }
+    public void internet(){
+        final Button reconnection = (Button)findViewById(R.id.reconnection);
+        reconnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ConnectivityManager cm = (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                if (netInfo!= null && netInfo.isConnected()){
+                    Toast.makeText(getApplication(),"You are connected to" +netInfo.getTypeName()+" "+netInfo.getSubtypeName(),Toast.LENGTH_SHORT).show();
+                }else {
+                    reconnection.setVisibility(View.VISIBLE);
+                    Toast.makeText(getApplication(),"You don't have connection.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
 }

@@ -319,7 +319,7 @@ public class AddVenueActivity extends AppCompatActivity
     private void setSpinnerFromHour() {
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.startHour, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         fromHourEditText.setAdapter(fromDaySpinner);
         fromHourEditText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -389,7 +389,7 @@ public class AddVenueActivity extends AppCompatActivity
     private void setSpinnerEndHour(){
         ArrayAdapter fromDaySpinner = ArrayAdapter.createFromResource(mContext,
                 R.array.endHour, R.layout.spinner_jadwal);
-        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        fromDaySpinner.setDropDownViewResource(android.R.layout.simple_list_item_activated_1);
 
         untilHourEditText.setAdapter(fromDaySpinner);
         untilHourEditText.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
