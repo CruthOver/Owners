@@ -138,7 +138,7 @@ public class ScheduleActivity extends AppCompatActivity {
         String weekDay="";
 
 
-        //format hari
+        //format hari jadwal
         if (Calendar.MONDAY == dayOfWeek) {
             weekDay = "Senin";
         } else if (Calendar.TUESDAY == dayOfWeek) {
