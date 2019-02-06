@@ -130,28 +130,49 @@ public class ScheduleActivity extends AppCompatActivity {
         });
 
         String tempDate = null;
-
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH);
         int day = cal.get(Calendar.DAY_OF_MONTH);
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        String weekDay="";
+
+
+        //format hari
+        if (Calendar.MONDAY == dayOfWeek) {
+            weekDay = "Senin";
+        } else if (Calendar.TUESDAY == dayOfWeek) {
+            weekDay = "Selasa";
+        } else if (Calendar.WEDNESDAY == dayOfWeek) {
+            weekDay = "Rabu";
+        } else if (Calendar.THURSDAY == dayOfWeek) {
+            weekDay = "Kamis";
+        } else if (Calendar.FRIDAY == dayOfWeek) {
+            weekDay = "Jumat";
+        } else if (Calendar.SATURDAY == dayOfWeek) {
+            weekDay = "Sabtu";
+        } else if (Calendar.SUNDAY == dayOfWeek) {
+            weekDay = "Minggu";
+        }
+        //END format hari
 
         month = month + 1;
-        date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
+        date = weekDay +", "+checkDigit(day)+"-"+checkDigit(month)+ "-" + year;
 
         tempDate = getIntent().getStringExtra("date");
         if(tempDate!=null){
             date = tempDate;
         }else{
-            date = year + "-" + checkDigit(month) + "-" + checkDigit(day) ;
+            date = weekDay +", "+checkDigit(day)+"-"+checkDigit(month)+ "-" + year;
         }
 
         tanggal.setText(date);
+        final String mWeekDay = weekDay;
         mDatePicker = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month = month + 1;
-                date = year + "-" + checkDigit(month)+ "-" + checkDigit(dayOfMonth);
+                date = mWeekDay +", "+checkDigit(dayOfMonth)+"-"+checkDigit(month)+ "-" + year;
                 tanggal.setText(date);
                 jadwalAdapter.clearData();
                 listJadwal();
@@ -192,6 +213,7 @@ public class ScheduleActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void setSpinnerField(){
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
